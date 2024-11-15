@@ -1,7 +1,7 @@
 # Documents
 
 ## Diagram
-- [ER Model](#)
+- [ER Model](https://drive.google.com/file/d/1tArlar1WjgZ1oUrVpfaJFV0U0w96rRU0/view?usp=sharing)
 - [C4 Model Component Diagram](#)
 
 ## Report
