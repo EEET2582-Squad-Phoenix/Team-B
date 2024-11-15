@@ -2,7 +2,7 @@
 
 ## Diagram
 - [ER Model](https://drive.google.com/file/d/1tArlar1WjgZ1oUrVpfaJFV0U0w96rRU0/view?usp=sharing)
-- [C4 Model Component Diagram](#)
+- [C4 Model Component Diagram](https://online.visual-paradigm.com/share.jsp?id=333730313436302d31)
 
 ## Report
 - [Milestone 1 report](https://docs.google.com/document/d/1HjZYw-9ZXzuMYkLFFy9G0__hgKjT8WVQgwS1lFFQ79c/edit?usp=sharing)
