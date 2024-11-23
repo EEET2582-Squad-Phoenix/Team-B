@@ -17,7 +17,7 @@ public class Account {
     private String id;
     private String email;
     private String password;
-    private Enum role;
+    private Enum role; //Remember to create the Enum 
     private Boolean emailVerified;
     private Boolean adminCreated;
     private Date createdAt;
