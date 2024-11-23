@@ -13,3 +13,6 @@
 - [Figma design](https://www.figma.com/design/rwnx3u5SUsMKPeCiNw8CUI/EEET2582---Team-B?node-id=0-1&t=uUpvmsFMPzEMcIhm-1)
 
 
+## Backend
+Spring Boot 3.4.0
+Java 21
