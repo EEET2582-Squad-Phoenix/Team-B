@@ -1,8 +1,8 @@
 spring:
   data:
     mongodb:
-      uri: ${MONGODB_URI}
-      database: userdata
+      uri: mongodb+srv://donambinh2002:passw0rd@news.s0vit.mongodb.net
+      database: Accounts
   mail:
     host:
     port:
