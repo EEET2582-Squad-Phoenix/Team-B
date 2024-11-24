@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamb.backend.Models.Account;
@@ -21,13 +21,21 @@ import com.teamb.backend.Services.AccountService;
 @RestController
 @RequestMapping("/account")
 public class AccountController {
+
     @Autowired
     private AccountService service;
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Account createAccount(@RequestBody Account account){
-        return service.addAccount(account);
+    // @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> createAccount(@RequestBody Account account) {
+        try {
+            Account saved = service.addAccount(account);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     @GetMapping("/all")

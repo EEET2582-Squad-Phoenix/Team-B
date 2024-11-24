@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.teamb.backend.Models.Account;
@@ -12,12 +13,20 @@ import com.teamb.backend.Repositories.AccountRepository;
 
 @Service
 public class AccountService {
+
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Account addAccount(Account account){
+        if (accountRepository.findByEmail(account.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email already taken"); // Throw exception for better handling
+        }
+           
         account.setId(UUID.randomUUID().toString().split("-")[0]);
         account.setCreatedAt(Instant.now());
+        // account.setPassword(passwordEncoder.encode(account.getPassword()));
         return accountRepository.save(account);
     }
 
