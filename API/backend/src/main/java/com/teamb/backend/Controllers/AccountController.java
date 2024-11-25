@@ -1,6 +1,7 @@
 package com.teamb.backend.Controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,25 @@ public class AccountController {
 
     @Autowired
     private AccountService service;
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest) {
+        try {
+            String email = loginRequest.get("email");
+            String password = loginRequest.get("password");
+
+            // Authenticate the user (check if the credentials are valid)
+            Account account = service.authenticateUser(email, password);
+
+            if (account != null) {
+                return ResponseEntity.status(HttpStatus.OK).body("Login successful");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
     @PostMapping("/register")
     // @ResponseStatus(HttpStatus.CREATED)

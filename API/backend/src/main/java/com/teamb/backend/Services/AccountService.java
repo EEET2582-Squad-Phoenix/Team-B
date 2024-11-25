@@ -19,6 +19,16 @@ public class AccountService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public Account authenticateUser(String email, String password) {
+        Account account = accountRepository.findByEmail(email).orElse(null);
+
+        if (account != null && passwordEncoder.matches(password, account.getPassword())) {
+            return account; // Return the authenticated account
+        }
+
+        return null; // Invalid credentials
+    }
+
     public Account addAccount(Account account){
         if (accountRepository.findByEmail(account.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already taken"); // Throw exception for better handling
@@ -26,7 +36,7 @@ public class AccountService {
            
         account.setId(UUID.randomUUID().toString().split("-")[0]);
         account.setCreatedAt(Instant.now());
-        // account.setPassword(passwordEncoder.encode(account.getPassword()));
+        account.setPassword(passwordEncoder.encode(account.getPassword()));
         return accountRepository.save(account);
     }
 
