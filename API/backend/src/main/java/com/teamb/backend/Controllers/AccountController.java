@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamb.backend.Models.Account;
 import com.teamb.backend.Models.Registration;
 import com.teamb.backend.Services.AccountService;
+import com.teamb.backend.Services.MailService;
 
 
 @RestController
@@ -26,6 +28,11 @@ public class AccountController {
 
     @Autowired
     private AccountService service;
+
+
+    @Autowired
+    private MailService mailService;
+
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest) {
@@ -51,12 +58,18 @@ public class AccountController {
     public ResponseEntity<?> createAccount(@RequestBody Registration registration) {
         try {
             Account saved = service.registerUser(registration);
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved + "/nRegistration successful. Please verify your email.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/verify")
+    public String verifyEmail(@RequestParam("token") String token) {
+        return service.verifyEmail(token);
     }
 
     @GetMapping("/all")

@@ -9,5 +9,6 @@ import com.teamb.backend.Models.Account;
 
 @Repository
 public interface AccountRepository extends MongoRepository<Account, String>{
+    Account findByVerificationToken(String verificationToken);
     Optional<Account> findByEmail(String email);
 } 

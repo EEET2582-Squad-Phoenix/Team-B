@@ -5,8 +5,6 @@ import java.util.UUID;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +31,9 @@ public class AccountService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private MailService mailService;
 
     public Account authenticateUser(String email, String password) {
         Account account = accountRepository.findByEmail(email).orElse(null);
@@ -61,6 +62,16 @@ public class AccountService {
         account.setCreatedAt(Instant.now());
         account.setAdminCreated(false); // Default
         accountRepository.save(account);
+
+        // Generate email verification token
+        String verificationToken = UUID.randomUUID().toString();
+
+        // Save the token to the account
+        account.setVerificationToken(verificationToken);
+        accountRepository.save(account);
+
+        // Send the verification email
+        mailService.sendVerificationEmail(registration.getEmail(), verificationToken);
 
         // Save Charity or Donor based on role
         if (registration.getRole() == Role.CHARITY) {
@@ -96,6 +107,19 @@ public class AccountService {
         }
 
         return account;
+    }
+
+    public String verifyEmail(String token){
+        Account account = accountRepository.findByVerificationToken(token);
+        if (account != null && !account.getEmailVerified()) {
+            // Mark the account as verified
+            account.setEmailVerified(true);
+            account.setVerificationToken(null); // Remove the token
+            accountRepository.save(account);
+            return "redirect:/login?verified=true"; // Redirect to login or success page
+        } else {
+            return "redirect:/login?verified=false"; // Token invalid or already verified
+        }
     }
 
     public List<Account> getAllAccounts(){

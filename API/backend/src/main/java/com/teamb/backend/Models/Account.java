@@ -31,6 +31,8 @@ public class Account implements UserDetails{
     private Instant createdAt;
     private Instant updatedAt;
 
+    private String verificationToken;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Convert role to a GrantedAuthority
