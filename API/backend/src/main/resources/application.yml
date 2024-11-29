@@ -2,7 +2,7 @@ spring:
   data:
     mongodb:
       uri: mongodb+srv://donambinh2002:passw0rd@news.s0vit.mongodb.net
-      database: Accounts
+      database: Userdata
   mail:
     host:
     port:

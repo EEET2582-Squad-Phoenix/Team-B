@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamb.backend.Models.Account;
+import com.teamb.backend.Models.Registration;
 import com.teamb.backend.Services.AccountService;
 
 
@@ -47,9 +48,9 @@ public class AccountController {
 
     @PostMapping("/register")
     // @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createAccount(@RequestBody Account account) {
+    public ResponseEntity<?> createAccount(@RequestBody Registration registration) {
         try {
-            Account saved = service.addAccount(account);
+            Account saved = service.registerUser(registration);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -67,6 +68,7 @@ public class AccountController {
     public Account getAccountById(@PathVariable String id){
         return service.getAccountByAccountId(id);
     }
+
 
     @PutMapping("/edit/{id}")
     public Account modifyAccount(@RequestBody Account account, String id){

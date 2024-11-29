@@ -18,11 +18,10 @@ public class Donor {
     @Id
     private String id; // Same as Account ID
 
-    private String name;
-    private String avatarUrl;
-    private String introVidUrl;
     private String firstName;
     private String lastName;
+    private String avatarUrl;
+    private String introVidUrl;
     private String address;
     private String language;
 

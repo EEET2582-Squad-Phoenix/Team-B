@@ -68,6 +68,3 @@ public class Account implements UserDetails{
     }
 }
 
-enum Role {
-    DONOR, CHARITY, ADMIN
-}
