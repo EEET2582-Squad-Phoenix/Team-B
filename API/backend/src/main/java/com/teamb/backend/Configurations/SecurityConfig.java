@@ -1,4 +1,4 @@
-package com.teamb.backend.Securities;
+package com.teamb.backend.Configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
