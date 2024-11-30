@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.UUID;
 import java.time.Instant;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,19 +33,34 @@ public class AccountService {
     private DonorRepository donorRepository;
 
     @Autowired
+    private JWTService jwtService;
+
+    @Autowired
+    AuthenticationManager authManager;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     private MailService mailService;
 
-    public Account authenticateUser(String email, String password) {
-        Account account = accountRepository.findByEmail(email).orElse(null);
-
-        if (account != null && passwordEncoder.matches(password, account.getPassword())) {
-            return account; // Return the authenticated account
+    public String authenticateUser(String email, String password) {
+        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(email);
+        } else {
+            return "fail";
         }
+            
 
-        return null; // Invalid credentials
+
+        // Account account = accountRepository.findByEmail(email).orElse(null);
+
+        // if (account != null && passwordEncoder.matches(password, account.getPassword())) {
+        //     return account; // Return the authenticated account
+        // }
+
+        // return null; // Invalid credentials
     }
 
    public Account registerUser(Registration registration) {
@@ -112,13 +130,12 @@ public class AccountService {
     public String verifyEmail(String token){
         Account account = accountRepository.findByVerificationToken(token);
         if (account != null && !account.getEmailVerified()) {
-            // Mark the account as verified
-            account.setEmailVerified(true);
-            account.setVerificationToken(null); // Remove the token
+            account.setEmailVerified(true);  // Mark the account as verified
+            account.setVerificationToken(null); // Remove the verification token
             accountRepository.save(account);
-            return "redirect:/login?verified=true"; // Redirect to login or success page
+            return "Verified successfully"; // Return confirmation message
         } else {
-            return "redirect:/login?verified=false"; // Token invalid or already verified
+            return "Invalid or already verified token"; // Return an error message if token is invalid
         }
     }
 

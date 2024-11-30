@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamb.backend.Models.Account;
 import com.teamb.backend.Models.Registration;
 import com.teamb.backend.Services.AccountService;
-import com.teamb.backend.Services.MailService;
 
 
 @RestController
@@ -30,10 +29,6 @@ public class AccountController {
     private AccountService service;
 
 
-    @Autowired
-    private MailService mailService;
-
-
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest) {
         try {
@@ -41,10 +36,10 @@ public class AccountController {
             String password = loginRequest.get("password");
 
             // Authenticate the user (check if the credentials are valid)
-            Account account = service.authenticateUser(email, password);
+            String result = service.authenticateUser(email, password);
 
-            if (account != null) {
-                return ResponseEntity.status(HttpStatus.OK).body("Login successful");
+            if (result != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
             }
@@ -67,11 +62,6 @@ public class AccountController {
         }
     }
 
-    @GetMapping("/verify")
-    public String verifyEmail(@RequestParam("token") String token) {
-        return service.verifyEmail(token);
-    }
-
     @GetMapping("/all")
     public List<Account> getAllAccounts(){
         return service.getAllAccounts();
@@ -84,8 +74,22 @@ public class AccountController {
 
 
     @PutMapping("/edit/{id}")
-    public Account modifyAccount(@RequestBody Account account, String id){
+    public Account modifyAccount(@RequestBody Account account, @PathVariable String id){
         return service.updateAccount(account, id);
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
+        try {
+            String result = service.verifyEmail(token);
+            if (result.equals("Verified successfully")) {
+                return ResponseEntity.status(HttpStatus.OK).body("Email verified successfully. Please login.");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired verification token.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during verification: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/delete/{id}")
