@@ -65,7 +65,7 @@ public class AccountService {
 
    public Account registerUser(Registration registration) {
         // Validate email uniqueness
-        if (accountRepository.findByEmail(registration.getEmail()).isPresent()) {
+        if (accountRepository.findByEmail(registration.getEmail()) != null) {
             throw new IllegalArgumentException("Email already taken");
         }
 
@@ -76,7 +76,11 @@ public class AccountService {
         account.setEmail(registration.getEmail());
         account.setPassword(passwordEncoder.encode(registration.getPassword()));
         account.setRole(registration.getRole());
-        account.setEmailVerified(registration.getEmailVerified());
+        if(registration.getRole() == Role.ADMIN){
+            account.setEmailVerified(true);
+        }else{
+            account.setEmailVerified(registration.getEmailVerified());
+        }
         account.setCreatedAt(Instant.now());
         account.setAdminCreated(false); // Default
         accountRepository.save(account);

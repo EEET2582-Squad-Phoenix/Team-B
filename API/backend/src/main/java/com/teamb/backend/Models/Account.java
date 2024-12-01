@@ -20,7 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document("accounts")
-public class Account implements UserDetails{
+public class Account{
     @Id
     private String id;
     private String email;
@@ -33,40 +33,40 @@ public class Account implements UserDetails{
 
     private String verificationToken;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Convert role to a GrantedAuthority
-        return Collections.singletonList(new SimpleGrantedAuthority(role.name()));
-    }
+    // @Override
+    // public Collection<? extends GrantedAuthority> getAuthorities() {
+    //     // Convert role to a GrantedAuthority
+    //     return Collections.singletonList(new SimpleGrantedAuthority(role.name()));
+    // }
 
-    @Override
-    public String getUsername() {
-        return email; // Email used as username
-    }
+    // @Override
+    // public String getUsername() {
+    //     return email; // Email used as username
+    // }
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
+    // @Override
+    // public String getPassword() {
+    //     return password;
+    // }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true; // Always active
-    }
+    // @Override
+    // public boolean isAccountNonExpired() {
+    //     return true; // Always active
+    // }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true; // Not locked
-    }
+    // @Override
+    // public boolean isAccountNonLocked() {
+    //     return true; // Not locked
+    // }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true; // Always valid
-    }
+    // @Override
+    // public boolean isCredentialsNonExpired() {
+    //     return true; // Always valid
+    // }
 
-    @Override
-    public boolean isEnabled() {
-        return emailVerified != null ? emailVerified : false;
-    }
+    // @Override
+    // public boolean isEnabled() {
+    //     return emailVerified != null ? emailVerified : false;
+    // }
 }
 
