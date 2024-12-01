@@ -51,16 +51,6 @@ public class AccountService {
         } else {
             return "fail";
         }
-            
-
-
-        // Account account = accountRepository.findByEmail(email).orElse(null);
-
-        // if (account != null && passwordEncoder.matches(password, account.getPassword())) {
-        //     return account; // Return the authenticated account
-        // }
-
-        // return null; // Invalid credentials
     }
 
    public Account registerUser(Registration registration) {
