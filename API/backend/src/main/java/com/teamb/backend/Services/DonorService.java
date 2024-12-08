@@ -28,13 +28,13 @@ public class DonorService {
         return donorRepository.findById(accountId).get();
     }
 
-    public ResponseEntity<?> uploadAvatar(String donorId, MultipartFile file) {
+    public ResponseEntity<?> uploadImage(String donorId, MultipartFile file, int height, int width) {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.status(400).body("No file uploaded");
             }
 
-            String imageUrl = imageUploadService.uploadImage(file);
+            String imageUrl = imageUploadService.uploadImage(file, height, width);
 
             Donor donor = donorRepository.findById(donorId).orElseThrow(() -> new RuntimeException("Donor not found"));
             donor.setAvatarUrl(imageUrl);

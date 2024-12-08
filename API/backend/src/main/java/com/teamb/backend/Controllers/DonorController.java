@@ -33,9 +33,14 @@ public class DonorController {
         return service.getDonorsByAccountId(id);
     }
 
-    @PostMapping("/{id}/avatar")
+    @PostMapping("/{id}/avatar/300")
     public ResponseEntity<?> uploadAvatar(@PathVariable String id, @RequestParam("image") MultipartFile file) {
-        return service.uploadAvatar(id, file);
+        return service.uploadImage(id, file, 300, 300);
+    }
+
+    @PostMapping("/{id}/avatar/100")
+    public ResponseEntity<?> uploadThumbnail(@PathVariable String id, @RequestParam("image") MultipartFile file) {
+        return service.uploadImage(id, file, 100, 100);
     }
     
 }
