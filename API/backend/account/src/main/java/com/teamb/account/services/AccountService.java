@@ -1,9 +1,12 @@
 package com.teamb.account.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.teamb.account.models.Account;
@@ -21,8 +24,15 @@ public class AccountService {
         return accountRepository.findAll();
     }
 
-    public Account getAccountByAccountId(String accountId){
-        return accountRepository.findById(accountId).get();
+
+    public ResponseEntity<Account> getAccountByAccountId(String accountId) {
+        Optional<Account> accountOptional = accountRepository.findById(accountId);
+        
+        if (accountOptional.isPresent()) {
+            return ResponseEntity.ok(accountOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
    

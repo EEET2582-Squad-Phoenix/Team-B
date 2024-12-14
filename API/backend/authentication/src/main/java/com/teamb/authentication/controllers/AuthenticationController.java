@@ -49,7 +49,7 @@ public class AuthenticationController {
         try {
             Account saved = service.registerUser(registration);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved + "/nRegistration successful. Please verify your email.");
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
