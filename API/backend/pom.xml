@@ -22,6 +22,7 @@
         <module>charity</module>
         <module>application</module>
 		<module>authentication</module>
+		<module>admin</module>
     </modules>
 
 	<properties>
@@ -72,6 +73,13 @@
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>dotenv-java</artifactId>
 			<version>3.0.0</version>
+		</dependency>
+
+		<!-- mapping from data model to API request/response -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.2.2</version>
 		</dependency>
 
 		<!-- JWT API -->

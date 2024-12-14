@@ -10,37 +10,20 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>application</artifactId>
+    <artifactId>admin</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>com.teamb</groupId>
-            <artifactId>account</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.teamb</groupId>
-            <artifactId>donor</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.teamb</groupId>
-            <artifactId>charity</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
         <dependency>
             <groupId>com.teamb</groupId>
             <artifactId>common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>com.teamb</groupId>
-            <artifactId>admin</artifactId>
+            <artifactId>account</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+   
+        <!-- Add dependencies specific to the account module -->
     </dependencies>
 </project>
