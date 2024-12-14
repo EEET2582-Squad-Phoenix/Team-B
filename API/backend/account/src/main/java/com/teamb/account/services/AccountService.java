@@ -3,7 +3,6 @@ package com.teamb.account.services;
 import java.util.List;
 import java.time.Instant;
 
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +15,6 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Autowired
-    AuthenticationManager authManager;
 
 
     public List<Account> getAllAccounts(){

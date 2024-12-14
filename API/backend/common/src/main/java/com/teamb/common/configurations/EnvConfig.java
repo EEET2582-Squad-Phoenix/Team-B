@@ -19,7 +19,7 @@ public class EnvConfig implements InitializingBean, EnvironmentAware {
         String currentDir = System.getProperty("user.dir");
 
         // Create a path to the .env file in the relative directory
-        String dotenvPath = Paths.get(currentDir, "API", "backend", ".env").toString();
+        String dotenvPath = Paths.get(currentDir, ".env").toString();
 
         // Load the .env file using the relative path
         Dotenv dotenv = Dotenv.configure().directory(dotenvPath).load();

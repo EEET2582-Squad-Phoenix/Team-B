@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teamb.account.models.Account;
 import com.teamb.authentication.services.AuthenticateService;
+import com.teamb.authentication.services.AuthenticateUserService;
 import com.teamb.authentication.models.Registration;
 
 
@@ -25,25 +26,22 @@ public class AuthenticationController {
     @Autowired
     private AuthenticateService service;
 
+    @Autowired
+    private AuthenticateUserService authUserService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+        String email = loginRequest.get("email");
+        String password = loginRequest.get("password");
+    
         try {
-            String email = loginRequest.get("email");
-            String password = loginRequest.get("password");
-
-            // Authenticate the user (check if the credentials are valid)
-            String result = service.authenticateUser(email, password);
-
-            if (result != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-            }
+            String token = authUserService.authenticateUser(email, password);
+            return ResponseEntity.ok(Map.of("token", token));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
+    
 
     @PostMapping("/register")
     // @ResponseStatus(HttpStatus.CREATED)

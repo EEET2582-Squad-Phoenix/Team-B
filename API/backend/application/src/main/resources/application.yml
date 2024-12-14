@@ -1,0 +1,20 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://donambinh2002:passw0rd@news.s0vit.mongodb.net/
+      database: Userdata
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: noreply.charitan@gmail.com
+    password: payi qdge xtwb pwnz
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: smtp.gmail.com
+          auth: true
+          starttls:
+            enable: true
+  config:
+    import: optional:file:.env
