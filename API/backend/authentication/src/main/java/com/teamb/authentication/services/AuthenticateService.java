@@ -42,7 +42,7 @@ public class AuthenticateService implements UserDetailsService{
 
    public Account registerUser(Registration registration) {
         // Validate email uniqueness
-        if (accountRepository.findByEmail(registration.getEmail()) != null) {
+        if (checkEmail(registration.getEmail())) {
             throw new IllegalArgumentException("Email already taken");
         }
 
@@ -106,6 +106,10 @@ public class AuthenticateService implements UserDetailsService{
         }
 
         return account;
+    }
+
+    public Boolean checkEmail(String email){
+        return (accountRepository.findByEmail(email) != null);      
     }
 
     public String verifyEmail(String token){

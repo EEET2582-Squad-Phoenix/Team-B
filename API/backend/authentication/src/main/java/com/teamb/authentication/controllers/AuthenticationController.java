@@ -57,6 +57,26 @@ public class AuthenticationController {
         }
     }
 
+    @PostMapping("/check-email")
+    // @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> checkEmail(@RequestBody Map<String, String> email) {
+        try {
+            Boolean saved = service.checkEmail(email.get("email"));
+
+            if(saved){
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is taken");
+            }else{
+                return ResponseEntity.status(HttpStatus.CREATED).body("Email is available");
+            }
+            
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+
     @GetMapping("/verify")
     public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
         try {
