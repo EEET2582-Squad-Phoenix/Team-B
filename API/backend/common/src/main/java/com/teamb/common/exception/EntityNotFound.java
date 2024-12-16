@@ -1,4 +1,4 @@
-package com.teamb.admin.exception;
+package com.teamb.common.exception;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

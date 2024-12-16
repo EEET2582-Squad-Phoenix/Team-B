@@ -1,4 +1,4 @@
-package com.teamb.admin.controllers;
+package com.teamb.charity.controllers;
 
 import com.teamb.common.exception.EntityNotFound;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ExceptionHandlerController {
-
     @ExceptionHandler(EntityNotFound.class)
     public ResponseEntity<ProblemDetail> handleNoEntityFound(EntityNotFound entityNotFound) {
         var problemDetails = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);

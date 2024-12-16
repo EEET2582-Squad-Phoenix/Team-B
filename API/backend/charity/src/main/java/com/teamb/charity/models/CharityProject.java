@@ -1,9 +1,9 @@
-package com.teamb.admin.models;
+package com.teamb.charity.models;
 
-import com.teamb.charity.models.Charity;
 import com.teamb.common.models.FundStatus;
 import com.teamb.common.models.ProjectStatus;
 import com.teamb.common.models.Region;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -21,22 +22,29 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("charityProject")
+@Document("charityProjects")
 public class CharityProject {
     @Id
     private String id;
+    @NotNull
     private String name;
     private List<String> imageUrls;
     private List<String> videoUrls;
+    @NotNull
     private String description;
+    @NotNull
     private String country;
+    @NotNull
     private BigDecimal goalAmount;
     private BigDecimal raisedAmount;
+    @NotNull
     private Region region;
-    private ProjectStatus status;
+    @Builder.Default
+    private ProjectStatus status = ProjectStatus.UNAPPROVED;
     private String haltedReason;
     private boolean highlighted;
-    private FundStatus fundStatus;
+    @Builder.Default
+    private FundStatus fundStatus = FundStatus.ONGOING;
     private Duration duration;
     private Date endedAt;
 
@@ -44,7 +52,9 @@ public class CharityProject {
     private Date updatedAt;
 
     @DBRef
+    @NotNull
     private Charity charity;
     @DBRef
+    @NotNull
     private Continent continent;
 }

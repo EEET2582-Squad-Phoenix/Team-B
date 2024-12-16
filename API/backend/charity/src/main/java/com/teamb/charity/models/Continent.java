@@ -1,5 +1,6 @@
-package com.teamb.admin.models;
+package com.teamb.charity.models;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,11 +12,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("continent")
+@Document("continents")
 public class Continent {
     @Id
     private String id;
 
+    @NotNull(message = "This field is required")
     private String country;
+    @NotNull(message = "This field is required")
     private String continent;
 }

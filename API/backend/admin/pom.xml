@@ -23,7 +23,11 @@
             <artifactId>account</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-   
+        <dependency>
+            <groupId>com.teamb</groupId>
+            <artifactId>charity</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <!-- Add dependencies specific to the account module -->
     </dependencies>
 </project>

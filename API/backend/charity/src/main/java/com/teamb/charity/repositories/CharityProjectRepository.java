@@ -1,9 +1,15 @@
-package com.teamb.admin.repositories;
+package com.teamb.charity.repositories;
 
 import com.teamb.charity.models.CharityProject;
+import com.teamb.charity.models.Continent;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CharityProjectRepository extends MongoRepository<CharityProject, String> {
+    List<CharityProject> findAllByNameContainingIgnoreCase(String name);
+
+    List<CharityProject> findAllByContinent(Continent continent);
 }
