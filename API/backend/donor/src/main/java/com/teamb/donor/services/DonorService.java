@@ -49,7 +49,7 @@ public class DonorService {
             donor.setAvatarUrl(imageUrl);
             donorRepository.save(donor);
 
-            return ResponseEntity.ok("Avatar updated successfully");
+            return ResponseEntity.ok("Avatar updated successfully: " + imageUrl);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error uploading avatar: " + e.getMessage());
         }
