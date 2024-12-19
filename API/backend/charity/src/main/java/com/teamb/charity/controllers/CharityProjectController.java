@@ -38,12 +38,12 @@ public class CharityProjectController {
 
     @PostMapping("Create")
     public ResponseEntity<CharityProject> createCharityProject(@RequestBody CharityProject newProject) {
-        var result = charityProjectService.createCharityProject(newProject);
+        var result = charityProjectService.saveCharityProject(newProject);
         return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CharityProject> updateCharityProject(@RequestBody charityProject updateProject) 
+    public ResponseEntity<CharityProject> updateCharityProject(@RequestBody CharityProject updateProject, @PathVariable String id)
     {
         var result = charityProjectService.updateCharityProject(id, updateProject);
         return ResponseEntity.ok(result);
