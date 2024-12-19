@@ -3,14 +3,13 @@ package com.teamb.charity.controllers;
 import com.teamb.charity.models.CharityProject;
 import com.teamb.charity.services.CharityProjectService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -35,6 +34,28 @@ public class CharityProjectController {
     public ResponseEntity<List<CharityProject>> getCharityProjectsByContinent(@PathVariable String continentId) {
         var result = charityProjectService.findCharityProjectsByContinent(continentId);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("Create")
+    public ResponseEntity<CharityProject> createCharityProject(@RequestBody CharityProject newProject) {
+        var result = charityProjectService.createCharityProject(newProject);
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CharityProject> updateCharityProject(@RequestBody charityProject updateProject) 
+    {
+        var result = charityProjectService.updateCharityProject(id, updateProject);
+        return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ProblemDetail> deleteCharityProject(@PathVariable String id) {
+        charityProjectService.deleteCharityProject(id);
+        ProblemDetail deletedMsg = ProblemDetail.forStatus(HttpStatus.OK);
+        deletedMsg.setTitle("Charity project deleted successfully");
+        deletedMsg.setDetail(String.format("Charity project with id %s deleted successfully", id));
+        return ResponseEntity.ok(deletedMsg);
     }
 
 }

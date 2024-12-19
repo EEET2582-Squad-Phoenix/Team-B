@@ -36,7 +36,8 @@ public class CharityProject {
     private String country;
     @NotNull
     private BigDecimal goalAmount;
-    private BigDecimal raisedAmount;
+    @Builder.Default
+    private BigDecimal raisedAmount = BigDecimal.ZERO;
     @NotNull
     private Region region;
     @Builder.Default
@@ -45,6 +46,7 @@ public class CharityProject {
     private boolean highlighted;
     @Builder.Default
     private FundStatus fundStatus = FundStatus.ONGOING;
+    @NotNull
     private Duration duration;
     private Date endedAt;
 

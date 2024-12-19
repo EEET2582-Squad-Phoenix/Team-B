@@ -20,4 +20,5 @@ public class CharityProjectController {
     public ResponseEntity<ProjectStatusUpdateResponse> approveCharityProject(@PathVariable("id") String projectId) {
         return ResponseEntity.ok(projectService.approveCharityProject(projectId));
     }
+
 }
