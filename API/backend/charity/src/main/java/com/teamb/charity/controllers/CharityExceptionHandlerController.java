@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
-public class ExceptionHandlerController {
+public class CharityExceptionHandlerController {
     @ExceptionHandler(EntityNotFound.class)
     public ResponseEntity<ProblemDetail> handleNoEntityFound(EntityNotFound entityNotFound) {
         var problemDetails = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);

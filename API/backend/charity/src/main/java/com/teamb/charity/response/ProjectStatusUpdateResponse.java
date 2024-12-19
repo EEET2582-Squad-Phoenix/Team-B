@@ -1,4 +1,4 @@
-package com.teamb.admin.api.response;
+package com.teamb.charity.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.teamb.common.models.ProjectStatus;

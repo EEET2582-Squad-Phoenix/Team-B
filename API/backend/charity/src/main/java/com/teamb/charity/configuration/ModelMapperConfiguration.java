@@ -1,4 +1,4 @@
-package com.teamb.admin.configuration;
+package com.teamb.charity.configuration;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

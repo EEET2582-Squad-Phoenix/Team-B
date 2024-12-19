@@ -4,17 +4,14 @@ import java.time.Instant;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.teamb.account.models.Account;
 import com.teamb.account.repositories.AccountRepository;
+import com.teamb.authentication.configurations.PasswordEncoding;
 import com.teamb.authentication.models.AccountAuth;
 import com.teamb.authentication.models.Registration;
 import com.teamb.charity.models.Charity;
@@ -34,13 +31,7 @@ public class AuthenticateService implements UserDetailsService{
     private DonorRepository donorRepository;
 
     @Autowired
-    private JWTService jwtService;
-
-    @Autowired
-    AuthenticationManager authManager;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoding passwordEncoding;
 
     @Autowired
     private MailService mailService;
@@ -48,18 +39,10 @@ public class AuthenticateService implements UserDetailsService{
     @Autowired
     private AccountRepository accountRepository;
 
-    public String authenticateUser(String email, String password) {
-        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(email);
-        } else {
-            return "fail";
-        }
-    }
 
    public Account registerUser(Registration registration) {
         // Validate email uniqueness
-        if (accountRepository.findByEmail(registration.getEmail()) != null) {
+        if (checkEmail(registration.getEmail())) {
             throw new IllegalArgumentException("Email already taken");
         }
 
@@ -68,7 +51,7 @@ public class AuthenticateService implements UserDetailsService{
         Account account = new Account();
         account.setId(sharedId);
         account.setEmail(registration.getEmail());
-        account.setPassword(passwordEncoder.encode(registration.getPassword()));
+        account.setPassword(passwordEncoding.passwordEncoder().encode(registration.getPassword()));
         account.setRole(registration.getRole());
         if(registration.getRole() == Role.ADMIN){
             account.setEmailVerified(true);
@@ -123,6 +106,10 @@ public class AuthenticateService implements UserDetailsService{
         }
 
         return account;
+    }
+
+    public Boolean checkEmail(String email){
+        return (accountRepository.findByEmail(email) != null);      
     }
 
     public String verifyEmail(String token){

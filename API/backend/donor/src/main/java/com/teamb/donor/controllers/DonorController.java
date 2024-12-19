@@ -29,7 +29,7 @@ public class DonorController {
     }
 
     @GetMapping("/getById/{id}")
-    public Donor getDonorById(@PathVariable String id){
+    public ResponseEntity<Donor> getDonorById(@PathVariable String id){
         return service.getDonorsByAccountId(id);
     }
 

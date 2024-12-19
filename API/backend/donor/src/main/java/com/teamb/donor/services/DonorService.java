@@ -1,12 +1,12 @@
 package com.teamb.donor.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.teamb.common.services.ImageUploadService;
@@ -26,9 +26,16 @@ public class DonorService {
         return donorRepository.findAll();
     }
 
-    public Donor getDonorsByAccountId(String accountId){
-        return donorRepository.findById(accountId).get();
+    public ResponseEntity<Donor> getDonorsByAccountId(String accountId) {
+        Optional<Donor> donorOptional = donorRepository.findById(accountId);
+        
+        if (donorOptional.isPresent()) {
+            return ResponseEntity.ok(donorOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
+    
 
     public ResponseEntity<?> uploadImage(String donorId, MultipartFile file, int height, int width) {
         try {
