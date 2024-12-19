@@ -18,7 +18,7 @@ public class CharityProjectService {
     public ProjectStatusUpdateResponse approveCharityProject(String projectId) {
         CharityProject project = repository.findById(projectId).orElseThrow(() -> new EntityNotFound("projectId", projectId));
 
-        //Business validation
+        //Business validation(test)
         switch (project.getStatus()) {
             case ACTIVE -> throw new IllegalArgumentException("This charity project is already active");
             case HALTED -> throw new IllegalStateException("Charity project is halted");
