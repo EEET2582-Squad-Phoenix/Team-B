@@ -1,11 +1,14 @@
 package com.teamb.charity.controllers;
 
 import com.teamb.charity.models.CharityProject;
+import com.teamb.charity.response.ProjectStatusUpdateResponse;
 import com.teamb.charity.services.CharityProjectService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +20,14 @@ import java.util.List;
 public class CharityProjectController {
 
     private final CharityProjectService charityProjectService;
+    private final ModelMapper modelMapper;
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/approve/{id}")
+    public ResponseEntity<ProjectStatusUpdateResponse> approveCharityProject(@PathVariable("id") String projectId) {
+        var project = charityProjectService.approveCharityProject(projectId);
+        return ResponseEntity.ok(modelMapper.map(project, ProjectStatusUpdateResponse.class));
+    }
 
     @GetMapping
     public ResponseEntity<List<CharityProject>> getCharityProjects(@RequestParam(required = false) String name) {

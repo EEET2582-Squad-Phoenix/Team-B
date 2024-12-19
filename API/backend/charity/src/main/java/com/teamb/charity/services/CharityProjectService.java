@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -68,7 +67,7 @@ public class CharityProjectService {
         return charityProjectRepository.save(charityProject);
     }
 
-    private boolean validateInputProject(CharityProject charityProject) {
+    private void validateInputProject(CharityProject charityProject) {
         if (FieldChecking.isNullOrEmpty(charityProject.getName())) {
             throw new IllegalArgumentException("Project name is missing!!");
         }
@@ -90,7 +89,6 @@ public class CharityProjectService {
         if (charityProject.getStatus().equals(ProjectStatus.HALTED) && charityProject.getHaltedReason().isEmpty()) {
             throw new IllegalArgumentException("Project halted reason is required");
         }
-        return true;
     }
 
     public CharityProject updateCharityProject(String id, CharityProject updatedProject) {
@@ -110,6 +108,21 @@ public class CharityProjectService {
             throw new EntityNotFound("projectId", id);
         }
         charityProjectRepository.deleteById(id);
+    }
+
+    public CharityProject approveCharityProject(String projectId) {
+        CharityProject project = charityProjectRepository.findById(projectId).orElseThrow(() -> new EntityNotFound("projectId", projectId));
+
+        //Business validation
+        switch (project.getStatus()) {
+            case ACTIVE -> throw new IllegalArgumentException("This charity project is already active");
+            case HALTED -> throw new IllegalStateException("Charity project is halted");
+            case COMPLETED -> throw new IllegalArgumentException("Charity project is completed");
+        }
+        //end
+
+        project.setStatus(ProjectStatus.ACTIVE);
+        return charityProjectRepository.save(project);
     }
 
 }
