@@ -1,5 +1,6 @@
 package com.teamb.charity.services;
 
+import com.teamb.charity.controllers.CharityProjectController;
 import com.teamb.charity.models.CharityProject;
 import com.teamb.charity.repositories.CharityProjectRepository;
 import com.teamb.charity.repositories.ContinentRepository;
@@ -8,14 +9,13 @@ import com.teamb.common.exception.EntityNotFound;
 import com.teamb.common.models.FundStatus;
 import com.teamb.common.models.ProjectStatus;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -24,6 +24,7 @@ public class CharityProjectService {
 
     private final CharityProjectRepository charityProjectRepository;
     private final ContinentRepository continentRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CharityProjectController.class);
 
     public CharityProject findCharityProjectById(String id) {
         return charityProjectRepository.findById(id).orElseThrow(() -> new EntityNotFound("projectId", id));
@@ -123,6 +124,42 @@ public class CharityProjectService {
 
         project.setStatus(ProjectStatus.ACTIVE);
         return charityProjectRepository.save(project);
+    }
+
+//    public List<CharityProject> searchCharityProjectByCategory(String category) {
+//        try{
+//            // consider??? - return total
+//            if (category == null || category.isEmpty()) {
+//                return charityProjectRepository.findAll();
+//            }
+//            System.out.println("caterogy"+ category);
+//            return charityProjectRepository.findByCond(category);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ArrayList<>();
+//        }
+//    }
+    // searchCharity
+    public List<CharityProject> searchCharityProjectByCategory(String category) {
+        try {
+            System.out.println("Category: " + category);
+
+            if (category == null || category.isEmpty()) {
+                System.out.println("Fetching all charity projects");
+                return charityProjectRepository.findAll();
+            }
+
+            System.out.println("Fetching charity projects for category: " + category);
+            List<CharityProject> result = charityProjectRepository.findByCond(category);
+//            System.out.println("Query executed successfully, found " + result.size() + " projects");
+            logger.info("Find successfully");
+            return result;
+        } catch (Exception e) {
+//            System.err.println("Error while searching charity projects: " + e.getMessage());
+            logger.error("Error", e);
+//            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
 }

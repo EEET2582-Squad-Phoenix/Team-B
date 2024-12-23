@@ -49,6 +49,7 @@ public class CharityProject {
     @NotNull
     private Duration duration;
     private Date endedAt;
+    private String category;
 
     private Date createdAt;
     private Date updatedAt;
