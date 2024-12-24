@@ -4,18 +4,24 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.teamb.common.models.Role;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document("accounts")
-public class Account{
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class Account implements Serializable{
+    private static final long serialVersionUID = 1L;
+
     @Id
     private String id;
     private String email;
@@ -27,6 +33,5 @@ public class Account{
     private Instant updatedAt;
 
     private String verificationToken;
-
 }
 

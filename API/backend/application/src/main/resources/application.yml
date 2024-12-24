@@ -19,8 +19,7 @@ spring:
   config:
     import: optional:file:.env
   redis:
-    sentinel:
-      master: mymaster
-      nodes: redis-sentinel1:26379,redis-sentinel2:26379,redis-sentinel3:26379
+    host: redis-test
+    port: 6379
   cache:
     type: redis
