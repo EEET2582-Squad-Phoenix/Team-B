@@ -91,5 +91,4 @@ public class CharityProjectController {
         deletedMsg.setDetail(String.format("Charity project with id %s deleted successfully", id));
         return ResponseEntity.ok(deletedMsg);
     }
-
 }

@@ -8,6 +8,7 @@ import com.teamb.charity.utils.FieldChecking;
 import com.teamb.common.exception.EntityNotFound;
 import com.teamb.common.models.FundStatus;
 import com.teamb.common.models.ProjectStatus;
+
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +81,6 @@ public class CharityProjectService {
         }
         if (FieldChecking.isNegative(charityProject.getGoalAmount())) {
             throw new IllegalArgumentException("Project goal amount is missing!!");
-        }
-        if (Objects.isNull(charityProject.getRegion())) {
-            throw new IllegalArgumentException("Project region is missing!!");
         }
         if (Objects.isNull(charityProject.getDuration())) {
             throw new IllegalArgumentException("Project duration is required");
@@ -162,4 +160,38 @@ public class CharityProjectService {
         }
     }
 
+    public CharityProject highlightGlobalProject(String projectId) {
+        List<CharityProject> globalProjects = charityProjectRepository.findByIsGlobal(true);
+        if (globalProjects.size() >= 3) {
+            throw new IllegalArgumentException("Cannot highlight more than 3 global projects");
+        }
+
+        CharityProject project = charityProjectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFound("projectId", projectId));
+        project.setGlobal(true);
+        return charityProjectRepository.save(project);
+    }
+
+    public CharityProject highlightRegionalProject(String projectId) {
+        List<CharityProject> regionalProjects = charityProjectRepository.findByIsGlobal(false);
+        if (regionalProjects.size() >= 3) {
+            throw new IllegalArgumentException("Cannot highlight more than 3 regional projects");
+        }
+
+        CharityProject project = charityProjectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFound("projectId", projectId));
+        project.setGlobal(false);
+        return charityProjectRepository.save(project);
+    }
+
+    public Map<String, List<CharityProject>> getHighlightedProjects() {
+        List<CharityProject> globalProjects = charityProjectRepository.findByIsGlobal(true);
+        List<CharityProject> regionalProjects = charityProjectRepository.findByIsGlobal(false);
+
+        Map<String, List<CharityProject>> highlightedProjects = new HashMap<>();
+        highlightedProjects.put("global", globalProjects);
+        highlightedProjects.put("regional", regionalProjects);
+
+        return highlightedProjects;
+    }
 }
