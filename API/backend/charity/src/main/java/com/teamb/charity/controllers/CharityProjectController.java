@@ -91,4 +91,24 @@ public class CharityProjectController {
         deletedMsg.setDetail(String.format("Charity project with id %s deleted successfully", id));
         return ResponseEntity.ok(deletedMsg);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/highlight/global/{id}")
+    public ResponseEntity<CharityProject> highlightGlobalProject(@PathVariable("id") String projectId) {
+        var project = charityProjectService.highlightGlobalProject(projectId);
+        return ResponseEntity.ok(project);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/highlight/regional/{id}")
+    public ResponseEntity<CharityProject> highlightRegionalProject(@PathVariable("id") String projectId) {
+        var project = charityProjectService.highlightRegionalProject(projectId);
+        return ResponseEntity.ok(project);
+    }
+    
+    @GetMapping("/highlighted")
+    public ResponseEntity<List<CharityProject>> getHighlightedProjects() {
+        var highlightedProjects = charityProjectService.getHighlightedProjects();
+        return ResponseEntity.ok(highlightedProjects);
+    }
 }

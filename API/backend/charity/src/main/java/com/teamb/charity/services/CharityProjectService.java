@@ -184,13 +184,13 @@ public class CharityProjectService {
         return charityProjectRepository.save(project);
     }
 
-    public Map<String, List<CharityProject>> getHighlightedProjects() {
+    public List<CharityProject> getHighlightedProjects() {
         List<CharityProject> globalProjects = charityProjectRepository.findByIsGlobal(true);
         List<CharityProject> regionalProjects = charityProjectRepository.findByIsGlobal(false);
 
-        Map<String, List<CharityProject>> highlightedProjects = new HashMap<>();
-        highlightedProjects.put("global", globalProjects);
-        highlightedProjects.put("regional", regionalProjects);
+        List<CharityProject> highlightedProjects = new ArrayList<>();
+        highlightedProjects.addAll(globalProjects);
+        highlightedProjects.addAll(regionalProjects);
 
         return highlightedProjects;
     }
