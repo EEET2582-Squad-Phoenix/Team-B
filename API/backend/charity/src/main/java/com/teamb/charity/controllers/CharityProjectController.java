@@ -47,7 +47,7 @@ public class CharityProjectController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("Create")
+    @PostMapping("/create")
     public ResponseEntity<CharityProject> createCharityProject(@RequestBody CharityProject newProject) {
         var result = charityProjectService.saveCharityProject(newProject);
         return ResponseEntity.ok(result);

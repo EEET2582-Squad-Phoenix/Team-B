@@ -11,6 +11,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.teamb.common.models.Role;
 
+import jakarta.validation.constraints.NotNull;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,8 +20,14 @@ import com.teamb.common.models.Role;
 public class Account{
     @Id
     private String id;
+
+    @NotNull
     private String email;
+
+    @NotNull
     private String password;
+
+    @NotNull
     private Role role; 
     private Boolean emailVerified;
     private Boolean adminCreated;

@@ -42,5 +42,8 @@ public class DonorController {
     public ResponseEntity<?> uploadThumbnail(@PathVariable String id, @RequestParam("image") MultipartFile file) {
         return service.uploadImage(id, file, 100, 100);
     }
+
+    
+    
     
 }
