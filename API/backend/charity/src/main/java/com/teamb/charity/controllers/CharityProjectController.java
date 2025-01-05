@@ -5,6 +5,8 @@ import com.teamb.charity.response.ProjectStatusUpdateResponse;
 import com.teamb.charity.services.CharityProjectService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.List;
 public class CharityProjectController {
 
     private final CharityProjectService charityProjectService;
+    private static final Logger logger = LoggerFactory.getLogger(CharityProjectController.class);
+
     private final ModelMapper modelMapper;
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -43,11 +47,30 @@ public class CharityProjectController {
 
     @GetMapping("/byContinent/{continentId}")
     public ResponseEntity<List<CharityProject>> getCharityProjectsByContinent(@PathVariable String continentId) {
+        logger.info("API called: GET /charityProjects/search with category: {}", continentId);
         var result = charityProjectService.findCharityProjectsByContinent(continentId);
+        System.out.print(continentId);
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/create")
+//    @GetMapping("/byCategory/{categoryName}")
+//    public ResponseEntity<List<CharityProject>> getCharityProjectByCategory(@PathVariable String categoryName){
+//        System.out.println("here is "+ categoryName);
+//        var result = charityProjectService.searchCharityProjectByCategory(categoryName);
+////        System.out.println("here is "+ categoryName);
+//        return ResponseEntity.ok(result);
+//    }
+
+
+    @GetMapping("/byCategory")
+    public ResponseEntity<List<CharityProject>> getCharityProjectByCategory(@RequestParam(required = false) String categoryName){
+        System.out.println("here is "+ categoryName);
+
+//        logger.info("API called: GET /charityProjects/search with category: {}", categoryName);
+        var result = charityProjectService.searchCharityProjectByCategory(categoryName);
+        return ResponseEntity.ok(result);
+    }
+    @PostMapping("Create")
     public ResponseEntity<CharityProject> createCharityProject(@RequestBody CharityProject newProject) {
         var result = charityProjectService.saveCharityProject(newProject);
         return ResponseEntity.ok(result);
@@ -69,4 +92,23 @@ public class CharityProjectController {
         return ResponseEntity.ok(deletedMsg);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/highlight/global/{id}")
+    public ResponseEntity<CharityProject> highlightGlobalProject(@PathVariable("id") String projectId) {
+        var project = charityProjectService.highlightGlobalProject(projectId);
+        return ResponseEntity.ok(project);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/highlight/regional/{id}")
+    public ResponseEntity<CharityProject> highlightRegionalProject(@PathVariable("id") String projectId) {
+        var project = charityProjectService.highlightRegionalProject(projectId);
+        return ResponseEntity.ok(project);
+    }
+    
+    @GetMapping("/highlighted")
+    public ResponseEntity<List<CharityProject>> getHighlightedProjects() {
+        var highlightedProjects = charityProjectService.getHighlightedProjects();
+        return ResponseEntity.ok(highlightedProjects);
+    }
 }

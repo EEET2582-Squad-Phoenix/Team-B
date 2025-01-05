@@ -38,8 +38,7 @@ public class CharityProject {
     private BigDecimal goalAmount;
     @Builder.Default
     private BigDecimal raisedAmount = BigDecimal.ZERO;
-    @NotNull
-    private Region region;
+    private boolean isGlobal;
     @Builder.Default
     private ProjectStatus status = ProjectStatus.UNAPPROVED;
     private String haltedReason;
@@ -49,6 +48,7 @@ public class CharityProject {
     @NotNull
     private Duration duration;
     private Date endedAt;
+    private String category;
 
     private Date createdAt;
     private Date updatedAt;

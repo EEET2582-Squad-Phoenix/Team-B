@@ -1,5 +1,6 @@
 package com.teamb.charity.services;
 
+import com.teamb.charity.controllers.CharityProjectController;
 import com.teamb.charity.models.CharityProject;
 import com.teamb.charity.repositories.CharityProjectRepository;
 import com.teamb.charity.repositories.ContinentRepository;
@@ -7,15 +8,15 @@ import com.teamb.charity.utils.FieldChecking;
 import com.teamb.common.exception.EntityNotFound;
 import com.teamb.common.models.FundStatus;
 import com.teamb.common.models.ProjectStatus;
+
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -24,6 +25,7 @@ public class CharityProjectService {
 
     private final CharityProjectRepository charityProjectRepository;
     private final ContinentRepository continentRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CharityProjectController.class);
 
     public CharityProject findCharityProjectById(String id) {
         return charityProjectRepository.findById(id).orElseThrow(() -> new EntityNotFound("projectId", id));
@@ -80,9 +82,6 @@ public class CharityProjectService {
         if (FieldChecking.isNegative(charityProject.getGoalAmount())) {
             throw new IllegalArgumentException("Project goal amount is missing!!");
         }
-        if (Objects.isNull(charityProject.getRegion())) {
-            throw new IllegalArgumentException("Project region is missing!!");
-        }
         if (Objects.isNull(charityProject.getDuration())) {
             throw new IllegalArgumentException("Project duration is required");
         }
@@ -125,4 +124,74 @@ public class CharityProjectService {
         return charityProjectRepository.save(project);
     }
 
+//    public List<CharityProject> searchCharityProjectByCategory(String category) {
+//        try{
+//            // consider??? - return total
+//            if (category == null || category.isEmpty()) {
+//                return charityProjectRepository.findAll();
+//            }
+//            System.out.println("caterogy"+ category);
+//            return charityProjectRepository.findByCond(category);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ArrayList<>();
+//        }
+//    }
+    // searchCharity
+    public List<CharityProject> searchCharityProjectByCategory(String category) {
+        try {
+            System.out.println("Category: " + category);
+
+            if (category == null || category.isEmpty()) {
+                System.out.println("Fetching all charity projects");
+                return charityProjectRepository.findAll();
+            }
+
+            System.out.println("Fetching charity projects for category: " + category);
+            List<CharityProject> result = charityProjectRepository.findByCond(category);
+//            System.out.println("Query executed successfully, found " + result.size() + " projects");
+            logger.info("Find successfully");
+            return result;
+        } catch (Exception e) {
+//            System.err.println("Error while searching charity projects: " + e.getMessage());
+            logger.error("Error", e);
+//            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public CharityProject highlightGlobalProject(String projectId) {
+        List<CharityProject> globalProjects = charityProjectRepository.findByIsGlobal(true);
+        if (globalProjects.size() >= 3) {
+            throw new IllegalArgumentException("Cannot highlight more than 3 global projects");
+        }
+
+        CharityProject project = charityProjectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFound("projectId", projectId));
+        project.setGlobal(true);
+        return charityProjectRepository.save(project);
+    }
+
+    public CharityProject highlightRegionalProject(String projectId) {
+        List<CharityProject> regionalProjects = charityProjectRepository.findByIsGlobal(false);
+        if (regionalProjects.size() >= 3) {
+            throw new IllegalArgumentException("Cannot highlight more than 3 regional projects");
+        }
+
+        CharityProject project = charityProjectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFound("projectId", projectId));
+        project.setGlobal(false);
+        return charityProjectRepository.save(project);
+    }
+
+    public List<CharityProject> getHighlightedProjects() {
+        List<CharityProject> globalProjects = charityProjectRepository.findByIsGlobal(true);
+        List<CharityProject> regionalProjects = charityProjectRepository.findByIsGlobal(false);
+
+        List<CharityProject> highlightedProjects = new ArrayList<>();
+        highlightedProjects.addAll(globalProjects);
+        highlightedProjects.addAll(regionalProjects);
+
+        return highlightedProjects;
+    }
 }

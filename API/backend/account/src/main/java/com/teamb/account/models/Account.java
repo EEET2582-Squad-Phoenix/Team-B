@@ -35,6 +35,5 @@ public class Account{
     private Instant updatedAt;
 
     private String verificationToken;
-
 }
 
