@@ -6,11 +6,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.teamb.common.models.Role;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
 @Data
@@ -22,6 +25,8 @@ public class Account{
     private String id;
 
     @NotNull
+    @Email
+    @Indexed(unique = true)
     private String email;
 
     @NotNull
@@ -29,8 +34,9 @@ public class Account{
 
     @NotNull
     private Role role; 
-    private Boolean emailVerified;
-    private Boolean adminCreated;
+    private Boolean emailVerified = false;
+    private Boolean adminCreated = false;
+
     private Instant createdAt;
     private Instant updatedAt;
 
