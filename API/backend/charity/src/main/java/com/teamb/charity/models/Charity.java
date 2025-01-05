@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.teamb.account.models.Account;
 import com.teamb.common.models.CharityType;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 
 @Data

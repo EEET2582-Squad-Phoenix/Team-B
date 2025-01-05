@@ -7,38 +7,27 @@
         <groupId>com.teamb</groupId>
         <artifactId>backend</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>charity</artifactId>
+    <artifactId>admin</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.teamb</groupId>
             <artifactId>common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.teamb</groupId>
             <artifactId>account</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
-        <!-- Add dependencies specific to the charity module -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>com.teamb</groupId>
+            <artifactId>charity</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        <!-- Add dependencies specific to the account module -->
     </dependencies>
 </project>
