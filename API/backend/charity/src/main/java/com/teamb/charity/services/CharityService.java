@@ -1,5 +1,6 @@
 package com.teamb.charity.services;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.teamb.account.models.Account;
+import com.teamb.common.models.Role;
 import com.teamb.charity.models.Charity;
+
+import com.teamb.account.repositories.AccountRepository;
 import com.teamb.charity.repositories.CharityRepository;
 import com.teamb.common.exception.EntityNotFound;
 
@@ -18,6 +23,8 @@ import com.teamb.common.exception.EntityNotFound;
 public class CharityService {
     @Autowired
     private CharityRepository charityRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     public List<Charity> getAllCharities() {
         return charityRepository.findAll();
@@ -48,8 +55,7 @@ public class CharityService {
         if (charity.getType() == null) {
             throw new IllegalArgumentException("Charity type is required");
         }
-        if (charity.getAccount() == null || charity.getAccount().getId() == null
-                || charity.getAccount().getId().isEmpty()) {
+        if (charity.getAccount() == null) {
             throw new IllegalArgumentException("Charity account is required");
         }
     }
@@ -60,6 +66,19 @@ public class CharityService {
         if (charity.getId() == null || charity.getId().isEmpty()) {
             charity.setId(UUID.randomUUID().toString());
         }
+
+        Account newAccount = new Account();
+        newAccount.setId(charity.getId());
+        newAccount.setEmail(charity.getAccount().getEmail());
+        newAccount.setPassword(charity.getAccount().getPassword());
+        newAccount.setRole(Role.CHARITY);
+        newAccount.setEmailVerified(false);
+        newAccount.setAdminCreated(false);
+        newAccount.setCreatedAt(Instant.now());
+        newAccount = accountRepository.save(newAccount);
+
+        // Link the account to the charity
+        charity.setAccount(newAccount);
         return charityRepository.save(charity);
     }
 
@@ -68,6 +87,21 @@ public class CharityService {
         var existingCharity = charityRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Charity not found"));
         validateInputCharity(charity);
+
+        existingCharity.setName(charity.getName());
+        existingCharity.setAddress(charity.getAddress());
+        existingCharity.setType(charity.getType());
+        existingCharity.setTaxCode(charity.getTaxCode());
+        existingCharity.setMonthlyDonation(charity.getMonthlyDonation());
+        existingCharity.setIntroVidUrl(charity.getIntroVidUrl());
+        existingCharity.setLogoUrl(charity.getLogoUrl());
+
+        // update account if needed
+        if (charity.getAccount() != null) {
+            existingCharity.getAccount().setUpdatedAt(Instant.now());
+            existingCharity.getAccount().setEmail(charity.getAccount().getEmail());
+            existingCharity.getAccount().setPassword(charity.getAccount().getPassword());
+        }
         return charityRepository.save(charity);
     }
 

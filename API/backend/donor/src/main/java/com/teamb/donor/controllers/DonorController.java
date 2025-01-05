@@ -24,27 +24,27 @@ public class DonorController {
     }
 
     // Get a donor by ID
-    @GetMapping("/getById/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Donor> getDonorById(@PathVariable String id) {
         return donorService.getDonorsByAccountId(id);
     }
 
     // Create a new donor
-    @PostMapping("/create")
+    @PostMapping("")
     public ResponseEntity<Donor> createDonor(@RequestBody Donor donor) {
         Donor createdDonor = donorService.saveDonor(donor);
         return ResponseEntity.ok(createdDonor);
     }
 
     // Update an existing donor
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Donor> updateDonor(@PathVariable String id, @RequestBody Donor donor) {
         Donor updatedDonor = donorService.updateDonor(id, donor);
         return ResponseEntity.ok(updatedDonor);
     }
 
     // Delete a donor by ID
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDonor(@PathVariable String id) {
         donorService.deleteDonor(id);
         return ResponseEntity.ok("Donor deleted successfully");
