@@ -23,6 +23,7 @@
         <module>application</module>
 		<module>authentication</module>
 		<module>admin</module>
+		<module>subscription</module>
     </modules>
 
 	<properties>
