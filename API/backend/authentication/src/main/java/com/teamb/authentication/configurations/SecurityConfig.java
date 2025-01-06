@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.teamb.authentication.services.AuthenticateService;
+import com.teamb.common.configurations.PasswordEncoding;
 
 @Configuration
 @EnableWebSecurity
@@ -50,13 +51,13 @@ public class SecurityConfig {
                 .build();
     }
 
-    // @Bean
-    // public AuthenticationProvider authenticationProvider(){
-    //     DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-    //     provider.setPasswordEncoder(passwordEncoding.passwordEncoder());
-    //     provider.setUserDetailsService(userDetailsService);
-    //     return provider;
-    // }
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoding.passwordEncoder());
+        provider.setUserDetailsService(userDetailsService);
+        return provider;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(

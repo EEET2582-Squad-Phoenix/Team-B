@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.teamb.account.models.Account;
 import com.teamb.account.repositories.AccountRepository;
-import com.teamb.authentication.configurations.PasswordEncoding;
 import com.teamb.authentication.models.AccountAuth;
 import com.teamb.authentication.models.Registration;
 import com.teamb.charity.models.Charity;
 import com.teamb.charity.repositories.CharityRepository;
+import com.teamb.common.configurations.PasswordEncoding;
 import com.teamb.common.models.Role;
 import com.teamb.common.services.MailService;
 import com.teamb.donor.models.Donor;

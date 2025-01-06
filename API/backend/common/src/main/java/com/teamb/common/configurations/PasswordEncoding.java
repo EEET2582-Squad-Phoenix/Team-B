@@ -1,4 +1,4 @@
-package com.teamb.authentication.configurations;
+package com.teamb.common.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
