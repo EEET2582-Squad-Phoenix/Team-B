@@ -1,8 +1,7 @@
 spring:
   data:
-    mongodb:
-      uri: mongodb+srv://donambinh2002:passw0rd@news.s0vit.mongodb.net/
-      database: Userdata
+    mongodb: 
+      uri: mongodb+srv://nguyenmandat000:8B9A34Rnh0aMl5ZQ@charitydbproject.pikzz.mongodb.net/charitydbproject?retryWrites=true&w=majority&appName=CharityDBProject
   mail:
     host: smtp.gmail.com
     port: 587
@@ -18,3 +17,5 @@ spring:
             enable: true
   config:
     import: optional:file:.env
+
+#Old mongodb url: mongodb+srv://donambinh2002:passw0rd@news.s0vit.mongodb.net/
