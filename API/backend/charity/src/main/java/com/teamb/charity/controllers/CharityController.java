@@ -47,14 +47,14 @@ public class CharityController {
     }
 
     // Update charity
-    @PutMapping("/{charityId}")
+    @PutMapping("/{id}")
     public ResponseEntity<Charity> updateCharity(@PathVariable String id, @RequestBody Charity updateCharity) {
         var result = service.updateCharity(id, updateCharity);
         return ResponseEntity.ok(result);
     }
 
     // Delete charity
-    @DeleteMapping("/{charityId}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ProblemDetail> deleteCharity(@PathVariable String id) {
         service.deleteCharity(id);
         ProblemDetail deletedMsg = ProblemDetail.forStatus(HttpStatus.OK);

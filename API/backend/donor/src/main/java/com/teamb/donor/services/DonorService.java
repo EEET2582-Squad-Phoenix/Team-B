@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.teamb.account.models.Account;
 import com.teamb.donor.models.Donor;
+import com.teamb.common.configurations.PasswordEncoding;
 import com.teamb.common.models.Role;
 
 import com.teamb.common.services.ImageUploadService;
@@ -29,6 +30,9 @@ public class DonorService {
 
     @Autowired
     private ImageUploadService imageUploadService;
+
+    @Autowired
+    private PasswordEncoding passwordEncoding;
 
     // Fetch all donors
     public List<Donor> getAllDonors() {
@@ -93,7 +97,7 @@ public class DonorService {
         Account account = new Account();
         account.setId(donor.getId()); // Ensure donor ID matches account ID
         account.setEmail(donor.getAccount().getEmail());
-        account.setPassword(donor.getAccount().getPassword()); // Password hashing should be done here
+        account.setPassword(passwordEncoding.passwordEncoder().encode(donor.getAccount().getPassword())); 
         account.setRole(Role.DONOR);
         account.setEmailVerified(false);
         account.setAdminCreated(false);
@@ -122,8 +126,8 @@ public class DonorService {
         // Update account fields if needed
         if (donor.getAccount() != null) {
             existingDonor.getAccount().setUpdatedAt(Instant.now());
-            existingDonor.getAccount().setEmail(donor.getAccount().getEmail());
-            existingDonor.getAccount().setPassword(donor.getAccount().getPassword()); // Hashing required
+            // existingDonor.getAccount().setEmail(donor.getAccount().getEmail());
+            // existingDonor.getAccount().setPassword(passwordEncoding.passwordEncoder().encode(donor.getAccount().getPassword())); 
         }
 
         return donorRepository.save(existingDonor);

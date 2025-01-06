@@ -17,6 +17,7 @@ import com.teamb.charity.models.Charity;
 
 import com.teamb.account.repositories.AccountRepository;
 import com.teamb.charity.repositories.CharityRepository;
+import com.teamb.common.configurations.PasswordEncoding;
 import com.teamb.common.exception.EntityNotFound;
 
 @Service
@@ -25,6 +26,8 @@ public class CharityService {
     private CharityRepository charityRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private PasswordEncoding passwordEncoding;
     
 
     public List<Charity> getAllCharities() {
@@ -42,8 +45,8 @@ public class CharityService {
         }
     }
 
-    // validate input charity
-    private void validateInputCharity(Charity charity) {
+     // Validate input charity
+     private void validateInputCharity(Charity charity, boolean validateAccount) {
         if (charity.getName() == null || charity.getName().isEmpty()) {
             throw new IllegalArgumentException("Charity name is required");
         }
@@ -56,14 +59,14 @@ public class CharityService {
         if (charity.getType() == null) {
             throw new IllegalArgumentException("Charity type is required");
         }
-        if (charity.getAccount() == null) {
+        if (validateAccount && (charity.getAccount() == null)) {
             throw new IllegalArgumentException("Charity account is required");
         }
     }
 
     // Save charity
     public Charity saveCharity(Charity charity) {
-        validateInputCharity(charity);
+        validateInputCharity(charity, true);
         if (charity.getId() == null || charity.getId().isEmpty()) {
             charity.setId(UUID.randomUUID().toString());
         }
@@ -71,7 +74,7 @@ public class CharityService {
         Account newAccount = new Account();
         newAccount.setId(charity.getId());
         newAccount.setEmail(charity.getAccount().getEmail());
-        newAccount.setPassword(charity.getAccount().getPassword());
+        newAccount.setPassword(passwordEncoding.passwordEncoder().encode(charity.getAccount().getPassword()));
         newAccount.setRole(Role.CHARITY);
         newAccount.setEmailVerified(false);
         newAccount.setAdminCreated(false);
@@ -87,7 +90,7 @@ public class CharityService {
     public Charity updateCharity(String id, Charity charity) {
         var existingCharity = charityRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Charity not found"));
-        validateInputCharity(charity);
+        validateInputCharity(charity, false);
 
         existingCharity.setName(charity.getName());
         existingCharity.setAddress(charity.getAddress());
@@ -100,8 +103,8 @@ public class CharityService {
         // update account if needed
         if (charity.getAccount() != null) {
             existingCharity.getAccount().setUpdatedAt(Instant.now());
-            existingCharity.getAccount().setEmail(charity.getAccount().getEmail());
-            existingCharity.getAccount().setPassword(charity.getAccount().getPassword());
+            // existingCharity.getAccount().setEmail(charity.getAccount().getEmail());
+            // existingCharity.getAccount().setPassword(passwordEncoding.passwordEncoder().encode(charity.getAccount().getPassword()));
         }
         return charityRepository.save(charity);
     }
