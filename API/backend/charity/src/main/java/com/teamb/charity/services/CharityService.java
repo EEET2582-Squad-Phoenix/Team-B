@@ -25,6 +25,7 @@ public class CharityService {
     private CharityRepository charityRepository;
     @Autowired
     private AccountRepository accountRepository;
+    
 
     public List<Charity> getAllCharities() {
         return charityRepository.findAll();
