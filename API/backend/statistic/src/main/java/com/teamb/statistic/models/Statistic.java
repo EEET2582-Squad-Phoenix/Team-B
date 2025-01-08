@@ -60,8 +60,8 @@ public class Statistic {
 
     // @DBRef
     // private Account account; // Reference to Account
-    @DBRef
-    private Charity charity;
+    // @DBRef
+    // private Charity charity;
 
 }
 
