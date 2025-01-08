@@ -38,7 +38,8 @@ public class AuthenticationController {
             String token = authUserService.authenticateUser(email, password);
             return ResponseEntity.ok(Map.of("token", token));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", e.getMessage()));
         }
     }
     
