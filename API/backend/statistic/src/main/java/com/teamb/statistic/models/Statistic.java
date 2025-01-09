@@ -33,7 +33,7 @@ public class Statistic {
 
     private String filterCountry;
     private String filterContinent;
-    private Instant createdAt; 
+    private Instant createdAt;
 
     // @NotNull
     // @Size(min = 1, max = 255)

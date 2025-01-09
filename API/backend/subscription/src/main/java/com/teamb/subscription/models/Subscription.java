@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Document("subscriptions")
 public class Subscription {
 
+    //! Please update this model according to ERD
     @Id
     private String id;
 

@@ -82,9 +82,9 @@ public class CharityProjectService {
         if (FieldChecking.isNegative(charityProject.getGoalAmount())) {
             throw new IllegalArgumentException("Project goal amount is missing!!");
         }
-        if (Objects.isNull(charityProject.getDuration())) {
-            throw new IllegalArgumentException("Project duration is required");
-        }
+        // if (Objects.isNull(charityProject.getDuration())) {
+        //     throw new IllegalArgumentException("Project duration is required");
+        // }
         if (charityProject.getStatus().equals(ProjectStatus.HALTED) && charityProject.getHaltedReason().isEmpty()) {
             throw new IllegalArgumentException("Project halted reason is required");
         }

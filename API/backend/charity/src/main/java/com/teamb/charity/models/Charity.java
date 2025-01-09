@@ -17,8 +17,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Digits;
 
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
+// import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 
@@ -34,9 +35,9 @@ public class Charity {
     @Size(min = 1, max = 255)
     private String name;
     
+    //! Charity only has 1 logo & 1 intro video. Having other images & videos to display on the profile page is recommended.
     private List<String> logoUrl;
     private List<String> introVidUrl;
-
 
     @NotNull
     @Size(min = 1, max = 255)
@@ -51,6 +52,7 @@ public class Charity {
     private CharityType type;
 
     @Min(0)
+    @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     private Double monthlyDonation = 0.0;
 
     @DBRef

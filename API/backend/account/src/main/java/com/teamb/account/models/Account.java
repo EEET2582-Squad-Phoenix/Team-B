@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
-import org.springframework.data.annotation.CreatedDate;
+// import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -30,10 +30,11 @@ public class Account{
     private String email;
 
     @NotNull
+    //! Needs constraints
     private String password;
 
     @NotNull
-    private Role role; 
+    private Role role;
     private Boolean emailVerified = false;
     private Boolean adminCreated = false;
 
@@ -42,4 +43,3 @@ public class Account{
 
     private String verificationToken;
 }
-
