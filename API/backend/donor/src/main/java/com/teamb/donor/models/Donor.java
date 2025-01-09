@@ -47,8 +47,7 @@ public class Donor {
     @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     private Double monthlyDonation = 0.0;
 
-    //! Considering
-    @DocumentReference(lazy = true)
+    @DocumentReference
     private List<Subscription> subscriptions = new ArrayList<>();
 
     @Nullable

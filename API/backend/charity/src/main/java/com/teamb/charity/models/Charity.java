@@ -35,9 +35,11 @@ public class Charity {
     @Size(min = 1, max = 255)
     private String name;
     
-    //! Charity only has 1 logo & 1 intro video. Having other images & videos to display on the profile page is recommended.
     private List<String> logoUrl;
     private List<String> introVidUrl;
+
+    private String displayedLogo;
+    private String displayedIntroVid;
 
     @NotNull
     @Size(min = 1, max = 255)
