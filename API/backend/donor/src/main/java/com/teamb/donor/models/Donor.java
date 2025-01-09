@@ -11,12 +11,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
-
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
+import com.mongodb.lang.Nullable;
 import com.teamb.account.models.Account;
 import com.teamb.subscription.models.Subscription;
 
@@ -29,11 +29,11 @@ public class Donor {
     private String id; // Same as Account ID
 
     @NotNull
-    @Size(min = 1, message = "First name is required")
+    @Size(min = 1, max = 255, message = "First name is required")
     private String firstName;
 
     @NotNull
-    @Size(min = 1, message = "Last name is required")
+    @Size(min = 1, max = 255, message = "Last name is required")
     private String lastName;
     private String avatarUrl;
     private String introVidUrl;
@@ -44,10 +44,14 @@ public class Donor {
     private String language = "en";
 
     @Min(0)
+    @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     private Double monthlyDonation = 0.0;
 
     @DocumentReference
     private List<Subscription> subscriptions = new ArrayList<>();
+
+    @Nullable
+    private String stripeCustomerId;
 
     @DBRef
     private Account account; // Reference to Account

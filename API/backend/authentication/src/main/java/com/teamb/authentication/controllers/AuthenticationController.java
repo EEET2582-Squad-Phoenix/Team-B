@@ -49,7 +49,8 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(Map.of("message", "Login successful"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", e.getMessage()));
         }
     }
 
