@@ -22,6 +22,9 @@ public class JWTService {
     }
 
     public String generateToken( String email, String accountId) {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("alg", "HS256");
+        headers.put("typ", "JWT");
         // Set claims (payload)
         Map<String, Object> claims = new HashMap<>();
         claims.put("accountId", accountId);
@@ -32,6 +35,7 @@ public class JWTService {
 
         // Generate the token using the HS256 algorithm
         return Jwts.builder()
+                .setHeader(headers)
                 .setClaims(claims)
                 .setSubject(email)  // You can use email as the subject as in your Node.js code
                 .setIssuedAt(new Date(System.currentTimeMillis()))
