@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/charity/projects")
+@RequestMapping("/admin/projects")
 public class CharityProjectController {
 
     private final CharityProjectService charityProjectService;
