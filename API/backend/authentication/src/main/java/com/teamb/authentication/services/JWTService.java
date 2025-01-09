@@ -1,85 +1,79 @@
 package com.teamb.authentication.services;
 
-import java.util.Base64;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
+
+import org.springframework.stereotype.Service;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JWTService {
 
     private String secretKey = "T9s4/KBX8vjsXPyUou2IWiJtvnpn7W5UK983YO6avSs=";
 
-    public JWTService(){
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            // SecretKey sk = keyGen.generateKey();
-            // secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        
+    public JWTService() {
+        // Initialize if needed (removed KeyGenerator code for simplicity)
     }
 
-    public String generateToken(String email, String id) {
-        Map<String, Object> claims =  new HashMap<>();
-        claims.put("id", id);
-        
-        long expirationTime = 3 * 60 * 60 * 1000;
+    public String generateToken(String email, String accountId) {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("typ", "JWT");
+        headers.put("alg", "HS256");
+     
+        // Set claims (payload)
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("accountId", accountId);
+        claims.put("email", email);
+    
+        // Set expiration time (10 days in milliseconds)
+        long expirationTime = 10 * 24 * 60 * 60 * 1000;
+    
+        // Generate the token using the HS256 algorithm
         return Jwts.builder()
-                .claims()
-                .add(claims)
-                .subject(email)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
-                .and()
-                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .setHeader(headers)
+                .setClaims(claims)  // Set claims without the subject
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(getKey(), SignatureAlgorithm.HS256)  // Use HS256 as the algorithm
                 .compact();
-
-  
     }
+    
 
     private SecretKey getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+        byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);  // Using HMAC-SHA256 as in Node.js
     }
 
     public String extractEmail(String token) {
-        // extract the username from jwt token
-        return extractClaim(token, Claims::getSubject);
+        // Extract the email from the JWT token
+        return extractClaim(token, claims -> claims.get("email", String.class));
     }
 
     public String extractId(String token) {
-        return extractClaim(token, claims -> claims.get("id", String.class));
+        // Extract the accountId from the JWT token
+        return extractClaim(token, claims -> claims.get("accountId", String.class));
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
+    private <T> T extractClaim(String token, java.util.function.Function<Claims, T> claimResolver) {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getKey())
+                .setSigningKey(getKey())  // Use the same key to verify the token
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseClaimsJws(token)
+                .getBody();
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) {
+    public boolean validateToken(String token, org.springframework.security.core.userdetails.UserDetails userDetails) {
         final String userName = extractEmail(token);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
