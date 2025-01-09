@@ -20,13 +20,13 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JWTService {
 
-    private String secretKey = "O/2ao6Pv6j15yAz3SU65O0n6esufd0P4WeIjnTHVfgI=";
+    private String secretKey = "T9s4/KBX8vjsXPyUou2IWiJtvnpn7W5UK983YO6avSs=";
 
     public JWTService(){
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey sk = keyGen.generateKey();
-            secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+            // SecretKey sk = keyGen.generateKey();
+            // secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -44,7 +44,7 @@ public class JWTService {
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() * 60 * 60 * 180))
                 .and()
-                .signWith(getKey())
+                .signWith(getKey(), io.jsonwebtoken.SignatureAlgorithm.HS256)
                 .compact();
 
   

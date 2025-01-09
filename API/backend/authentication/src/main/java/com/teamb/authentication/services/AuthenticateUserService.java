@@ -32,7 +32,7 @@ public class AuthenticateUserService {
             String accountId = account.getId();
 
             return jwtService.generateToken(email, accountId);
-        } catch (Exception e) {
+        } catch (BadCredentialsException e) {
             throw new RuntimeException("Invalid email or password");
         } catch (Exception e) {
             throw new RuntimeException("Email is not verifed");
