@@ -21,28 +21,29 @@ public class JWTService {
         // Initialize if needed (removed KeyGenerator code for simplicity)
     }
 
-    public String generateToken( String email, String accountId) {
+    public String generateToken(String email, String accountId) {
         Map<String, Object> headers = new HashMap<>();
-        headers.put("alg", "HS256");
         headers.put("typ", "JWT");
+        headers.put("alg", "HS256");
+     
         // Set claims (payload)
         Map<String, Object> claims = new HashMap<>();
         claims.put("accountId", accountId);
         claims.put("email", email);
-
+    
         // Set expiration time (10 days in milliseconds)
         long expirationTime = 10 * 24 * 60 * 60 * 1000;
-
+    
         // Generate the token using the HS256 algorithm
         return Jwts.builder()
                 .setHeader(headers)
-                .setClaims(claims)
-                .setSubject(email)  // You can use email as the subject as in your Node.js code
+                .setClaims(claims)  // Set claims without the subject
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getKey(), SignatureAlgorithm.HS256)  // Use HS256 as the algorithm
                 .compact();
     }
+    
 
     private SecretKey getKey() {
         byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
