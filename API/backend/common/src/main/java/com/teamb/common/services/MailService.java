@@ -23,7 +23,7 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(senderEmail);
         message.setTo(recipientEmail);
-        message.setSubject("Email Verification");
+        message.setSubject("Verify Registration");
         message.setText("Click the link to verify your email: " + verificationUrl);
 
         mailSender.send(message);
@@ -33,12 +33,12 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(senderEmail);
         message.setTo(recipientEmail);
-        message.setSubject("Project Halt Notification");
+        message.setSubject("Project Halt Notice");
 
         String emailBody = """
             Dear %s,
 
-            We hope this email finds you well. We are writing to inform you that your project, **%s**, has been marked as **halted** in our system.
+            We hope this email finds you well. We are writing to inform you that your project, **%s**, has been **halted** in our system.
 
             ### Reason for Halt:
             %s
@@ -69,12 +69,12 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(senderEmail);
         message.setTo(recipientEmail);
-        message.setSubject("Project Halt Notification");
+        message.setSubject("Project Halt Notice");
 
         String donorEmailBody = """
             Dear %s,
 
-            We are reaching out to provide an update regarding the project you support: **%s**. Unfortunately, the project has been temporarily marked as **halted** due to the following reason:
+            We are reaching out to provide an update regarding the project you support: **%s**. Unfortunately, the project has been temporarily **halted** due to the following reason:
 
             ### Reason for Halt:
             %s
