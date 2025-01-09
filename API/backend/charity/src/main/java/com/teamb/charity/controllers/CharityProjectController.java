@@ -4,6 +4,7 @@ import com.teamb.charity.models.CharityProject;
 import com.teamb.charity.response.ProjectStatusUpdateResponse;
 import com.teamb.charity.services.CharityProjectService;
 import com.teamb.common.exception.EntityNotFound;
+import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.common.models.ProjectStatus;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -43,11 +44,14 @@ public class CharityProjectController {
     }
 
     // Fetch charity projects by country
-    @GetMapping("/byCountry/{country}")
-    public ResponseEntity<List<CharityProject>> getCharityProjectsByCountry(@PathVariable String country) {
-        logger.info("API called: GET /charityProjects/search with country: {}", country);
-        var result = charityProjectService.findCharityProjectsByCountry(country);
-        return ResponseEntity.ok(result);
+    @GetMapping("/byCountries")
+    public ResponseEntity<List<CharityProject>> getCharityProjectsByCountries(@RequestParam List<String> countries) {
+        try {
+            List<CharityProject> projects = charityProjectService.getProjectsByCountries(countries);
+            return ResponseEntity.ok(projects);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     // Fetch charity projects by continent
@@ -60,12 +64,14 @@ public class CharityProjectController {
     }
 
     // Fetch charity projects by category
-    @GetMapping("/byCategory")
-    public ResponseEntity<List<CharityProject>> getCharityProjectByCategory(@RequestParam(required = false) String categoryName){
-        System.out.println("here is "+ categoryName);
-//        logger.info("API called: GET /charityProjects/search with category: {}", categoryName);
-        var result = charityProjectService.searchCharityProjectByCategory(categoryName);
-        return ResponseEntity.ok(result);
+    @GetMapping("/byCategories")
+    public ResponseEntity<List<CharityProject>> getCharityProjectsByCategories(@RequestParam List<ProjectCategoryType> categories) {
+        try {
+            List<CharityProject> projects = charityProjectService.getProjectsByCategories(categories);
+            return ResponseEntity.ok(projects);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     // Approve newly created charity project

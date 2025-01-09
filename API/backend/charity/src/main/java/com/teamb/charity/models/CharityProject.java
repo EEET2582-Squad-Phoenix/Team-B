@@ -3,8 +3,11 @@ package com.teamb.charity.models;
 import com.mongodb.lang.Nullable;
 import com.teamb.common.models.FundStatus;
 import com.teamb.common.models.ProjectStatus;
+import com.teamb.common.models.ProjectCategoryType;
 // import com.teamb.common.models.Region;
+
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -21,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -34,7 +38,7 @@ public class CharityProject {
     @Size(min = 1, max = 255)
     private String name;
 
-    //! Thumbnail is recommended as a separate attribute.
+    private String thumbnailUrl;
     @Size(max = 15)
     private List<String> imageUrls;
     @Size(max = 4)
@@ -72,8 +76,8 @@ public class CharityProject {
     private Date createdAt; // = startAt
     private Date updatedAt;
 
-    //! A project can have multiple category enums
-    private String category;
+    @NotEmpty(message = "At least one category must be selected.")
+    private List<ProjectCategoryType> categories;
 
     @Nullable
     private String stripeProductId;

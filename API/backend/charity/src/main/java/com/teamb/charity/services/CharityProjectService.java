@@ -7,6 +7,7 @@ import com.teamb.charity.repositories.ContinentRepository;
 import com.teamb.charity.utils.FieldChecking;
 import com.teamb.common.exception.EntityNotFound;
 import com.teamb.common.models.FundStatus;
+import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.common.models.ProjectStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -62,9 +63,12 @@ public class CharityProjectService {
         return charityProjectRepository.findAllByNameContainingIgnoreCase(name);
     }
 
-    // Fetch charity projects by country
-    public List<CharityProject> findCharityProjectsByCountry(String country) {
-        return charityProjectRepository.findAllByCountry(country);
+    // Fetch charity projects by countries
+    public List<CharityProject> getProjectsByCountries(List<String> countries) {
+        if (countries == null || countries.isEmpty()) {
+            throw new IllegalArgumentException("At least one country must be provided");
+        }
+        return charityProjectRepository.findByCountryIn(countries);
     }
     
     // Fetch charity projects by continent
@@ -73,28 +77,14 @@ public class CharityProjectService {
                 .orElseThrow(() -> new EntityNotFound("continentId", continentId));
         return charityProjectRepository.findAllByContinent(continent);
     }
-
-    // Fetch charity projects by category
-    public List<CharityProject> searchCharityProjectByCategory(String category) {
-        try {
-            System.out.println("Category: " + category);
-
-            if (category == null || category.isEmpty()) {
-                System.out.println("Fetching all charity projects");
-                return charityProjectRepository.findAll();
-            }
-
-            System.out.println("Fetching charity projects for category: " + category);
-            List<CharityProject> result = charityProjectRepository.findByCond(category);
-//            System.out.println("Query executed successfully, found " + result.size() + " projects");
-            logger.info("Find successfully");
-            return result;
-        } catch (Exception e) {
-//            System.err.println("Error while searching charity projects: " + e.getMessage());
-            logger.error("Error", e);
-//            e.printStackTrace();
-            return new ArrayList<>();
+    
+    // Fetch charity projects by categories
+    public List<CharityProject> getProjectsByCategories(List<ProjectCategoryType> categories) {
+        if (categories == null || categories.isEmpty()) {
+            throw new IllegalArgumentException("At least one category must be provided");
         }
+
+        return charityProjectRepository.findByCategoriesIn(categories);
     }
 
     // Create charity project - API provided by team A
