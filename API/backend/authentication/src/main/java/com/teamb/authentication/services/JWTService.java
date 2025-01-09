@@ -34,22 +34,23 @@ public class JWTService {
         
     }
 
-    public String generateToken(String email, String id) {
-        Map<String, Object> claims =  new HashMap<>();
-        claims.put("id", id);
-        
-        long expirationTime = 3 * 60 * 60 * 1000;
+    public String generateToken(String accountId, String email) {
+        // Set claims (payload)
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("accountId", accountId);
+        claims.put("email", email);
+
+        // Set expiration time
+        long expirationTime = 10 * 24 * 60 * 60 * 1000; // 10 days in milliseconds
+
+        // Generate the token
         return Jwts.builder()
-                .claims()
-                .add(claims)
-                .subject(email)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
-                .and()
+                .setClaims(claims)
+                .setSubject(email)  // You can use email as the subject as in your Node.js code
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
-
-  
     }
 
     private SecretKey getKey() {
