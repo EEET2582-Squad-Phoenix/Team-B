@@ -1,27 +1,18 @@
 package com.teamb.statistic.models;
 
+import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.Instant;
-import java.util.List;
-
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.teamb.account.models.Account;
-import com.teamb.common.models.CharityType;
-
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.data.mongodb.core.mapping.Field;
+import com.teamb.common.models.ProjectCategoryType;
 
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -31,37 +22,19 @@ public class Statistic {
     @Id
     private String id; // Same as Account ID
 
+    private List<String> userTargetIDs; // List of foreign keys for multiple users
+    private String userTargetID; // Single foreign key for one user
+    private StatisticType statisticType;
+
     private String filterCountry;
     private String filterContinent;
-    private Instant createdAt; 
-
-    // @NotNull
-    // @Size(min = 1, max = 255)
-    // private String name;
+    private ProjectCategoryType filterCategory;
+    private Date filterStartDate;
+    private Date filterEndDate;
     
-    // private List<String> logoUrl;
-    // private List<String> introVidUrl;
+    // 14 digits before the decimal point and up to 2 digits after the decimal point.
+    @Digits(integer = 14, fraction = 2)
+    private double value;
 
-
-    // @NotNull
-    // @Size(min = 1, max = 255)
-    // private String address;
-
-    // @NotNull
-    // @Pattern(regexp = "^[A-Za-z0-9]{5,10}$", message = "Invalid tax code")
-    // private String taxCode;
-
-    // @NotNull
-    // @Field("organizationType")
-    // private CharityType type;
-
-    // @Min(0)
-    // private Double monthlyDonation = 0.0;
-
-    // @DBRef
-    // private Account account; // Reference to Account
-    @DBRef
-    private Charity charity;
-
+    private Instant createdAt;
 }
-

@@ -18,4 +18,15 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
     List<CharityProject> findByCond(String cond);
 
     List<CharityProject> findByIsGlobal(boolean isGlobal);
+
+    @Query(value = "{ 'charity.id': ?0 }", fields = "{ 'raisedAmount': 1 }")
+    double sumDonationAmountByCharityId(String donorId);
+
+    // Count total number of projects by charityId
+    @Query(value = "{ 'charity.id': ?0 }", count = true)
+    int countProjectsByCharityId(String charityId);
+
+     // Count total number of projects
+     @Query(value = "{}", count = true)
+     int countAllProjects();
 }

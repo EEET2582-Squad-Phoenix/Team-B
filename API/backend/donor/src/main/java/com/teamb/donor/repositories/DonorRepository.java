@@ -7,4 +7,5 @@ import com.teamb.donor.models.Donor;
 
 @Repository
 public interface DonorRepository extends MongoRepository<Donor, String>{
+    
 } 
