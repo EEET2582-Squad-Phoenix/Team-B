@@ -7,6 +7,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.teamb.account.models.Account;
+import com.teamb.account.repositories.AccountRepository;
+
 @Service
 public class AuthenticateUserService {
 
@@ -15,14 +18,21 @@ public class AuthenticateUserService {
 
     @Autowired
     private JWTService jwtService;
+
+    @Autowired
+    private AccountRepository accountRepository;
     
     public String authenticateUser(String email, String password) {
         try {
             Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
             );
-            return jwtService.generateToken(email);
-        } catch (BadCredentialsException e) {
+
+            Account account = accountRepository.findByEmail(email);
+            String accountId = account.getId();
+
+            return jwtService.generateToken(email, accountId);
+        } catch (Exception e) {
             throw new RuntimeException("Invalid email or password");
         } catch (Exception e) {
             throw new RuntimeException("Email is not verifed");

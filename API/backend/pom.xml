@@ -26,6 +26,7 @@
 		<module>subscription</module>
         <module>statistic</module>
         <module>donation</module>
+        <module>notification</module>
     </modules>
 
     <properties>
