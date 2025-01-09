@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(auth-> auth
                 .requestMatchers("/auth/**", "/error").permitAll()
-                .requestMatchers("/account/**", "admin/charity/**", "admin/donor/**").hasRole("ADMIN")
+                .requestMatchers("/account/**", "admin/charity/**", "admin/donor/**", "admin/projects/**").hasRole("ADMIN")
                 .requestMatchers("/account/**", "donor/**").hasRole("DONOR")
                 .requestMatchers("/account/**", "charity/**").hasRole("CHARITY")
                 .anyRequest().authenticated())

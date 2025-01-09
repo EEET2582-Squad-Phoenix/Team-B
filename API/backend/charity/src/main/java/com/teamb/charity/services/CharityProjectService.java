@@ -181,6 +181,7 @@ public class CharityProjectService {
         CharityProject project = charityProjectRepository.findById(projectId)
                 .orElseThrow(() -> new EntityNotFound("projectId", projectId));
         project.setGlobal(false);
+        
         return charityProjectRepository.save(project);
     }
 

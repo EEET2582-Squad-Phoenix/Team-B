@@ -24,7 +24,6 @@
 		<module>authentication</module>
 		<module>admin</module>
 		<module>subscription</module>
-        <module>statistic</module>
         <module>donation</module>
     </modules>
 
