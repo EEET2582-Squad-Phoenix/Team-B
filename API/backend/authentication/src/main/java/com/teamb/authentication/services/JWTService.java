@@ -20,7 +20,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JWTService {
 
-    private String secretKey = "";
+    private String secretKey = "O/2ao6Pv6j15yAz3SU65O0n6esufd0P4WeIjnTHVfgI=";
 
     public JWTService(){
         try {

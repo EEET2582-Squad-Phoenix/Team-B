@@ -46,7 +46,7 @@ public class Donor {
     @Min(0)
     private Double monthlyDonation = 0.0;
 
-    @DocumentReference(lazy = true)
+    @DocumentReference
     private List<Subscription> subscriptions = new ArrayList<>();
 
     @DBRef
