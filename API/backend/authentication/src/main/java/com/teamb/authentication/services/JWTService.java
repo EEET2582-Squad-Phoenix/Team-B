@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
@@ -36,15 +37,16 @@ public class JWTService {
     public String generateToken(String email, String id) {
         Map<String, Object> claims =  new HashMap<>();
         claims.put("id", id);
-
+        
+        long expirationTime = 3 * 60 * 60 * 1000;
         return Jwts.builder()
                 .claims()
                 .add(claims)
                 .subject(email)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() * 60 * 60 * 180))
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .and()
-                .signWith(getKey(), io.jsonwebtoken.SignatureAlgorithm.HS256)
+                .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
 
   
