@@ -28,4 +28,73 @@ public class MailService {
 
         mailSender.send(message);
     }
+
+    public void sendHaltProjectToCharity(String recipientEmail, String charityName, String projectName, String haltReason) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(senderEmail);
+        message.setTo(recipientEmail);
+        message.setSubject("Project Halt Notification");
+
+        String emailBody = """
+            Dear %s,
+
+            We hope this email finds you well. We are writing to inform you that your project, **%s**, has been marked as **halted** in our system.
+
+            ### Reason for Halt:
+            %s
+
+            Please review the above and reach out to our team if you need further clarification or if there are steps you can take to address the issue. We value the work you do and are here to assist wherever possible.
+
+            If this was done in error or you need further assistance, please don't hesitate to contact us.
+
+            Thank you for your understanding.
+
+            Best regards,
+            The Admin Team
+            """;
+
+        String formattedEmailBody = String.format(
+            emailBody,
+            charityName,
+            projectName,
+            haltReason
+        );
+
+        message.setText(formattedEmailBody);
+
+        mailSender.send(message);
+    }
+
+    public void sendHaltProjectToDonor(String recipientEmail,  String donorName, String projectName, String haltReason) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(senderEmail);
+        message.setTo(recipientEmail);
+        message.setSubject("Project Halt Notification");
+
+        String donorEmailBody = """
+            Dear %s,
+
+            We are reaching out to provide an update regarding the project you support: **%s**. Unfortunately, the project has been temporarily marked as **halted** due to the following reason:
+
+            ### Reason for Halt:
+            %s
+
+            Thank you for your continued support and understanding.
+
+            Warm regards,
+            The Admin Team
+            """;
+
+            // Format the subject and body
+            String formattedEmailBody = String.format(
+                donorEmailBody,
+                donorName,
+                projectName,
+                haltReason
+            );
+
+        message.setText(formattedEmailBody);
+
+        mailSender.send(message);
+    }
 }
