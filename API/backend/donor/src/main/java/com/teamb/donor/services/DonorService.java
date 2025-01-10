@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,18 +39,23 @@ public class DonorService {
     private PasswordEncoding passwordEncoding;
 
     // Fetch all donors
+    @Cacheable(value = "allDonors")
     public List<Donor> getAllDonors() {
         return donorRepository.findAll();
     }
 
     // Fetch donor by account ID
-    public ResponseEntity<Donor> getDonorsByAccountId(String accountId) {
-        return donorRepository.findById(accountId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    @Cacheable(value = "donor", key = "#id")
+    public Donor getDonorsByAccountId(String id) {
+        return donorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Donor not found"));
     }
 
     // Upload image for a donor
+    @Caching(evict = {
+        @CacheEvict(value = "donor", key = "#donorId"),
+        @CacheEvict(value = "allDonors", allEntries = true)
+    })
     public ResponseEntity<?> uploadImage(String donorId, MultipartFile file, int height, int width) {
         if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No file uploaded");
@@ -88,6 +96,8 @@ public class DonorService {
     }
 
     // Save donor and create associated account
+    @CachePut(value = "donor", key = "#result.id")
+    @CacheEvict(value = "allDonors", allEntries = true)
     public Donor saveDonor(Donor donor) {
         validateInputDonor(donor);
 
@@ -113,6 +123,8 @@ public class DonorService {
     }
 
     // Update donor
+    @CachePut(value = "donor", key = "#id")
+    @CacheEvict(value = "allDonors", allEntries = true)
     public Donor updateDonor(String id, Donor donor) {
         Donor existingDonor = donorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Donor not found"));
@@ -136,6 +148,10 @@ public class DonorService {
     }
 
     // Delete donor
+    @Caching(evict = {
+        @CacheEvict(value = "donor", key = "#id"),
+        @CacheEvict(value = "allDonors", allEntries = true)
+    })
     public void deleteDonor(String id) {
         if (!donorRepository.existsById(id)) {
             throw new IllegalArgumentException("Donor not found");

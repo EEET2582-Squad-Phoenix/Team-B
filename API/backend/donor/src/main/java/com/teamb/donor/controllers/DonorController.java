@@ -26,7 +26,8 @@ public class DonorController {
     // Get a donor by ID
     @GetMapping("/{id}")
     public ResponseEntity<Donor> getDonorById(@PathVariable String id) {
-        return donorService.getDonorsByAccountId(id);
+        Donor donor = donorService.getDonorsByAccountId(id);
+        return ResponseEntity.ok(donor);
     }
 
     // Create a new donor
