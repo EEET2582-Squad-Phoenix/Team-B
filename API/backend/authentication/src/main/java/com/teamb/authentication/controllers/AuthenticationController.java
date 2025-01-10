@@ -33,6 +33,7 @@ public class AuthenticationController {
     @Autowired
     private AuthenticateUserService authUserService;
 
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest, HttpServletResponse response) {
         String email = loginRequest.get("email");
@@ -65,7 +66,6 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
-        
 
     @PostMapping("/register")
     // @ResponseStatus(HttpStatus.CREATED)

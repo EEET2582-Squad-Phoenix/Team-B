@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -59,7 +60,8 @@ public class DonorService {
             String imageUrl = imageUploadService.uploadImage(file, height, width);
             donor.setAvatarUrl(imageUrl);
             donorRepository.save(donor);
-            return ResponseEntity.ok("Avatar updated successfully");
+
+            return ResponseEntity.ok("Avatar updated successfully: " + imageUrl);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error uploading avatar: " + e.getMessage());

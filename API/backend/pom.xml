@@ -27,13 +27,30 @@
         <module>statistic</module>
         <module>donation</module>
         <module>notification</module>
+		    <module>redis</module>
     </modules>
 
     <properties>
         <java.version>21</java.version>
     </properties>
 
-    <dependencies>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
         <!-- Spring Boot validation using annotations -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
