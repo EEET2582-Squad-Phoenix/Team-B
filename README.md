@@ -12,10 +12,15 @@ ADMIN
     "password": "Passw0rd123"
 
 CHARITY
+    "email": "TestCharity1@gmail.com",
+    "password": "Password-1234"
 
 DONOR
     "email": "7@gmail.com",
     "password":"1234567"
+
+    "email": "testRegisterDonor1@gmail.com",
+    "password": "Password-1234"
 ```
 
 # Documents
