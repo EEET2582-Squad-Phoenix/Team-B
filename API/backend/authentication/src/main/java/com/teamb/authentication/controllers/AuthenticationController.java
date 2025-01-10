@@ -43,7 +43,7 @@ public class AuthenticationController {
             String token = authUserService.authenticateUser(email, password);
             Cookie jwtCookie = new Cookie("jwt", token);
             jwtCookie.setHttpOnly(true);
-            jwtCookie.setSecure(true); // Enable in production
+            jwtCookie.setSecure(false); // Enable in production
             jwtCookie.setPath("/");
             jwtCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
             response.addCookie(jwtCookie);
@@ -59,7 +59,7 @@ public class AuthenticationController {
     public ResponseEntity<?> logout(HttpServletResponse response) {
         Cookie jwtCookie = new Cookie("jwt", null);
         jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true); // Enable in production
+        jwtCookie.setSecure(false); // Enable in production
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(0); // Clear cookie
         response.addCookie(jwtCookie);
