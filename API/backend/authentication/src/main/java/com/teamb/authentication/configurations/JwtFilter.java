@@ -16,6 +16,7 @@ import com.teamb.authentication.services.JWTService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -37,14 +38,33 @@ public class JwtFilter extends OncePerRequestFilter{
             return;
         }
     
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        // String authHeader = request.getHeader("Authorization");
+        // if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        //     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        //     response.getWriter().write("Missing or invalid Authorization header");
+        //     return;
+        // }
+    
+        // String token = authHeader.substring(7);
+        String token = null;
+
+        // Retrieve JWT from cookies
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        // If token is not found, reject the request
+        if (token == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Missing or invalid Authorization header");
+            response.getWriter().write("Missing JWT token in cookies");
             return;
         }
-    
-        String token = authHeader.substring(7);
+        
         try {
             String username = jwtService.extractEmail(token);
     
