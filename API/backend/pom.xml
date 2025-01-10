@@ -27,9 +27,8 @@
         <module>statistic</module>
         <module>donation</module>
         <module>notification</module>
-		    <module>redis</module>
+        <module>redis</module>
         <module>charity_projects</module>
-        <module>continent</module>
     </modules>
 
     <properties>

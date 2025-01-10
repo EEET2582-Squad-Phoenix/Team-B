@@ -22,13 +22,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.teamb</groupId>
-            <artifactId>continent</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
