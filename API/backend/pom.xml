@@ -26,7 +26,8 @@
 		<module>subscription</module>
         <module>statistic</module>
         <module>donation</module>
-		<module>redis</module>
+        <module>notification</module>
+		    <module>redis</module>
     </modules>
 
     <properties>

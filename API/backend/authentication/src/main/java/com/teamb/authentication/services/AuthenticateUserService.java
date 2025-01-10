@@ -19,23 +19,26 @@ public class AuthenticateUserService {
     @Autowired
     private JWTService jwtService;
 
-    @Autowired 
+    @Autowired
     private AccountRepository accountRepository;
     
     public String authenticateUser(String email, String password) {
         try {
+            // Authenticate the user
             Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
+                    new UsernamePasswordAuthenticationToken(email, password)
             );
-            
-            Account account = accountRepository.findByEmail(email);
-            String accountId = account.getId();
 
-            return jwtService.generateToken(email, accountId);
+            // Fetch user account from the database
+            Account account = accountRepository.findByEmail(email);
+            if (account == null) {
+                throw new RuntimeException("Account not found");
+            }
+
+            // Generate the JWT token
+            return jwtService.generateToken(email, account.getId());
         } catch (BadCredentialsException e) {
             throw new RuntimeException("Invalid email or password");
-        } catch (Exception e) {
-            throw new RuntimeException("Email is not verifed");
         }
     }
     

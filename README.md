@@ -1,3 +1,28 @@
+# HOW TO RUN
+```bash
+Important: If all steps are done correctly but BE still does not run, run ./mvnw clean install
+step 1: run ./mvnw install
+step 2: run ./mvnw spring-boot:run -pl application
+```
+
+**Testing accounts**
+```bash
+ADMIN
+    "email": "admin1@gmail.com",
+    "password": "Passw0rd123"
+
+CHARITY
+    "email": "TestCharity1@gmail.com",
+    "password": "Password-1234"
+
+DONOR
+    "email": "7@gmail.com",
+    "password":"1234567"
+
+    "email": "testRegisterDonor1@gmail.com",
+    "password": "Password-1234"
+```
+
 # Documents
 
 ## Diagram
