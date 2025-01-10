@@ -36,59 +36,59 @@ public class StatisticService {
         return statisticRepository.save(statistic);
     }
 
-    // Calculate total number of projects
-    public Statistic calculateTotalNumberOfProjects(List<String> userTargetIDs, String filterCountry, String filterContinent, String filterCategory, Date filterStartDate, Date filterEndDate) {
-        long totalProjects = charityProjectRepository.countByUserTargetIDsAndFilters(userTargetIDs, filterCountry, filterContinent, filterCategory, filterStartDate, filterEndDate);
+    // // Calculate total number of projects
+    // public Statistic calculateTotalNumberOfProjects(List<String> userTargetIDs, String filterCountry, String filterContinent, String filterCategory, Date filterStartDate, Date filterEndDate) {
+    //     long totalProjects = charityProjectRepository.countByUserTargetIDsAndFilters(userTargetIDs, filterCountry, filterContinent, filterCategory, filterStartDate, filterEndDate);
 
-        Statistic statistic = new Statistic();
-        statistic.setUserTargetIDs(userTargetIDs);
-        statistic.setStatisticType(StatisticType.PROJECT_COUNT);
-        statistic.setFilterCountry(filterCountry);
-        statistic.setFilterContinent(filterContinent);
-        statistic.setFilterCategory(ProjectCategoryType.valueOf(filterCategory));
-        statistic.setFilterStartDate(filterStartDate);
-        statistic.setFilterEndDate(filterEndDate);
-        statistic.setValue(totalProjects);
-        statistic.setCreatedAt(Instant.now());
+    //     Statistic statistic = new Statistic();
+    //     statistic.setUserTargetIDs(userTargetIDs);
+    //     statistic.setStatisticType(StatisticType.PROJECT_COUNT);
+    //     statistic.setFilterCountry(filterCountry);
+    //     statistic.setFilterContinent(filterContinent);
+    //     statistic.setFilterCategory(ProjectCategoryType.valueOf(filterCategory));
+    //     statistic.setFilterStartDate(filterStartDate);
+    //     statistic.setFilterEndDate(filterEndDate);
+    //     statistic.setValue(totalProjects);
+    //     statistic.setCreatedAt(Instant.now());
 
-        return statisticRepository.save(statistic);
-    }
+    //     return statisticRepository.save(statistic);
+    // }
 
-    // Calculate total donation value
-    public Statistic calculateTotalDonationValue(List<String> userTargetIDs, String filterCountry, String filterContinent, String filterCategory, Date filterStartDate, Date filterEndDate) {
-        double totalDonationValue = donationRepository.sumByUserTargetIDsAndFilters(userTargetIDs, filterCountry, filterContinent, filterCategory, filterStartDate, filterEndDate);
+    // // Calculate total donation value
+    // public Statistic calculateTotalDonationValue(List<String> userTargetIDs, String filterCountry, String filterContinent, String filterCategory, Date filterStartDate, Date filterEndDate) {
+    //     double totalDonationValue = donationRepository.sumByUserTargetIDsAndFilters(userTargetIDs, filterCountry, filterContinent, filterCategory, filterStartDate, filterEndDate);
 
-        Statistic statistic = new Statistic();
-        statistic.setUserTargetIDs(userTargetIDs);
-        statistic.setStatisticType(StatisticType.DONATION_VALUE);
-        statistic.setFilterCountry(filterCountry);
-        statistic.setFilterContinent(filterContinent);
-        statistic.setFilterCategory(ProjectCategoryType.valueOf(filterCategory));
-        statistic.setFilterStartDate(filterStartDate);
-        statistic.setFilterEndDate(filterEndDate);
-        statistic.setValue(totalDonationValue);
-        statistic.setCreatedAt(Instant.now());
+    //     Statistic statistic = new Statistic();
+    //     statistic.setUserTargetIDs(userTargetIDs);
+    //     statistic.setStatisticType(StatisticType.DONATION_VALUE);
+    //     statistic.setFilterCountry(filterCountry);
+    //     statistic.setFilterContinent(filterContinent);
+    //     statistic.setFilterCategory(ProjectCategoryType.valueOf(filterCategory));
+    //     statistic.setFilterStartDate(filterStartDate);
+    //     statistic.setFilterEndDate(filterEndDate);
+    //     statistic.setValue(totalDonationValue);
+    //     statistic.setCreatedAt(Instant.now());
 
-        return statisticRepository.save(statistic);
-    }
+    //     return statisticRepository.save(statistic);
+    // }
 
-    // Calculate number of projects for one user
-    public Statistic calculateNumberOfProjectsForUser(String userTargetID, String filterCountry, String filterContinent, String filterCategory, Date filterStartDate, Date filterEndDate) {
-        long totalProjects = charityProjectRepository.countByUserTargetIDAndFilters(userTargetID, filterCountry, filterContinent, filterCategory, filterStartDate, filterEndDate);
+    // // Calculate number of projects for one user
+    // public Statistic calculateNumberOfProjectsForUser(String userTargetID, String filterCountry, String filterContinent, String filterCategory, Date filterStartDate, Date filterEndDate) {
+    //     long totalProjects = charityProjectRepository.countByUserTargetIDAndFilters(userTargetID, filterCountry, filterContinent, filterCategory, filterStartDate, filterEndDate);
 
-        Statistic statistic = new Statistic();
-        statistic.setUserTargetIDs(List.of(userTargetID));
-        statistic.setStatisticType(StatisticType.PROJECT_COUNT);
-        statistic.setFilterCountry(filterCountry);
-        statistic.setFilterContinent(filterContinent);
-        statistic.setFilterCategory(ProjectCategoryType.valueOf(filterCategory));
-        statistic.setFilterStartDate(filterStartDate);
-        statistic.setFilterEndDate(filterEndDate);
-        statistic.setValue(totalProjects);
-        statistic.setCreatedAt(Instant.now());
+    //     Statistic statistic = new Statistic();
+    //     statistic.setUserTargetIDs(List.of(userTargetID));
+    //     statistic.setStatisticType(StatisticType.PROJECT_COUNT);
+    //     statistic.setFilterCountry(filterCountry);
+    //     statistic.setFilterContinent(filterContinent);
+    //     statistic.setFilterCategory(ProjectCategoryType.valueOf(filterCategory));
+    //     statistic.setFilterStartDate(filterStartDate);
+    //     statistic.setFilterEndDate(filterEndDate);
+    //     statistic.setValue(totalProjects);
+    //     statistic.setCreatedAt(Instant.now());
 
-        return statisticRepository.save(statistic);
-    }
+    //     return statisticRepository.save(statistic);
+    // }
 
     // Calculate donation value for one user
     public Statistic calculateDonationValueForOneTarget(String userTargetID, Date filterStartDate, Date filterEndDate, boolean isDonor) {
