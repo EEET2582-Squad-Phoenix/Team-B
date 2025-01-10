@@ -72,7 +72,6 @@
 
 
 #For testing
-
 services:
   redis:
     image: redis:7.4
@@ -83,6 +82,20 @@ services:
       - redis-data:/data
     networks:
       - app-network
+    command: ["redis-server", "--appendonly", "yes"]
+
+  redis-backup:
+    image: redis:7.4
+    container_name: redis-backup
+    ports:
+      - "6380:6379"
+    networks:
+      - app-network
+    depends_on:
+      - redis
+    command: ["redis-server", "--slaveof", "redis", "6379"]
+    volumes:
+      - redis-backup-data:/data
 
 networks:
   app-network:
@@ -90,3 +103,4 @@ networks:
 
 volumes:
   redis-data:
+  redis-backup-data:
