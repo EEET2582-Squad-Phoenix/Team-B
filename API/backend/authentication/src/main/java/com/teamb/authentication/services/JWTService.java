@@ -18,13 +18,14 @@ public class JWTService {
         
     }
 
-    public String generateToken(String email, String accountId) {
+    public String generateToken(String email, String accountId, String role) {
         Map<String, Object> claims = new HashMap<>();
         
 
         return JWT.create()
                 .withClaim("email", email)
                 .withClaim("accountId", accountId)
+                .withClaim("role", role)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + (10 * 24 * 60 * 60 * 1000)))
                 .sign(algorithm);

@@ -36,7 +36,7 @@ public class AuthenticateUserService {
             }
 
             // Generate the JWT token
-            return jwtService.generateToken(email, account.getId());
+            return jwtService.generateToken(email, account.getId(), account.getRole().toString());
         } catch (BadCredentialsException e) {
             throw new RuntimeException("Invalid email or password");
         }
