@@ -1,9 +1,10 @@
-package com.teamb.charity.services;
+package com.teamb.charity_projects.services;
 
-import com.teamb.charity.models.Continent;
-import com.teamb.charity.repositories.CharityProjectRepository;
-import com.teamb.charity.repositories.ContinentRepository;
+import com.teamb.charity_projects.models.Continent;
 import com.teamb.common.exception.EntityNotFound;
+import com.teamb.charity_projects.repositories.CharityProjectRepository;
+import com.teamb.charity_projects.repositories.ContinentRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
