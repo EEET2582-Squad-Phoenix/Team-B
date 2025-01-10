@@ -8,6 +8,8 @@ step 2: run ./mvnw spring-boot:run -pl application
 **Testing accounts**
 ```bash
 ADMIN
+    "email": "admin1@gmail.com",
+    "password": "Passw0rd123"
 
 CHARITY
 
