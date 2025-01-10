@@ -21,7 +21,7 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
     @Query("select pc from charityProjects pc where pc.category = ?1")
     List<CharityProject> findByCond(String cond);
     List<CharityProject> findByIsGlobal(boolean isGlobal);
-    List<CharityProject> findByIsGlobalAndIsHighlighted(boolean isGlobal, boolean highlighted);
+    List<CharityProject> findByIsGlobalAndHighlighted(boolean isGlobal, boolean highlighted);
 
     List<CharityProject> findAllByStatus(ProjectStatus status);
 }

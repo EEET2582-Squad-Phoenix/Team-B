@@ -164,12 +164,12 @@ public class CharityProjectService {
 
         boolean isGlobal = project.isGlobal();
         if (isGlobal) {
-            List<CharityProject> globalProjects = charityProjectRepository.findByIsGlobalAndIsHighlighted(true, true);
+            List<CharityProject> globalProjects = charityProjectRepository.findByIsGlobalAndHighlighted(true, true);
             if (globalProjects.size() >= 3) {
                 throw new IllegalArgumentException("Cannot highlight more than 3 global projects");
             }
         } else {
-            List<CharityProject> regionalProjects = charityProjectRepository.findByIsGlobalAndIsHighlighted(false, true);
+            List<CharityProject> regionalProjects = charityProjectRepository.findByIsGlobalAndHighlighted(false, true);
             if (regionalProjects.size() >= 3) {
                 throw new IllegalArgumentException("Cannot highlight more than 3 regional projects");
             }
@@ -193,8 +193,8 @@ public class CharityProjectService {
 
     // Fetch highlighted charity projects
     public List<CharityProject> getHighlightedProjects() {
-        List<CharityProject> globalProjects = charityProjectRepository.findByIsGlobalAndIsHighlighted(true, true);
-        List<CharityProject> regionalProjects = charityProjectRepository.findByIsGlobalAndIsHighlighted(false, true);
+        List<CharityProject> globalProjects = charityProjectRepository.findByIsGlobalAndHighlighted(true, true);
+        List<CharityProject> regionalProjects = charityProjectRepository.findByIsGlobalAndHighlighted(false, true);
 
         List<CharityProject> highlightedProjects = new ArrayList<>();
         highlightedProjects.addAll(globalProjects);
