@@ -8,6 +8,9 @@ import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,33 +18,21 @@ import java.util.Map;
 @Service
 public class JWTService {
 
-    private String secretKey = "T9s4/KBX8vjsXPyUou2IWiJtvnpn7W5UK983YO6avSs=";
+    private String secretKey = "mHbLsmh+uFlpYOlg7doIys4aPSzj6CpJG0kNHtW/EXA=";
+    private final Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
     public JWTService() {
         // Initialize if needed (removed KeyGenerator code for simplicity)
     }
 
-    public String generateToken(String email, String accountId) {
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("typ", "JWT");
-        headers.put("alg", "HS256");
-     
-        // Set claims (payload)
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("accountId", accountId);
-        claims.put("email", email);
-    
-        // Set expiration time (10 days in milliseconds)
-        long expirationTime = 10 * 24 * 60 * 60 * 1000;
-    
-        // Generate the token using the HS256 algorithm
-        return Jwts.builder()
-                .setHeader(headers)
-                .setClaims(claims)  // Set claims without the subject
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(getKey(), SignatureAlgorithm.HS256)  // Use HS256 as the algorithm
-                .compact();
+   public String generateToken(String email, String accountId) {
+        // Generate the token
+        return JWT.create()
+                .withClaim("email", email)
+                .withClaim("accountId", accountId)
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + (10 * 24 * 60 * 60 * 1000))) // 10 days
+                .sign(algorithm);
     }
     
 

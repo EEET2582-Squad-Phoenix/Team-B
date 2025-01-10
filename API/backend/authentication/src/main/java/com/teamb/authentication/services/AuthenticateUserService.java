@@ -24,18 +24,21 @@ public class AuthenticateUserService {
     
     public String authenticateUser(String email, String password) {
         try {
+            // Authenticate the user
             Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
+                    new UsernamePasswordAuthenticationToken(email, password)
             );
 
+            // Fetch user account from the database
             Account account = accountRepository.findByEmail(email);
-            String accountId = account.getId();
+            if (account == null) {
+                throw new RuntimeException("Account not found");
+            }
 
-            return jwtService.generateToken(email, accountId);
+            // Generate the JWT token
+            return jwtService.generateToken(email, account.getId());
         } catch (BadCredentialsException e) {
             throw new RuntimeException("Invalid email or password");
-        } catch (Exception e) {
-            throw new RuntimeException("Email is not verifed");
         }
     }
     
