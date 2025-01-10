@@ -14,36 +14,39 @@ import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JWTService {
 
-    private String secretKey = "";
+    private String secretKey = "T9s4/KBX8vjsXPyUou2IWiJtvnpn7W5UK983YO6avSs=";
 
     public JWTService(){
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey sk = keyGen.generateKey();
-            secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+            // SecretKey sk = keyGen.generateKey();
+            // secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         
     }
 
-    public String generateToken(String email) {
+    public String generateToken(String email, String id) {
         Map<String, Object> claims =  new HashMap<>();
-
+        claims.put("id", id);
+        
+        long expirationTime = 3 * 60 * 60 * 1000;
         return Jwts.builder()
                 .claims()
                 .add(claims)
                 .subject(email)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() * 60 * 60 * 180))
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .and()
-                .signWith(getKey())
+                .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
 
   
@@ -57,6 +60,10 @@ public class JWTService {
     public String extractEmail(String token) {
         // extract the username from jwt token
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractId(String token) {
+        return extractClaim(token, claims -> claims.get("id", String.class));
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {

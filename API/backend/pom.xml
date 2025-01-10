@@ -25,6 +25,7 @@
 		<module>admin</module>
 		<module>subscription</module>
         <module>donation</module>
+        <module>notification</module>
     </modules>
 
     <properties>

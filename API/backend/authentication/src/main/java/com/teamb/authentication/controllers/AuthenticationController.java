@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamb.account.models.Account;
 import com.teamb.authentication.services.AuthenticateService;
 import com.teamb.authentication.services.AuthenticateUserService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
 import com.teamb.authentication.models.Registration;
 
 
@@ -30,18 +34,38 @@ public class AuthenticationController {
     private AuthenticateUserService authUserService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest, HttpServletResponse response) {
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
     
         try {
             String token = authUserService.authenticateUser(email, password);
-            return ResponseEntity.ok(Map.of("token", token));
+            Cookie jwtCookie = new Cookie("jwt", token);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(false); // Enable in production
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+            response.addCookie(jwtCookie);
+
+        return ResponseEntity.ok(Map.of("message", "Login successful"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", e.getMessage()));
         }
     }
-    
+
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie jwtCookie = new Cookie("jwt", null);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(false); // Enable in production
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(0); // Clear cookie
+        response.addCookie(jwtCookie);
+
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+    }
+        
 
     @PostMapping("/register")
     // @ResponseStatus(HttpStatus.CREATED)
