@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import com.teamb.account.models.Account;
 import com.teamb.common.models.Role;
+import com.teamb.common.services.MailService;
+import com.teamb.charity.dtos.CreateCharityDTO;
 import com.teamb.charity.models.Charity;
 
 import com.teamb.account.repositories.AccountRepository;
@@ -26,12 +28,15 @@ import com.teamb.common.exception.EntityNotFound;
 
 @Service
 public class CharityService {
+
     @Autowired
     private CharityRepository charityRepository;
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
     private PasswordEncoding passwordEncoding;
+    @Autowired
+    private MailService mailService;
 
     // Get charity by id
     public Account getAccount(Charity charity){
@@ -69,29 +74,52 @@ public class CharityService {
         }
     }
 
-    // Save charity
-    // @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")
-    // @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
-    // public Charity saveCharity(Charity charity) {
-    //     validateInputCharity(charity, true);
-    //     if (charity.getId() == null || charity.getId().isEmpty()) {
-    //         charity.setId(UUID.randomUUID().toString());
-    //     }
+    //Save charity
+    @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")
+    @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
+    public Charity saveCharity(CreateCharityDTO charity) {
+        
+        if (accountRepository.findByEmail(charity.getEmail()) != null) {
+            throw new IllegalArgumentException("Email already taken");
+        }
+    
+        if (charity.getName() == null || charity.getName().isEmpty() ||
+        charity.getAddress() == null || charity.getAddress().isEmpty() ||
+        charity.getTaxCode() == null || charity.getTaxCode().isEmpty() || charity.getEmail().isEmpty() || charity.getPassword().isEmpty() ) {
+            throw new IllegalArgumentException("Missing required fields for Charity");
+        }else{
+            Account newAccount = new Account();
+            newAccount.setEmail(charity.getEmail());
+            newAccount.setPassword(passwordEncoding.passwordEncoder().encode(charity.getPassword()));
+            newAccount.setRole(Role.CHARITY);
+            newAccount.setEmailVerified(charity.getEmailVerified());
+            newAccount.setAdminCreated(true);
+            newAccount.setCreatedAt(Instant.now());
+            accountRepository.save(newAccount);
+            // Generate email verification token
+            String verificationToken = UUID.randomUUID().toString();
 
-    //     Account newAccount = new Account();
-    //     newAccount.setId(charity.getId());
-    //     newAccount.setEmail(charity.getAccount().getEmail());
-    //     newAccount.setPassword(passwordEncoding.passwordEncoder().encode(charity.getAccount().getPassword()));
-    //     newAccount.setRole(Role.CHARITY);
-    //     newAccount.setEmailVerified(false);
-    //     newAccount.setAdminCreated(false);
-    //     newAccount.setCreatedAt(Instant.now());
-    //     newAccount = accountRepository.save(newAccount);
+            // Save the token to the account
+            newAccount.setVerificationToken(verificationToken);
+            accountRepository.save(newAccount);
 
-    //     // Link the account to the charity
-    //     charity.setAccount(newAccount);
-    //     return charityRepository.save(charity);
-    // }
+            // Send the verification email
+            mailService.sendVerificationEmail(charity.getEmail(), verificationToken);
+
+            Charity newCharity = new Charity();
+            newCharity.setId(newAccount.getId());
+            newCharity.setName(charity.getName());
+            newCharity.setLogoUrl(charity.getLogoUrl());
+            newCharity.setIntroVidUrl(charity.getIntroVidUrl());
+            newCharity.setAddress(charity.getAddress());
+            newCharity.setTaxCode(charity.getTaxCode());
+            newCharity.setType(charity.getCharityType());
+            charityRepository.save(newCharity);
+
+            return charityRepository.save(newCharity);
+        }
+  
+    }
 
     // Update charity
     @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")

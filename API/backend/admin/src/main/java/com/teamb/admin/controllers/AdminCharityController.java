@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamb.charity.dtos.CreateCharityDTO;
 // import com.teamb.account.repositories.AccountRepository;
 import com.teamb.charity.models.Charity;
 import com.teamb.charity.services.CharityService;
@@ -40,12 +41,12 @@ public class AdminCharityController {
         return ResponseEntity.ok(charity);
     }
 
-    // Create charity
-    // @PostMapping("")
-    // public ResponseEntity<Charity> createCharity(@RequestBody Charity newCharity) {
-    //     var result = service.saveCharity(newCharity);        
-    //     return ResponseEntity.ok(result);
-    // }
+    //Create charity
+    @PostMapping("")
+    public ResponseEntity<Charity> createCharity(@RequestBody CreateCharityDTO newCharity) {
+        var result = service.saveCharity(newCharity);        
+        return ResponseEntity.ok(result);
+    }
 
     // Update charity
     @PutMapping("/{id}")

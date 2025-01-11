@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import com.teamb.donor.dtos.CreateDonorDTO;
 import com.teamb.donor.models.Donor;
 import com.teamb.donor.services.DonorService;
 
@@ -33,11 +35,11 @@ public class AdminDonorController {
     }
 
     // Create a new donor
-    // @PostMapping("")
-    // public ResponseEntity<Donor> createDonor(@RequestBody Donor donor) {
-    //     Donor createdDonor = donorService.saveDonor(donor);
-    //     return ResponseEntity.ok(createdDonor);
-    // }
+    @PostMapping("")
+    public ResponseEntity<Donor> createDonor(@RequestBody CreateDonorDTO donor) {
+        Donor createdDonor = donorService.saveDonor(donor);
+        return ResponseEntity.ok(createdDonor);
+    }
 
     // Update an existing donor
     @PutMapping("/{id}")
