@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.teamb.account.models.Account;
 import com.teamb.donor.dtos.CreateDonorDTO;
 import com.teamb.donor.models.Donor;
+import com.teamb.subscription.models.Subscription;
 import com.teamb.common.configurations.PasswordEncoding;
 import com.teamb.common.models.Role;
 
@@ -44,6 +45,26 @@ public class DonorService {
     @Autowired
     private MailService mailService;
 
+    // Validate donor input
+    private void validateInputDonor(Donor donor) {
+        if (donor == null) {
+            throw new IllegalArgumentException("Donor object cannot be null");
+        }
+        if (donor.getFirstName() == null || donor.getFirstName().isEmpty()) {
+            throw new IllegalArgumentException("Donor first name is required");
+        }
+        if (donor.getLastName() == null || donor.getLastName().isEmpty()) {
+            throw new IllegalArgumentException("Donor last name is required");
+        }
+        if (donor.getLanguage() == null || donor.getLanguage().isEmpty()) {
+            throw new IllegalArgumentException("Donor language is required");
+        }
+        if (getAccount(donor) == null) {
+            throw new IllegalArgumentException("Donor account cannot be null");
+        }
+    }
+
+    // Fetch account by donor
     public Account getAccount(Donor donor){
         return accountRepository.findById(donor.getId()).orElseThrow(() -> new IllegalArgumentException("Account not found"));
     }
@@ -59,6 +80,28 @@ public class DonorService {
     public Donor getDonorsByAccountId(String id) {
         return donorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donor not found"));
+    }
+
+    // Fetch donor by name (either last or first name)
+    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#name")
+    public List<Donor> getDonorsByName(String name) {
+        return donorRepository.findByFirstNameOrLastName(name);
+    }
+
+    // Return all subscriptions for a donor
+    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
+    public List<Subscription> getSubscriptions(String id) {
+        return donorRepository.getSubscriptions(id).stream()
+                .map(subscription -> (Subscription) subscription)
+                .collect(Collectors.toList());
+    }
+
+    // Return donation for a donor
+    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
+    public Double getMonthlyDonation(String id) {
+        return donorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Donor not found"))
+                .getMonthlyDonation();
     }
 
     // Upload image for a donor
@@ -83,25 +126,6 @@ public class DonorService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error uploading avatar: " + e.getMessage());
-        }
-    }
-
-    // Validate donor input
-    private void validateInputDonor(Donor donor) {
-        if (donor == null) {
-            throw new IllegalArgumentException("Donor object cannot be null");
-        }
-        if (donor.getFirstName() == null || donor.getFirstName().isEmpty()) {
-            throw new IllegalArgumentException("Donor first name is required");
-        }
-        if (donor.getLastName() == null || donor.getLastName().isEmpty()) {
-            throw new IllegalArgumentException("Donor last name is required");
-        }
-        if (donor.getLanguage() == null || donor.getLanguage().isEmpty()) {
-            throw new IllegalArgumentException("Donor language is required");
-        }
-        if (getAccount(donor) == null) {
-            throw new IllegalArgumentException("Donor account cannot be null");
         }
     }
 

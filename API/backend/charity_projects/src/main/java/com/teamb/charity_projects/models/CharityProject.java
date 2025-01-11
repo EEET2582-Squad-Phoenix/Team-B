@@ -86,7 +86,8 @@ public class CharityProject {
     @NotNull
     private Charity charity;
 
-    private List<String> donorIDs;
+    @DBRef
+    private List<Donor> donors;
 
     // ! Consider getting rid of this
     // @DBRef
