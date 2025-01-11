@@ -229,28 +229,21 @@ public class CharityProjectService {
         return highlightedProjects;
     }
 
-    //! Halt charity project
+    // Halt charity project - Halt status modification API provided by team A
     public CharityProject haltCharityProject(String projectId, Halt haltReason) {
         CharityProject project = charityProjectRepository.findById(projectId).orElseThrow(() -> new EntityNotFound("projectId", projectId));
-
       
         // Verify if project can be halted
-        switch (project.getStatus()) {
-            case UNAPPROVED -> throw new IllegalArgumentException("Cannot halt unapproved charity project");
-            case HALTED -> throw new IllegalArgumentException("This charity project is already halted");
-            case INACTIVATED -> throw new IllegalArgumentException("This charity project is already deactivated");
-            case COMPLETED -> throw new IllegalArgumentException("This charity project is already completed");
-            default -> {
-                // No action needed for other statuses
-            }
-        }
-
-        //! Halted reason can become a new entity
-        // if (FieldChecking.isNullOrEmpty(project.getHaltedReason())) {
-        //     throw new IllegalArgumentException("Halted reason is missing!!");
+        // switch (project.getStatus()) {
+        //     case UNAPPROVED -> throw new IllegalArgumentException("Cannot halt unapproved charity project");
+        //     case HALTED -> throw new IllegalArgumentException("This charity project is already halted");
+        //     case INACTIVATED -> throw new IllegalArgumentException("This charity project is already deactivated");
+        //     case COMPLETED -> throw new IllegalArgumentException("This charity project is already completed");
+        //     default -> {
+        //         // No action needed for other statuses
+        //     }
         // }
-
-        project.setStatus(ProjectStatus.HALTED);
+        
         haltReason.setCharityProjectId(projectId);
 
         haltRepository.save(haltReason);

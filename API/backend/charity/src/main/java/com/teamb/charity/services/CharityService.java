@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.teamb.account.models.Account;
 import com.teamb.common.models.Role;
 import com.teamb.common.services.MailService;
+import com.teamb.common.models.CharityType;
 import com.teamb.charity.dtos.CreateCharityDTO;
 import com.teamb.charity.models.Charity;
 
@@ -25,6 +26,11 @@ import com.teamb.account.repositories.AccountRepository;
 import com.teamb.charity.repositories.CharityRepository;
 import com.teamb.common.configurations.PasswordEncoding;
 import com.teamb.common.exception.EntityNotFound;
+
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Service
 public class CharityService {
@@ -38,25 +44,8 @@ public class CharityService {
     @Autowired
     private MailService mailService;
 
-    // Get charity by id
-    public Account getAccount(Charity charity){
-        return accountRepository.findById(charity.getId()).orElseThrow(() -> new IllegalArgumentException("Account not found"));
-    }
-
-    @Cacheable(value = "allCharities", condition = "#redisAvailable")
-    public List<Charity> getAllCharities() {
-        return charityRepository.findAll();
-    }
-
-    // Get charity by account id
-    @Cacheable(value = "charity", condition = "#redisAvailable", key = "#accountId")
-    public Charity getCharitiesByAccountId(String accountId) {
-        return charityRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Charity not found"));
-    }
-
-     // Validate input charity
-     private void validateInputCharity(Charity charity, boolean validateAccount) {
+    // Validate input charity
+    private void validateInputCharity(Charity charity, boolean validateAccount) {
         if (charity.getName() == null || charity.getName().isEmpty()) {
             throw new IllegalArgumentException("Charity name is required");
         }
@@ -74,20 +63,49 @@ public class CharityService {
         }
     }
 
-    //Save charity
+    // Fetch charity account by id
+    public Account getAccount(Charity charity){
+        return accountRepository.findById(charity.getId()).orElseThrow(() -> new IllegalArgumentException("Account not found"));
+    }
+
+    // Fetch all charities
+    @Cacheable(value = "allCharities", condition = "#redisAvailable")
+    public List<Charity> getAllCharities() {
+        return charityRepository.findAll();
+    }
+
+    // Fetch charity info by id
+    @Cacheable(value = "charity", condition = "#redisAvailable", key = "#accountId")
+    public Charity getCharityByAccountId(String accountId) {
+        return charityRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Charity not found"));
+    }
+
+    // Fetch charity by name
+    @Cacheable(value = "charity", condition = "#redisAvailable", key = "#name")
+    public Charity getCharityByName(String name) {
+        return charityRepository.findByName(name);
+    }
+
+    // Fetch charities by list of types;
+    @Cacheable(value = "charity", condition = "#redisAvailable", key = "#type")
+    public List<Charity> getCharitiesByTypes(List<CharityType> charityTypes) {
+        return charityRepository.findByCharityTypeIn(charityTypes);
+    }
+
+    // Create charity
     @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")
     @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
     public Charity saveCharity(CreateCharityDTO charity) {
-        
         if (accountRepository.findByEmail(charity.getEmail()) != null) {
             throw new IllegalArgumentException("Email already taken");
         }
     
         if (charity.getName() == null || charity.getName().isEmpty() ||
         charity.getAddress() == null || charity.getAddress().isEmpty() ||
-        charity.getTaxCode() == null || charity.getTaxCode().isEmpty() || charity.getEmail().isEmpty() || charity.getPassword().isEmpty() ) {
+        charity.getTaxCode() == null || charity.getTaxCode().isEmpty() || charity.getEmail().isEmpty() || charity.getPassword().isEmpty()) {
             throw new IllegalArgumentException("Missing required fields for Charity");
-        }else{
+        } else {
             Account newAccount = new Account();
             newAccount.setEmail(charity.getEmail());
             newAccount.setPassword(passwordEncoding.passwordEncoder().encode(charity.getPassword()));
@@ -109,6 +127,8 @@ public class CharityService {
             Charity newCharity = new Charity();
             newCharity.setId(newAccount.getId());
             newCharity.setName(charity.getName());
+            newCharity.setDisplayedLogo(charity.getDisplayedLogo());
+            newCharity.setDisplayedIntroVid(charity.getDisplayedIntroVid());
             newCharity.setLogoUrl(charity.getLogoUrl());
             newCharity.setIntroVidUrl(charity.getIntroVidUrl());
             newCharity.setAddress(charity.getAddress());
@@ -118,7 +138,6 @@ public class CharityService {
 
             return charityRepository.save(newCharity);
         }
-  
     }
 
     // Update charity
@@ -134,6 +153,8 @@ public class CharityService {
         existingCharity.setType(charity.getType());
         existingCharity.setTaxCode(charity.getTaxCode());
         existingCharity.setMonthlyDonation(charity.getMonthlyDonation());
+        existingCharity.setDisplayedLogo(charity.getDisplayedLogo());
+        existingCharity.setDisplayedIntroVid(charity.getDisplayedIntroVid());
         existingCharity.setIntroVidUrl(charity.getIntroVidUrl());
         existingCharity.setLogoUrl(charity.getLogoUrl());
         existingCharity.setDisplayedIntroVid(charity.getDisplayedIntroVid());

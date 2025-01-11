@@ -42,11 +42,11 @@ public class Charity implements Serializable{
     @Size(min = 1, max = 255)
     private String name;
     
-    private List<String> logoUrl;
-    private List<String> introVidUrl;
-
     private String displayedLogo;
     private String displayedIntroVid;
+
+    private List<String> logoUrl;
+    private List<String> introVidUrl;
 
     @NotNull
     @Size(min = 1, max = 255)

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 // import com.teamb.account.repositories.AccountRepository;
 import com.teamb.charity.models.Charity;
 import com.teamb.charity.services.CharityService;
+import com.teamb.common.models.CharityType;
 // import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,15 +28,37 @@ public class CharityController {
     @Autowired
     private CharityService service;
 
+    // Fetch charity account by id
+    @GetMapping("/{id}")
+    public ResponseEntity<Charity> getCharityAccountById(@PathVariable String id){
+        Charity charity = service.getCharityByAccountId(id);
+        return ResponseEntity.ok(charity);
+    }
+
+    // Fetch all charities
     @GetMapping("/all")
     public List<Charity> getAllCharities(){
         return service.getAllCharities();
     }
 
+    // Fetch charity by id
     @GetMapping("/{id}")
     public ResponseEntity<Charity> getCharityById(@PathVariable String id){
-        Charity charity = service.getCharitiesByAccountId(id);
+        Charity charity = service.getCharityByAccountId(id);
         return ResponseEntity.ok(charity);
+    }
+
+    // Fetch charity by name
+    @GetMapping("/name/{name}")
+    public ResponseEntity<Charity> getCharityByName(@PathVariable String name){
+        Charity charity = service.getCharityByName(name);
+        return ResponseEntity.ok(charity);
+    }
+
+    // Fetch charities by list of types
+    @GetMapping("/type")
+    public List<Charity> getCharitiesByType(@RequestBody List<CharityType> charityTypes){
+        return service.getCharitiesByTypes(charityTypes);
     }
 
     // Update charity

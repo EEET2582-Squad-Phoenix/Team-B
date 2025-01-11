@@ -21,12 +21,13 @@ public class CreateCharityDTO {
 
     // Charity-specific fields
     private String name;
+    private String displayedLogo;
+    private String displayedIntroVid;
     private List<String> logoUrl;
     private List<String> introVidUrl;
     private String address;
     private String taxCode;
     private CharityType charityType;
-
 }
 
 
