@@ -39,6 +39,22 @@ public class JWTService {
             .asString();
     }
 
+    public String extractAccountId(String token) {
+        return JWT.require(algorithm)
+            .build()
+            .verify(token)
+            .getClaim("accountId")  // Extract the email from the claims
+            .asString();
+    }
+
+    public String extractRole(String token) {
+        return JWT.require(algorithm)
+            .build()
+            .verify(token)
+            .getClaim("role")  // Extract the email from the claims
+            .asString();
+    }
+
     public boolean validateToken(String token, String email) {
         try {
             String tokenEmail = extractEmail(token);
