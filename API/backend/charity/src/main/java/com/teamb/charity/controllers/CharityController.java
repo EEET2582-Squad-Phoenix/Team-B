@@ -41,11 +41,11 @@ public class CharityController {
     }
 
     // Create charity
-    @PostMapping("")
-    public ResponseEntity<Charity> createCharity(@RequestBody Charity newCharity) {
-        var result = service.saveCharity(newCharity);        
-        return ResponseEntity.ok(result);
-    }
+    // @PostMapping("")
+    // public ResponseEntity<Charity> createCharity(@RequestBody Charity newCharity) {
+    //     var result = service.saveCharity(newCharity);        
+    //     return ResponseEntity.ok(result);
+    // }
 
     // Update charity
     @PutMapping("/{id}")

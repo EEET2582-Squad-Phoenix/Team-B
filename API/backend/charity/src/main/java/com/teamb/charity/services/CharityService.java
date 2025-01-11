@@ -32,7 +32,10 @@ public class CharityService {
     private AccountRepository accountRepository;
     @Autowired
     private PasswordEncoding passwordEncoding;
-    
+
+    public Account getAccount(Charity charity){
+        return accountRepository.findById(charity.getId()).orElseThrow(() -> new IllegalArgumentException("Account not found"));
+    }
 
     @Cacheable(value = "allCharities", condition = "#redisAvailable")
     public List<Charity> getAllCharities() {
@@ -66,28 +69,28 @@ public class CharityService {
     }
 
     // Save charity
-    @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")
-    @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
-    public Charity saveCharity(Charity charity) {
-        validateInputCharity(charity, true);
-        if (charity.getId() == null || charity.getId().isEmpty()) {
-            charity.setId(UUID.randomUUID().toString());
-        }
+    // @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")
+    // @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
+    // public Charity saveCharity(Charity charity) {
+    //     validateInputCharity(charity, true);
+    //     if (charity.getId() == null || charity.getId().isEmpty()) {
+    //         charity.setId(UUID.randomUUID().toString());
+    //     }
 
-        Account newAccount = new Account();
-        newAccount.setId(charity.getId());
-        newAccount.setEmail(charity.getAccount().getEmail());
-        newAccount.setPassword(passwordEncoding.passwordEncoder().encode(charity.getAccount().getPassword()));
-        newAccount.setRole(Role.CHARITY);
-        newAccount.setEmailVerified(false);
-        newAccount.setAdminCreated(false);
-        newAccount.setCreatedAt(Instant.now());
-        newAccount = accountRepository.save(newAccount);
+    //     Account newAccount = new Account();
+    //     newAccount.setId(charity.getId());
+    //     newAccount.setEmail(charity.getAccount().getEmail());
+    //     newAccount.setPassword(passwordEncoding.passwordEncoder().encode(charity.getAccount().getPassword()));
+    //     newAccount.setRole(Role.CHARITY);
+    //     newAccount.setEmailVerified(false);
+    //     newAccount.setAdminCreated(false);
+    //     newAccount.setCreatedAt(Instant.now());
+    //     newAccount = accountRepository.save(newAccount);
 
-        // Link the account to the charity
-        charity.setAccount(newAccount);
-        return charityRepository.save(charity);
-    }
+    //     // Link the account to the charity
+    //     charity.setAccount(newAccount);
+    //     return charityRepository.save(charity);
+    // }
 
     // Update charity
     @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")
@@ -104,10 +107,12 @@ public class CharityService {
         existingCharity.setMonthlyDonation(charity.getMonthlyDonation());
         existingCharity.setIntroVidUrl(charity.getIntroVidUrl());
         existingCharity.setLogoUrl(charity.getLogoUrl());
+        existingCharity.setDisplayedIntroVid(charity.getDisplayedIntroVid());
+        existingCharity.setDisplayedLogo(charity.getDisplayedLogo());
 
         // update account if needed
-        if (charity.getAccount() != null) {
-            existingCharity.getAccount().setUpdatedAt(Instant.now());
+        if (getAccount(existingCharity) != null) {
+            getAccount(existingCharity).setUpdatedAt(Instant.now());
             // existingCharity.getAccount().setEmail(charity.getAccount().getEmail());
             // existingCharity.getAccount().setPassword(passwordEncoding.passwordEncoder().encode(charity.getAccount().getPassword()));
         }
