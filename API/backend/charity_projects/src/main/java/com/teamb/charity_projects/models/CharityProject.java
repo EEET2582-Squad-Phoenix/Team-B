@@ -1,6 +1,7 @@
-package com.teamb.charity.models;
+package com.teamb.charity_projects.models;
 
 import com.mongodb.lang.Nullable;
+import com.teamb.charity.models.Charity;
 import com.teamb.common.models.FundStatus;
 import com.teamb.common.models.ProjectStatus;
 import com.teamb.common.models.ProjectCategoryType;

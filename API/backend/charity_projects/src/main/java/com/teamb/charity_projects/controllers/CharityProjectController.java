@@ -1,11 +1,12 @@
-package com.teamb.charity.controllers;
+package com.teamb.charity_projects.controllers;
 
-import com.teamb.charity.models.CharityProject;
-import com.teamb.charity.response.ProjectStatusUpdateResponse;
-import com.teamb.charity.services.CharityProjectService;
+import com.teamb.charity_projects.services.CharityProjectService;
 import com.teamb.common.exception.EntityNotFound;
 import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.common.models.ProjectStatus;
+import com.teamb.charity_projects.models.CharityProject;
+import com.teamb.charity_projects.response.ProjectStatusUpdateResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
