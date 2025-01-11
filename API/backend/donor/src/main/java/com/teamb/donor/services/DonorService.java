@@ -139,13 +139,18 @@ public class DonorService {
 
         existingDonor.setFirstName(donor.getFirstName());
         existingDonor.setLastName(donor.getLastName());
+        existingDonor.setAvatarUrl(donor.getAvatarUrl());
+        existingDonor.setIntroVidUrl(donor.getIntroVidUrl());
         existingDonor.setAddress(donor.getAddress());
         existingDonor.setLanguage(donor.getLanguage());
-        existingDonor.setAvatarUrl(donor.getAvatarUrl());
+        existingDonor.setMonthlyDonation(donor.getMonthlyDonation());
+        existingDonor.setSubscriptions(donor.getSubscriptions());
+        existingDonor.setStripeCustomerId(donor.getStripeCustomerId());
+
 
         // Update account fields if needed
-        if (getAccount(donor) != null) {
-            getAccount(donor).setUpdatedAt(Instant.now());
+        if (getAccount(existingDonor) != null) {
+            getAccount(existingDonor).setUpdatedAt(Instant.now());
             // existingDonor.getAccount().setEmail(donor.getAccount().getEmail());
             // existingDonor.getAccount().setPassword(passwordEncoding.passwordEncoder().encode(donor.getAccount().getPassword())); 
         }
