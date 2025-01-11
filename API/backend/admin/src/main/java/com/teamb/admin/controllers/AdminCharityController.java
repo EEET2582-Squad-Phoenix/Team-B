@@ -37,7 +37,7 @@ public class AdminCharityController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Charity> getCharityById(@PathVariable String id){
-        Charity charity = service.getCharitiesByAccountId(id);
+        Charity charity = service.getCharityByAccountId(id);
         return ResponseEntity.ok(charity);
     }
 

@@ -55,8 +55,8 @@ public class Donor implements Serializable{
     @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     private Double monthlyDonation = 0.0;
 
-    @DocumentReference
-    private List<Subscription> subscriptions = new ArrayList<>();
+    @DBRef
+    private List<Subscription> subscriptions;
 
     @Nullable
     private String stripeCustomerId;

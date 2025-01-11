@@ -5,6 +5,7 @@ import com.teamb.charity.models.Charity;
 import com.teamb.common.models.FundStatus;
 import com.teamb.common.models.ProjectStatus;
 import com.teamb.common.models.ProjectCategoryType;
+import com.teamb.donor.models.Donor;
 // import com.teamb.common.models.Region;
 
 import jakarta.validation.constraints.Digits;
@@ -69,6 +70,7 @@ public class CharityProject {
     private boolean highlighted;
 
     //! Optional: Get rid of fundStatus as you can compare raisedAmount and goalAmount to determine the status
+    @Builder.Default
     private FundStatus fundStatus = FundStatus.ONGOING;
 
     @NotNull
@@ -86,7 +88,8 @@ public class CharityProject {
     @NotNull
     private Charity charity;
 
-    private List<String> donorIDs;
+    @DBRef
+    private List<Donor> donors;
 
     // ! Consider getting rid of this
     // @DBRef

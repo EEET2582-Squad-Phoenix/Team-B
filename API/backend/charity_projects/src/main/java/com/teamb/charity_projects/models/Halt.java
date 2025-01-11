@@ -27,6 +27,7 @@ public class Halt {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    //! Get rid of it
     @LastModifiedDate
     private LocalDateTime updatedAt;
 }
