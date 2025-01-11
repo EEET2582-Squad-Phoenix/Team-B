@@ -34,16 +34,16 @@ public class CharityService {
     private PasswordEncoding passwordEncoding;
     
 
-    @Cacheable(value = "allCharities")
+    @Cacheable(value = "allCharities", condition = "#redisAvailable")
     public List<Charity> getAllCharities() {
         return charityRepository.findAll();
     }
 
     // Get charity by account id
-    @Cacheable(value = "charity", key = "#accountId")
+    @Cacheable(value = "charity", condition = "#redisAvailable", key = "#accountId")
     public Charity getCharitiesByAccountId(String accountId) {
         return charityRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Donor not found"));
+                .orElseThrow(() -> new RuntimeException("Charity not found"));
     }
 
      // Validate input charity
@@ -66,8 +66,8 @@ public class CharityService {
     }
 
     // Save charity
-    @CachePut(value = "charity", key = "#result.id")
-    @CacheEvict(value = "allCharities", allEntries = true)
+    @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")
+    @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
     public Charity saveCharity(Charity charity) {
         validateInputCharity(charity, true);
         if (charity.getId() == null || charity.getId().isEmpty()) {
@@ -90,8 +90,8 @@ public class CharityService {
     }
 
     // Update charity
-    @CachePut(value = "charity", key = "#result.id")
-    @CacheEvict(value = "allCharities", allEntries = true)
+    @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")
+    @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
     public Charity updateCharity(String id, Charity charity) {
         var existingCharity = charityRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Charity not found"));
@@ -116,8 +116,8 @@ public class CharityService {
 
     // Delete charity
     @Caching(evict = {
-        @CacheEvict(value = "donor", key = "#id"),
-        @CacheEvict(value = "allDonors", allEntries = true)
+        @CacheEvict(value = "charity", condition = "#redisAvailable", key = "#id"),
+        @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
     })
     public void deleteCharity(String id) {
         boolean isExisted = charityRepository.existsById(id);

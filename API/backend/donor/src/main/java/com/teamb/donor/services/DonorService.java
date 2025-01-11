@@ -39,13 +39,13 @@ public class DonorService {
     private PasswordEncoding passwordEncoding;
 
     // Fetch all donors
-    @Cacheable(value = "allDonors")
+    @Cacheable(value = "allDonors", condition = "#redisAvailable")
     public List<Donor> getAllDonors() {
         return donorRepository.findAll();
     }
 
     // Fetch donor by account ID
-    @Cacheable(value = "donor", key = "#id")
+    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
     public Donor getDonorsByAccountId(String id) {
         return donorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donor not found"));
@@ -53,8 +53,8 @@ public class DonorService {
 
     // Upload image for a donor
     @Caching(evict = {
-        @CacheEvict(value = "donor", key = "#donorId"),
-        @CacheEvict(value = "allDonors", allEntries = true)
+        @CacheEvict(value = "donor", condition = "#redisAvailable", key = "#donorId"),
+        @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
     })
     public ResponseEntity<?> uploadImage(String donorId, MultipartFile file, int height, int width) {
         if (file.isEmpty()) {
@@ -96,8 +96,8 @@ public class DonorService {
     }
 
     // Save donor and create associated account
-    @CachePut(value = "donor", key = "#result.id")
-    @CacheEvict(value = "allDonors", allEntries = true)
+    @CachePut(value = "donor", condition = "#redisAvailable", key = "#result.id")
+    @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
     public Donor saveDonor(Donor donor) {
         validateInputDonor(donor);
 
@@ -123,8 +123,8 @@ public class DonorService {
     }
 
     // Update donor
-    @CachePut(value = "donor", key = "#id")
-    @CacheEvict(value = "allDonors", allEntries = true)
+    @CachePut(value = "donor", condition = "#redisAvailable", key = "#id")
+    @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
     public Donor updateDonor(String id, Donor donor) {
         Donor existingDonor = donorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Donor not found"));
@@ -149,8 +149,8 @@ public class DonorService {
 
     // Delete donor
     @Caching(evict = {
-        @CacheEvict(value = "donor", key = "#id"),
-        @CacheEvict(value = "allDonors", allEntries = true)
+        @CacheEvict(value = "donor", condition = "#redisAvailable", key = "#id"),
+        @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
     })
     public void deleteDonor(String id) {
         if (!donorRepository.existsById(id)) {
