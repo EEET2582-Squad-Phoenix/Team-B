@@ -1,10 +1,12 @@
 package com.teamb.charity_projects.controllers;
 
 import com.teamb.charity_projects.services.CharityProjectService;
+import com.teamb.charity_projects.utils.CountryToContinent;
 import com.teamb.common.exception.EntityNotFound;
 import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.common.models.ProjectStatus;
-
+import com.teamb.charity_projects.dtos.CountryRequest;
+import com.teamb.charity_projects.dtos.UpdateProjectDTO;
 import com.teamb.charity_projects.models.CharityProject;
 import com.teamb.charity_projects.models.Halt;
 import com.teamb.charity_projects.response.ProjectStatusUpdateResponse;
@@ -21,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -234,9 +239,9 @@ public class CharityProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CharityProject> updateCharityProject(@RequestBody CharityProject updateProject, @PathVariable String id)
+    public ResponseEntity<CharityProject> updateCharityProject(@RequestBody UpdateProjectDTO updateProject, @PathVariable String id)
     {
-        var result = charityProjectService.updateCharityProject(id, updateProject);
+        CharityProject result = charityProjectService.updateCharityProject(id, updateProject);
         return ResponseEntity.ok(result);
     }
 

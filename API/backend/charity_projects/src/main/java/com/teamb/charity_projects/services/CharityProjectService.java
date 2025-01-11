@@ -6,11 +6,14 @@ import com.teamb.common.models.FundStatus;
 import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.common.models.ProjectStatus;
 import com.teamb.charity_projects.controllers.CharityProjectController;
+import com.teamb.charity_projects.dtos.CountryRequest;
+import com.teamb.charity_projects.dtos.UpdateProjectDTO;
 import com.teamb.charity_projects.models.CharityProject;
 import com.teamb.charity_projects.models.Halt;
 import com.teamb.charity_projects.repositories.CharityProjectRepository;
 import com.teamb.charity_projects.repositories.ContinentRepository;
 import com.teamb.charity_projects.repositories.HaltRepository;
+import com.teamb.charity_projects.utils.CountryToContinent;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -29,6 +32,9 @@ public class CharityProjectService {
 
     @Autowired
     private HaltRepository haltRepository;
+
+    @Autowired
+    private CountryToContinent countryToContinent;
 
     private final CharityProjectRepository charityProjectRepository;
     private final ContinentRepository continentRepository;
@@ -55,6 +61,7 @@ public class CharityProjectService {
         //     throw new IllegalArgumentException("Project halted reason is required");
         // }
     }
+
 
     // Find charity project by id - API provided by team A
     public CharityProject findCharityProjectById(String id) {
@@ -120,13 +127,26 @@ public class CharityProjectService {
     }
 
     // Update charity project - API provided by team A
-    public CharityProject updateCharityProject(String id, CharityProject updatedProject) {
+    public CharityProject updateCharityProject(String id, UpdateProjectDTO updatedProject) {
         CharityProject existingProject = charityProjectRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFound("projectId", id));
     
-        validateInputProject(updatedProject);
 
+        existingProject.setName(updatedProject.getName());
+        existingProject.setThumbnailUrl(updatedProject.getThumbnailUrl());
+        existingProject.setVideoUrls(updatedProject.getVideoUrls());
+        existingProject.setDescription(updatedProject.getDescription());
+        existingProject.setCountry(updatedProject.getCountry());
+        existingProject.setCategories(updatedProject.getCategories());
+        existingProject.setGoalAmount(updatedProject.getGoalAmount());
         existingProject.setUpdatedAt(Date.from(Instant.now()));
+
+        CountryRequest countryRequest = new CountryRequest();
+        countryRequest.setCountry(updatedProject.getCountry().toLowerCase());
+        String continent = countryToContinent.getContinentByCountry(countryRequest);
+        if(continent != null){
+            existingProject.setContinent(countryToContinent.getContinentByCountry(countryRequest));
+        }
     
         return charityProjectRepository.save(existingProject);
     }
