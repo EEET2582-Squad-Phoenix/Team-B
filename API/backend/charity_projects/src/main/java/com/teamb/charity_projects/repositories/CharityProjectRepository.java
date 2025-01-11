@@ -25,4 +25,8 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
     List<CharityProject> findByIsGlobalAndHighlighted(boolean isGlobal, boolean highlighted);
 
     List<CharityProject> findAllByStatus(ProjectStatus status);
+
+    List<CharityProject> findAllByStatusIn(List<ProjectStatus> statuses);
+    List<CharityProject> findAllByCharityId(String id);
+    List<CharityProject> findAllByCharityIdAndStatusIn(String charityId, List<ProjectStatus> statuses);
 }

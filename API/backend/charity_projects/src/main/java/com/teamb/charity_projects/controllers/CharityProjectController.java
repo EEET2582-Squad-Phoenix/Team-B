@@ -197,7 +197,7 @@ public class CharityProjectController {
     @GetMapping("/byStatuses")
     public ResponseEntity<List<CharityProject>> getCharityProjectsByStatuses(@RequestParam List<ProjectStatus> statuses) {
         try {
-            List<CharityProject> projects = charityProjectService.getProjectsByStatuses(statuses);
+            List<CharityProject> projects = charityProjectService.getProjectsByStatus(statuses);
             return ResponseEntity.ok(projects);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
@@ -208,7 +208,7 @@ public class CharityProjectController {
     @GetMapping("/byCharity/{charityId}")
     public ResponseEntity<List<CharityProject>> getCharityProjectsByCharity(@PathVariable String charityId) {
         try {
-            List<CharityProject> projects = charityProjectService.getProjectsByCharity(charityId);
+            List<CharityProject> projects = charityProjectService.getProjectsByCharityId(charityId);
             return ResponseEntity.ok(projects);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
@@ -219,7 +219,7 @@ public class CharityProjectController {
     @GetMapping("/byCharityAndStatuses/{charityId}")
     public ResponseEntity<List<CharityProject>> getCharityProjectsByCharityAndStatuses(@PathVariable String charityId, @RequestParam List<ProjectStatus> statuses) {
         try {
-            List<CharityProject> projects = charityProjectService.getProjectsByCharityAndStatuses(charityId, statuses);
+            List<CharityProject> projects = charityProjectService.getProjectsByCharityIdAndStatus(charityId, statuses);
             return ResponseEntity.ok(projects);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
