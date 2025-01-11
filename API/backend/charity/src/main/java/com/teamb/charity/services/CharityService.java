@@ -125,10 +125,11 @@ public class CharityService {
         @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
     })
     public void deleteCharity(String id) {
-        boolean isExisted = charityRepository.existsById(id);
+        boolean isExisted = charityRepository.existsById(id) && accountRepository.existsById(id);
         if (!isExisted) {
             throw new EntityNotFound("charity Id", id);
         }
+        accountRepository.deleteById(id);
         charityRepository.deleteById(id);
     }
 
