@@ -2,6 +2,7 @@ package com.teamb.donor.services;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,10 @@ public class DonorService {
 
     @Autowired
     private PasswordEncoding passwordEncoding;
+
+    public Account getAccount(Donor donor){
+        return accountRepository.findById(donor.getId()).orElseThrow(() -> new IllegalArgumentException("Account not found"));
+    }
 
     // Fetch all donors
     @Cacheable(value = "allDonors", condition = "#redisAvailable")
@@ -90,37 +95,38 @@ public class DonorService {
         if (donor.getLanguage() == null || donor.getLanguage().isEmpty()) {
             throw new IllegalArgumentException("Donor language is required");
         }
-        if (donor.getAccount() == null) {
+        if (getAccount(donor) == null) {
             throw new IllegalArgumentException("Donor account cannot be null");
         }
     }
 
     // Save donor and create associated account
-    @CachePut(value = "donor", condition = "#redisAvailable", key = "#result.id")
-    @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
-    public Donor saveDonor(Donor donor) {
-        validateInputDonor(donor);
+    // This is incorrect
+    // @CachePut(value = "donor", condition = "#redisAvailable", key = "#result.id")
+    // @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
+    // public Donor saveDonor(Donor donor) {
+    //     validateInputDonor(donor);
 
-        if (donor.getId() == null || donor.getId().isEmpty()) {
-            donor.setId(UUID.randomUUID().toString());
-        }
+    //     if (donor.getId() == null || donor.getId().isEmpty()) {
+    //         donor.setId(UUID.randomUUID().toString());
+    //     }
 
-        // Create and save associated account
-        Account account = new Account();
-        account.setId(donor.getId()); // Ensure donor ID matches account ID
-        account.setEmail(donor.getAccount().getEmail());
-        account.setPassword(passwordEncoding.passwordEncoder().encode(donor.getAccount().getPassword())); 
-        account.setRole(Role.DONOR);
-        account.setEmailVerified(false);
-        account.setAdminCreated(false);
-        account.setCreatedAt(Instant.now());
-        account = accountRepository.save(account);
+    //     // Create and save associated account
+    //     Account account = new Account();
+    //     account.setId(donor.getId()); // Ensure donor ID matches account ID
+    //     account.setEmail(donor.getAccount().getEmail());
+    //     account.setPassword(passwordEncoding.passwordEncoder().encode(donor.getAccount().getPassword())); 
+    //     account.setRole(Role.DONOR);
+    //     account.setEmailVerified(false);
+    //     account.setAdminCreated(false);
+    //     account.setCreatedAt(Instant.now());
+    //     account = accountRepository.save(account);
 
-        // Link the account to the donor
-        donor.setAccount(account);
+    //     // Link the account to the donor
+    //     donor.setAccount(account);
 
-        return donorRepository.save(donor);
-    }
+    //     return donorRepository.save(donor);
+    // }
 
     // Update donor
     @CachePut(value = "donor", condition = "#redisAvailable", key = "#id")
@@ -138,8 +144,8 @@ public class DonorService {
         existingDonor.setAvatarUrl(donor.getAvatarUrl());
 
         // Update account fields if needed
-        if (donor.getAccount() != null) {
-            existingDonor.getAccount().setUpdatedAt(Instant.now());
+        if (getAccount(donor) != null) {
+            getAccount(donor).setUpdatedAt(Instant.now());
             // existingDonor.getAccount().setEmail(donor.getAccount().getEmail());
             // existingDonor.getAccount().setPassword(passwordEncoding.passwordEncoder().encode(donor.getAccount().getPassword())); 
         }

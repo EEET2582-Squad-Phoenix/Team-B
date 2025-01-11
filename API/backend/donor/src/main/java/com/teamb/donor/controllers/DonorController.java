@@ -31,11 +31,12 @@ public class DonorController {
     }
 
     // Create a new donor
-    @PostMapping("")
-    public ResponseEntity<Donor> createDonor(@RequestBody Donor donor) {
-        Donor createdDonor = donorService.saveDonor(donor);
-        return ResponseEntity.ok(createdDonor);
-    }
+    // Incorrect, does not create account alongside donor
+    // @PostMapping("")
+    // public ResponseEntity<Donor> createDonor(@RequestBody Donor donor) {
+    //     Donor createdDonor = donorService.saveDonor(donor);
+    //     return ResponseEntity.ok(createdDonor);
+    // }
 
     // Update an existing donor
     @PutMapping("/{id}")
