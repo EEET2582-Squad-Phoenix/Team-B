@@ -60,6 +60,7 @@ public class Charity implements Serializable{
     @Field("organizationType")
     private CharityType type;
 
+    //! Check naming conventions
     @Min(0)
     @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     private Double monthlyDonation = 0.0;
@@ -68,4 +69,3 @@ public class Charity implements Serializable{
     @JsonIdentityReference(alwaysAsId = true)
     private Account account; // Reference to Account
 }
-

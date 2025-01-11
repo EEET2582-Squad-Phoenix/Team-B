@@ -282,8 +282,18 @@ public class CharityProjectService {
         return charityProjectRepository.save(project);
     }
 
-    // Fetch projects by status
-    public List<CharityProject> getProjectsByStatus(ProjectStatus status) {
-        return charityProjectRepository.findAllByStatus(status);
+    // Fetch projects based on multiple statuses
+    public List<CharityProject> getProjectsByStatus(List<ProjectStatus> statuses) {
+        return charityProjectRepository.findAllByStatusIn(statuses);
+    }
+
+    // Fetch projects owned by a charity
+    public List<CharityProject> getProjectsByCharityId(String charityId) {
+        return charityProjectRepository.findAllByCharityId(charityId);
+    }
+
+    // Fetch projects owned by a charity based on multiple statuses
+    public List<CharityProject> getProjectsByCharityIdAndStatus(String charityId, List<ProjectStatus> statuses) {
+        return charityProjectRepository.findAllByCharityIdAndStatusIn(charityId, statuses);
     }
 }

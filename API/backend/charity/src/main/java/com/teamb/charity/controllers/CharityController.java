@@ -14,13 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 // import com.teamb.account.repositories.AccountRepository;
 import com.teamb.charity.models.Charity;
 import com.teamb.charity.services.CharityService;
-import org.springframework.web.bind.annotation.PostMapping;
+// import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import org.springframework.http.HttpStatus;
-
-
 
 @RestController
 @RequestMapping("/charity")
@@ -40,13 +38,6 @@ public class CharityController {
         return ResponseEntity.ok(charity);
     }
 
-    // Create charity
-    // @PostMapping("")
-    // public ResponseEntity<Charity> createCharity(@RequestBody Charity newCharity) {
-    //     var result = service.saveCharity(newCharity);        
-    //     return ResponseEntity.ok(result);
-    // }
-
     // Update charity
     @PutMapping("/{id}")
     public ResponseEntity<Charity> updateCharity(@PathVariable String id, @RequestBody Charity updateCharity) {
@@ -63,5 +54,4 @@ public class CharityController {
         deletedMsg.setDetail(String.format("Charity with id %s deleted successfully", id));
         return ResponseEntity.ok(deletedMsg);    
     }
-
 }

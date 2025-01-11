@@ -33,6 +33,7 @@ public class CharityService {
     @Autowired
     private PasswordEncoding passwordEncoding;
 
+    // Get charity by id
     public Account getAccount(Charity charity){
         return accountRepository.findById(charity.getId()).orElseThrow(() -> new IllegalArgumentException("Account not found"));
     }

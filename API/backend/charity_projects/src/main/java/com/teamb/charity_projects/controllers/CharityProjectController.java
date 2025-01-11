@@ -187,13 +187,34 @@ public class CharityProjectController {
         }
     }
 
-    // Fetch projects by status
-    @GetMapping("/byStatus/{status}")
-    public ResponseEntity<List<CharityProject>> getCharityProjectsByStatus(@PathVariable String status) {
+    // Fetch projects by multiple statuses
+    @GetMapping("/byStatuses")
+    public ResponseEntity<List<CharityProject>> getCharityProjectsByStatuses(@RequestParam List<ProjectStatus> statuses) {
         try {
-            ProjectStatus projectStatus = ProjectStatus.valueOf(status.toUpperCase());
-            List<CharityProject> result = charityProjectService.getProjectsByStatus(projectStatus);
-            return ResponseEntity.ok(result);
+            List<CharityProject> projects = charityProjectService.getProjectsByStatuses(statuses);
+            return ResponseEntity.ok(projects);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    // Fetch projects owned by a charity
+    @GetMapping("/byCharity/{charityId}")
+    public ResponseEntity<List<CharityProject>> getCharityProjectsByCharity(@PathVariable String charityId) {
+        try {
+            List<CharityProject> projects = charityProjectService.getProjectsByCharity(charityId);
+            return ResponseEntity.ok(projects);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    // Fetch projects owned by a charity based on multiple statuses
+    @GetMapping("/byCharityAndStatuses/{charityId}")
+    public ResponseEntity<List<CharityProject>> getCharityProjectsByCharityAndStatuses(@PathVariable String charityId, @RequestParam List<ProjectStatus> statuses) {
+        try {
+            List<CharityProject> projects = charityProjectService.getProjectsByCharityAndStatuses(charityId, statuses);
+            return ResponseEntity.ok(projects);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
         }

@@ -7,4 +7,5 @@ import com.teamb.charity.models.Charity;
 
 @Repository
 public interface CharityRepository extends MongoRepository<Charity, String>{
-} 
+
+}
