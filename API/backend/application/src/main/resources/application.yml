@@ -17,5 +17,7 @@ spring:
             enable: true
   config:
     import: optional:file:.env
+  jpa:
+    show-sql: true
 
 #Old mongodb url: mongodb+srv://donambinh2002:passw0rd@news.s0vit.mongodb.net/

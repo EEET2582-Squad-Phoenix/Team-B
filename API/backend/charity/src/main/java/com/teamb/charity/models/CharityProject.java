@@ -22,7 +22,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("charityProjects")
+@Document("charityprojects")
 public class CharityProject {
     @Id
     private String id;
@@ -48,7 +48,7 @@ public class CharityProject {
     @NotNull
     private Duration duration;
     private Date endedAt;
-    private String category;
+    private List<String> category;
 
     private Date createdAt;
     private Date updatedAt;
@@ -56,7 +56,6 @@ public class CharityProject {
     @DBRef
     @NotNull
     private Charity charity;
-    @DBRef
     @NotNull
-    private Continent continent;
+    private String continent;
 }

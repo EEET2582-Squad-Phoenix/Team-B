@@ -26,33 +26,24 @@ public class StatisticController {
 
     @PostMapping("/project-count")
     public ResponseEntity<Statistic> calculateProjectCount(
-            @RequestBody List<String> userTargetIDs,
-            @RequestParam(required = false) String filterCountry,
-            @RequestParam(required = false) String filterContinent,
-            @RequestParam(required = false) String filterCategory,
-            @RequestParam Date filterStartDate,
-            @RequestParam Date filterEndDate) {
-        Statistic statistic = statisticService.calculateProjectCount(userTargetIDs, filterCountry, filterContinent, filterCategory, filterStartDate, filterEndDate);
+            @RequestBody Statistic filter) {
+        Statistic statistic = statisticService.calculateProjectCount(filter);
         return ResponseEntity.ok(statistic);
     }
 
     @PostMapping("/donation-value/target")
     public ResponseEntity<Statistic> calculateDonationValueForOneTarget(
             @RequestParam String userTargetID,
-            @RequestParam Date filterStartDate,
-            @RequestParam Date filterEndDate,
             @RequestParam boolean isDonor) {
-        Statistic statistic = statisticService.calculateDonationValueForOneTarget(userTargetID, filterStartDate, filterEndDate, isDonor);
+        Statistic statistic = statisticService.calculateDonationValueForOneTarget(userTargetID, isDonor);
         return ResponseEntity.ok(statistic);
     }
 
     @PostMapping("/project-count/target")
     public ResponseEntity<Statistic> calculateProjectCountForOneTarget(
             @RequestParam String userTargetID,
-            @RequestParam Date filterStartDate,
-            @RequestParam Date filterEndDate,
             @RequestParam boolean isDonor) {
-        Statistic statistic = statisticService.calculateProjectCountForOneTarget(userTargetID, filterStartDate, filterEndDate, isDonor);
+        Statistic statistic = statisticService.calculateProjectCountForOneTarget(userTargetID, isDonor);
         return ResponseEntity.ok(statistic);
     }
 }

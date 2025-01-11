@@ -1,15 +1,15 @@
 package com.teamb.statistic.utils;
 
-import java.time.Instant;
 import java.time.temporal.TemporalUnit;
+import java.util.Date;
 
-public class InstantUtils {
+public class DateUtils {
 
-    public static Instant floor(Instant date, TemporalUnit unit) {
-        return date.truncatedTo(unit);
+    public static Date floor(Date date, TemporalUnit unit) {
+        return Date.from(date.toInstant().truncatedTo(unit));
     }
 
-    public static Instant ceil(Instant date, TemporalUnit unit) {
-        return date.plus(1, unit).truncatedTo(unit);
+    public static Date ceil(Date date, TemporalUnit unit) {
+        return Date.from(date.toInstant().plus(1, unit).truncatedTo(unit));
     }
 }

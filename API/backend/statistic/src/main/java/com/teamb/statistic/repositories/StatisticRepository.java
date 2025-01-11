@@ -7,5 +7,4 @@ import com.teamb.statistic.models.Statistic;
 
 @Repository
 public interface StatisticRepository extends MongoRepository<Statistic, String>{
-
 } 

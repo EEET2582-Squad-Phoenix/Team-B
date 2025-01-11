@@ -2,12 +2,11 @@ package com.teamb.statistic.models;
 
 import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
-import org.springframework.data.mongodb.core.mapping.Field;
 import com.teamb.common.models.ProjectCategoryType;
 
 import java.time.Instant;
@@ -17,13 +16,13 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Document("statistics")
 public class Statistic {
     @Id
     private String id; // Same as Account ID
 
     private List<String> userTargetIDs; // List of foreign keys for multiple users
-    private String userTargetID; // Single foreign key for one user
     private StatisticType statisticType;
 
     private String filterCountry;

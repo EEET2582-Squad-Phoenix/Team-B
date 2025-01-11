@@ -27,6 +27,12 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
     int countProjectsByCharityId(String charityId);
 
      // Count total number of projects
-     @Query(value = "{}", count = true)
-     int countAllProjects();
+     @Query(value = """
+             {
+                  continent: {$regex: ?0},
+                  country: {$regex: ?1},
+                  category: {$regex: ?2}
+             }
+             """, count = true)
+     int countBy(String continent, String country, String category);
 }
