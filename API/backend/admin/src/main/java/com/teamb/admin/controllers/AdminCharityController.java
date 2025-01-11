@@ -61,6 +61,7 @@ public class AdminCharityController {
         ProblemDetail deletedMsg = ProblemDetail.forStatus(HttpStatus.OK);
         deletedMsg.setTitle("Charity deleted successfully");
         deletedMsg.setDetail(String.format("Charity with id %s deleted successfully", id));
-        return ResponseEntity.ok(deletedMsg);    }
+        return ResponseEntity.ok(deletedMsg);    
+    }
 
 }

@@ -164,9 +164,11 @@ public class DonorService {
         @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
     })
     public void deleteDonor(String id) {
-        if (!donorRepository.existsById(id)) {
+        boolean ifExist = donorRepository.existsById(id) && accountRepository.existsById(id);
+        if (!ifExist) {
             throw new IllegalArgumentException("Donor not found");
         }
         donorRepository.deleteById(id);
+        accountRepository.deleteById(id);
     }
 }
