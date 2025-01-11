@@ -4,7 +4,9 @@ import com.teamb.charity_projects.services.CharityProjectService;
 import com.teamb.common.exception.EntityNotFound;
 import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.common.models.ProjectStatus;
+
 import com.teamb.charity_projects.models.CharityProject;
+import com.teamb.charity_projects.models.Halt;
 import com.teamb.charity_projects.response.ProjectStatusUpdateResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -124,16 +127,19 @@ public class CharityProjectController {
     }
 
     //! Halt charity project
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/halt/{id}")
-    public ResponseEntity<CharityProject> haltCharityProject(@PathVariable("id") String projectId) {
+    public ResponseEntity<?> haltCharityProject(@PathVariable String id, @RequestBody Halt haltReason) {
         try {
-            var haltedProject = charityProjectService.haltCharityProject(projectId);
+            if (haltReason == null) {
+                // Return a bad request error with a meaningful message
+                return ResponseEntity.badRequest().body("Halt reason must be provided.");
+            }
+
+            CharityProject haltedProject = charityProjectService.haltCharityProject(id, haltReason);
             return ResponseEntity.ok(haltedProject);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        catch (EntityNotFound e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (EntityNotFound e) {
             // Return a not found response if the project does not exist
             return ResponseEntity.notFound().build();
         }

@@ -7,12 +7,15 @@ import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.common.models.ProjectStatus;
 import com.teamb.charity_projects.controllers.CharityProjectController;
 import com.teamb.charity_projects.models.CharityProject;
+import com.teamb.charity_projects.models.Halt;
 import com.teamb.charity_projects.repositories.CharityProjectRepository;
 import com.teamb.charity_projects.repositories.ContinentRepository;
+import com.teamb.charity_projects.repositories.HaltRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,9 @@ import java.util.*;
 @Transactional
 @RequiredArgsConstructor
 public class CharityProjectService {
+
+    @Autowired
+    private HaltRepository haltRepository;
 
     private final CharityProjectRepository charityProjectRepository;
     private final ContinentRepository continentRepository;
@@ -45,9 +51,9 @@ public class CharityProjectService {
         // if (Objects.isNull(charityProject.getDuration())) {
         //     throw new IllegalArgumentException("Project duration is required");
         // }
-        if (charityProject.getStatus().equals(ProjectStatus.HALTED) && charityProject.getHaltedReason().isEmpty()) {
-            throw new IllegalArgumentException("Project halted reason is required");
-        }
+        // if (charityProject.getStatus().equals(ProjectStatus.HALTED)) {
+        //     throw new IllegalArgumentException("Project halted reason is required");
+        // }
     }
 
     // Find charity project by id - API provided by team A
@@ -204,9 +210,10 @@ public class CharityProjectService {
     }
 
     //! Halt charity project
-    public CharityProject haltCharityProject(String projectId) {
+    public CharityProject haltCharityProject(String projectId, Halt haltReason) {
         CharityProject project = charityProjectRepository.findById(projectId).orElseThrow(() -> new EntityNotFound("projectId", projectId));
 
+      
         // Verify if project can be halted
         switch (project.getStatus()) {
             case UNAPPROVED -> throw new IllegalArgumentException("Cannot halt unapproved charity project");
@@ -219,11 +226,14 @@ public class CharityProjectService {
         }
 
         //! Halted reason can become a new entity
-        if (FieldChecking.isNullOrEmpty(project.getHaltedReason())) {
-            throw new IllegalArgumentException("Halted reason is missing!!");
-        }
+        // if (FieldChecking.isNullOrEmpty(project.getHaltedReason())) {
+        //     throw new IllegalArgumentException("Halted reason is missing!!");
+        // }
 
         project.setStatus(ProjectStatus.HALTED);
+        haltReason.setCharityProjectId(projectId);
+
+        haltRepository.save(haltReason);
         return charityProjectRepository.save(project);
     }
 

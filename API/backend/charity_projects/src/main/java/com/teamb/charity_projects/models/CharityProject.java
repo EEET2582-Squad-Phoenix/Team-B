@@ -30,7 +30,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("charityProjects")
+@Document("charityprojects")
 public class CharityProject {
     @Id
     private String id;
@@ -64,12 +64,11 @@ public class CharityProject {
     private ProjectStatus status = ProjectStatus.UNAPPROVED;
 
     //! Recommendation: Make halt as a different entity including 2 halted reasons (for charity and for donors), a timestamp
-    private String haltedReason;
+    // private String haltedReason;
 
     private boolean highlighted;
 
     //! Optional: Get rid of fundStatus as you can compare raisedAmount and goalAmount to determine the status
-    @Builder.Default
     private FundStatus fundStatus = FundStatus.ONGOING;
 
     @NotNull
@@ -87,8 +86,10 @@ public class CharityProject {
     @NotNull
     private Charity charity;
 
+    private List<String> donorIDs;
+
     // ! Consider getting rid of this
-    @DBRef
+    // @DBRef
     @NotNull
-    private Continent continent;
+    private String continent;
 }

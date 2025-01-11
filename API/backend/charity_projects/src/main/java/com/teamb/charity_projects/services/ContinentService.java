@@ -39,9 +39,9 @@ public class ContinentService {
 
     public void deleteContinent(String id) {
         var continent = continentRepository.findById(id).orElseThrow(() -> new EntityNotFound("continentId", id));
-        var projectsWithConId = charityProjectRepository.findAllByContinent(continent);
-        var updatedProjects = projectsWithConId.stream().peek(p -> p.setContinent(null)).toList();
-        charityProjectRepository.saveAll(updatedProjects);
+        // var projectsWithConId = charityProjectRepository.findAllByContinent(continent);
+        // var updatedProjects = projectsWithConId.stream().peek(p -> p.setContinent(null)).toList();
+        // charityProjectRepository.saveAll(updatedProjects);
         continentRepository.deleteById(id);
     }
 
