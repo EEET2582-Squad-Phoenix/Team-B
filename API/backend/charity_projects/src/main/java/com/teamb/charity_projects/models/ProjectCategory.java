@@ -1,4 +1,4 @@
-package com.teamb.charity.models;
+package com.teamb.charity_projects.models;
 
 import com.teamb.common.models.ProjectCategoryType;
 import jakarta.validation.constraints.NotNull;

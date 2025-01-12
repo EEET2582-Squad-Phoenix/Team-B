@@ -1,11 +1,16 @@
-package com.teamb.charity.controllers;
+package com.teamb.charity_projects.controllers;
 
-import com.teamb.charity.models.CharityProject;
-import com.teamb.charity.response.ProjectStatusUpdateResponse;
-import com.teamb.charity.services.CharityProjectService;
+import com.teamb.charity_projects.services.CharityProjectService;
+import com.teamb.charity_projects.utils.CountryToContinent;
 import com.teamb.common.exception.EntityNotFound;
 import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.common.models.ProjectStatus;
+import com.teamb.charity_projects.dtos.CountryRequest;
+import com.teamb.charity_projects.dtos.UpdateProjectDTO;
+import com.teamb.charity_projects.models.CharityProject;
+import com.teamb.charity_projects.models.Halt;
+import com.teamb.charity_projects.response.ProjectStatusUpdateResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -17,6 +22,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -123,16 +132,19 @@ public class CharityProjectController {
     }
 
     //! Halt charity project
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/halt/{id}")
-    public ResponseEntity<CharityProject> haltCharityProject(@PathVariable("id") String projectId) {
+    public ResponseEntity<?> haltCharityProject(@PathVariable String id, @RequestBody Halt haltReason) {
         try {
-            var haltedProject = charityProjectService.haltCharityProject(projectId);
+            if (haltReason == null) {
+                // Return a bad request error with a meaningful message
+                return ResponseEntity.badRequest().body("Halt reason must be provided.");
+            }
+
+            CharityProject haltedProject = charityProjectService.haltCharityProject(id, haltReason);
             return ResponseEntity.ok(haltedProject);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        catch (EntityNotFound e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (EntityNotFound e) {
             // Return a not found response if the project does not exist
             return ResponseEntity.notFound().build();
         }
@@ -186,13 +198,34 @@ public class CharityProjectController {
         }
     }
 
-    // Fetch projects by status
-    @GetMapping("/byStatus/{status}")
-    public ResponseEntity<List<CharityProject>> getCharityProjectsByStatus(@PathVariable String status) {
+    // Fetch projects by multiple statuses
+    @GetMapping("/byStatuses")
+    public ResponseEntity<List<CharityProject>> getCharityProjectsByStatuses(@RequestParam List<ProjectStatus> statuses) {
         try {
-            ProjectStatus projectStatus = ProjectStatus.valueOf(status.toUpperCase());
-            List<CharityProject> result = charityProjectService.getProjectsByStatus(projectStatus);
-            return ResponseEntity.ok(result);
+            List<CharityProject> projects = charityProjectService.getProjectsByStatus(statuses);
+            return ResponseEntity.ok(projects);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    // Fetch projects owned by a charity
+    @GetMapping("/byCharity/{charityId}")
+    public ResponseEntity<List<CharityProject>> getCharityProjectsByCharity(@PathVariable String charityId) {
+        try {
+            List<CharityProject> projects = charityProjectService.getProjectsByCharityId(charityId);
+            return ResponseEntity.ok(projects);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    // Fetch projects owned by a charity based on multiple statuses
+    @GetMapping("/byCharityAndStatuses/{charityId}")
+    public ResponseEntity<List<CharityProject>> getCharityProjectsByCharityAndStatuses(@PathVariable String charityId, @RequestParam List<ProjectStatus> statuses) {
+        try {
+            List<CharityProject> projects = charityProjectService.getProjectsByCharityIdAndStatus(charityId, statuses);
+            return ResponseEntity.ok(projects);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -206,9 +239,9 @@ public class CharityProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CharityProject> updateCharityProject(@RequestBody CharityProject updateProject, @PathVariable String id)
+    public ResponseEntity<CharityProject> updateCharityProject(@RequestBody UpdateProjectDTO updateProject, @PathVariable String id)
     {
-        var result = charityProjectService.updateCharityProject(id, updateProject);
+        CharityProject result = charityProjectService.updateCharityProject(id, updateProject);
         return ResponseEntity.ok(result);
     }
 

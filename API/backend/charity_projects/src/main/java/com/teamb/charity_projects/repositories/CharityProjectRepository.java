@@ -1,9 +1,10 @@
-package com.teamb.charity.repositories;
+package com.teamb.charity_projects.repositories;
 
-import com.teamb.charity.models.CharityProject;
-import com.teamb.charity.models.Continent;
+import com.teamb.charity_projects.models.CharityProject;
+import com.teamb.charity_projects.models.Continent;
 import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.common.models.ProjectStatus;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -24,4 +25,8 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
     List<CharityProject> findByIsGlobalAndHighlighted(boolean isGlobal, boolean highlighted);
 
     List<CharityProject> findAllByStatus(ProjectStatus status);
+
+    List<CharityProject> findAllByStatusIn(List<ProjectStatus> statuses);
+    List<CharityProject> findAllByCharityId(String id);
+    List<CharityProject> findAllByCharityIdAndStatusIn(String charityId, List<ProjectStatus> statuses);
 }

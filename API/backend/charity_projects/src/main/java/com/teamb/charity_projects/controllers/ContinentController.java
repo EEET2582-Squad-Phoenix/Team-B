@@ -1,7 +1,8 @@
-package com.teamb.charity.controllers;
+package com.teamb.charity_projects.controllers;
 
-import com.teamb.charity.models.Continent;
-import com.teamb.charity.services.ContinentService;
+import com.teamb.charity_projects.models.Continent;
+import com.teamb.charity_projects.services.ContinentService;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;

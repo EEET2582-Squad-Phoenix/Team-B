@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamb.charity.dtos.CreateCharityDTO;
 // import com.teamb.account.repositories.AccountRepository;
 import com.teamb.charity.models.Charity;
 import com.teamb.charity.services.CharityService;
@@ -36,13 +37,13 @@ public class AdminCharityController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Charity> getCharityById(@PathVariable String id){
-        Charity charity = service.getCharitiesByAccountId(id);
+        Charity charity = service.getCharityByAccountId(id);
         return ResponseEntity.ok(charity);
     }
 
-    // Create charity
+    //Create charity
     @PostMapping("")
-    public ResponseEntity<Charity> createCharity(@RequestBody Charity newCharity) {
+    public ResponseEntity<Charity> createCharity(@RequestBody CreateCharityDTO newCharity) {
         var result = service.saveCharity(newCharity);        
         return ResponseEntity.ok(result);
     }
@@ -61,6 +62,7 @@ public class AdminCharityController {
         ProblemDetail deletedMsg = ProblemDetail.forStatus(HttpStatus.OK);
         deletedMsg.setTitle("Charity deleted successfully");
         deletedMsg.setDetail(String.format("Charity with id %s deleted successfully", id));
-        return ResponseEntity.ok(deletedMsg);    }
+        return ResponseEntity.ok(deletedMsg);    
+    }
 
 }

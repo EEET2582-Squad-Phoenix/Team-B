@@ -1,9 +1,11 @@
-package com.teamb.charity.models;
+package com.teamb.charity_projects.models;
 
 import com.mongodb.lang.Nullable;
+import com.teamb.charity.models.Charity;
 import com.teamb.common.models.FundStatus;
 import com.teamb.common.models.ProjectStatus;
 import com.teamb.common.models.ProjectCategoryType;
+import com.teamb.donor.models.Donor;
 // import com.teamb.common.models.Region;
 
 import jakarta.validation.constraints.Digits;
@@ -29,7 +31,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("charityProjects")
+@Document("charityprojects")
 public class CharityProject {
     @Id
     private String id;
@@ -63,7 +65,7 @@ public class CharityProject {
     private ProjectStatus status = ProjectStatus.UNAPPROVED;
 
     //! Recommendation: Make halt as a different entity including 2 halted reasons (for charity and for donors), a timestamp
-    private String haltedReason;
+    // private String haltedReason;
 
     private boolean highlighted;
 
@@ -86,8 +88,11 @@ public class CharityProject {
     @NotNull
     private Charity charity;
 
-    // ! Consider getting rid of this
     @DBRef
+    private List<Donor> donors;
+
+    // ! Consider getting rid of this
+    // @DBRef
     @NotNull
-    private Continent continent;
+    private String continent;
 }

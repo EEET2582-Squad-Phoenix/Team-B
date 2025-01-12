@@ -1,4 +1,4 @@
-package com.teamb.charity.models;
+package com.teamb.charity_projects.models;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

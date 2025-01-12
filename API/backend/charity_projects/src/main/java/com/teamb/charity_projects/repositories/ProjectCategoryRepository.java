@@ -1,6 +1,6 @@
-package com.teamb.charity.repositories;
+package com.teamb.charity_projects.repositories;
 
-import com.teamb.charity.models.ProjectCategory;
+import com.teamb.charity_projects.models.ProjectCategory;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
