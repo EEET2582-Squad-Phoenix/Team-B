@@ -25,41 +25,40 @@ public class StatisticController {
 
     @PostMapping("/donation-value")
     public ResponseEntity<Statistic> calculateTotalDonationValue(
-            @RequestParam Date filterStartDate,
-            @RequestParam Date filterEndDate) {
-        Statistic statistic = statisticService.calculateTotalDonationValue(filterStartDate, filterEndDate);
-        return ResponseEntity.ok(statistic);
-    }
+       @RequestParam StatisticType statisticType,
+            @RequestParam(required = false) String filterContinent,
+            @RequestParam(required = false) String filterCountry,
+            @RequestParam(required = false) String filterCategory,
+            @RequestParam(required = false) String filterStartDate,
+            @RequestParam(required = false) String filterEndDate
+    ) {
+        try {
+            // Build the Statistic filter object
+            Statistic filter = Statistic.builder()
+                    .statisticType(statisticType)
+                    .filterContinent(filterContinent)
+                    .filterCountry(filterCountry)
+                    .filterCategory(filterCategory)
+                    .filterStartDate(parseDate(filterStartDate))
+                    .filterEndDate(parseDate(filterEndDate))
+                    .build();
 
-    @PostMapping("/project-count")
-    public ResponseEntity<Statistic> calculateProjectCount(
-            @RequestBody Statistic filter) {
-        Statistic statistic = statisticService.calculateProjectCount(filter);
-        return ResponseEntity.ok(statistic);
-    }
+            // Calculate project count based on the filter
+            Statistic statistic = statisticService.calculateTotalDonationValue(filter);
 
-    @PostMapping("/donation-value/target")
-    public ResponseEntity<Statistic> calculateDonationValueForOneTarget(
-            @RequestParam String userTargetID,
-            @RequestParam boolean isDonor) {
-        Statistic statistic = statisticService.calculateDonationValueForOneTarget(userTargetID, isDonor);
-        return ResponseEntity.ok(statistic);
+            return ResponseEntity.ok(statistic);
+        } catch (Exception e) {
+            log.error("Error occurred while calculating total donation", e);
+            return ResponseEntity.badRequest().build();
+        }
     }
-
-    @PostMapping("/project-count/target")
-    public ResponseEntity<Statistic> calculateProjectCountForOneTarget(
-            @RequestParam String userTargetID,
-            @RequestParam boolean isDonor) {
-        Statistic statistic = statisticService.calculateProjectCountForOneTarget(userTargetID, isDonor);
-        return ResponseEntity.ok(statistic);
-    }
-
-    @GetMapping("/project-count/hello")
+    
+    @GetMapping("/project-count")
     public ResponseEntity<Statistic> getProjectCount(
             @RequestParam StatisticType statisticType,
             @RequestParam(required = false) String filterContinent,
             @RequestParam(required = false) String filterCountry,
-            @RequestParam(required = false) ProjectCategoryType filterCategory,
+            @RequestParam(required = false) String filterCategory,
             @RequestParam(required = false) String filterStartDate,
             @RequestParam(required = false) String filterEndDate
     ) {
@@ -95,5 +94,24 @@ public class StatisticController {
             throw new IllegalArgumentException("Invalid date format. Use ISO-8601 format, e.g., 2025-01-11T10:00:00Z");
         }
     }
+
+
+
+    @PostMapping("/donation-value/target")
+    public ResponseEntity<Statistic> calculateDonationValueForOneTarget(
+            @RequestParam String userTargetID,
+            @RequestParam boolean isDonor) {
+        Statistic statistic = statisticService.calculateDonationValueForOneTarget(userTargetID, isDonor);
+        return ResponseEntity.ok(statistic);
+    }
+
+    @PostMapping("/project-count/target")
+    public ResponseEntity<Statistic> calculateProjectCountForOneTarget(
+            @RequestParam String userTargetID,
+            @RequestParam boolean isDonor) {
+        Statistic statistic = statisticService.calculateProjectCountForOneTarget(userTargetID, isDonor);
+        return ResponseEntity.ok(statistic);
+    }
+
 
 }

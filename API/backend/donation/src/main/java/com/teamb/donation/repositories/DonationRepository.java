@@ -42,12 +42,12 @@ public interface DonationRepository extends MongoRepository<DonationDTO, String>
         "{ '$group': { '_id': '$projectId' } }",
         "{ '$count': 'totalProjects' }"
     })
-    int countDistinctProjectsByDonorId(String donorId);
+    Double countDistinctProjectsByDonorId(String donorId);
 
     // Sum all donation values
     @Aggregation(pipeline = {
         "{ '$group': { '_id': null, 'totalAmount': { '$sum': '$amount' } } }"
     })
-    double sumAllDonationValues();
+    Double sumAllDonationValues();
 
 }

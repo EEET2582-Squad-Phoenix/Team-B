@@ -27,13 +27,14 @@ public class Statistic {
 
     private String filterCountry;
     private String filterContinent;
-    private ProjectCategoryType filterCategory;
+    private String filterCategory;
     private Date filterStartDate;
     private Date filterEndDate;
-    
-    // 14 digits before the decimal point and up to 2 digits after the decimal point.
+
+    // 14 digits before the decimal point and up to 2 digits after the decimal
+    // point.
     @Digits(integer = 14, fraction = 2)
-    private double value;
+    private Double value;
 
     private Instant createdAt;
 }
