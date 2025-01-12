@@ -56,7 +56,7 @@ public class Donor implements Serializable{
     private Double monthlyDonation = 0.0;
 
     @DBRef
-    private List<Subscription> subscriptions;
+    private List<Object> subscriptions;
 
     @Nullable
     private String stripeCustomerId;
