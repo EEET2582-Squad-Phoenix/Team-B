@@ -150,8 +150,6 @@ public class CharityService {
         existingCharity.setDisplayedIntroVid(charity.getDisplayedIntroVid());
         existingCharity.setIntroVidUrl(charity.getIntroVidUrl());
         existingCharity.setLogoUrl(charity.getLogoUrl());
-        existingCharity.setDisplayedIntroVid(charity.getDisplayedIntroVid());
-        existingCharity.setDisplayedLogo(charity.getDisplayedLogo());
 
         // update account if needed
         if (getAccount(existingCharity) != null) {
