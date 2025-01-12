@@ -157,7 +157,7 @@ public class CharityService {
             // existingCharity.getAccount().setEmail(charity.getAccount().getEmail());
             // existingCharity.getAccount().setPassword(passwordEncoding.passwordEncoder().encode(charity.getAccount().getPassword()));
         }
-        return charityRepository.save(charity);
+        return charityRepository.save(existingCharity);
     }
 
     // Delete charity
