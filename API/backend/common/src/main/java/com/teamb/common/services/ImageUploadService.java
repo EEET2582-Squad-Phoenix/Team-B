@@ -17,7 +17,6 @@ public class ImageUploadService {
         cloudinary = new Cloudinary("cloudinary://445236893585978:NIBpyivrPUPW5fFQMOw5sx2Y-s8@dyb0upbnh");
     }
 
-
     public String uploadImage(MultipartFile file, int width, int height) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                 "transformation", new Transformation().width(width).height(height).crop("fill").gravity("auto")

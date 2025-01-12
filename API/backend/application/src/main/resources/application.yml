@@ -17,7 +17,23 @@ spring:
             enable: true
   config:
     import: optional:file:.env
-  jpa:
-    show-sql: true
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: notification-group
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+        
+
+
+  redis:
+    host: redis-test
+    port: 6379
+  cache:
+    type: redis
 
 #Old mongodb url: mongodb+srv://donambinh2002:passw0rd@news.s0vit.mongodb.net/

@@ -1,7 +1,6 @@
 package com.teamb.charity.repositories;
 
 import com.teamb.charity.models.CharityProject;
-import com.teamb.charity.models.Continent;
 
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -14,7 +13,7 @@ import java.util.List;
 public interface CharityProjectRepository extends MongoRepository<CharityProject, String> {
      List<CharityProject> findAllByNameContainingIgnoreCase(String name);
 
-     List<CharityProject> findAllByContinent(Continent continent);
+     List<CharityProject> findAllByContinent(String continent);
 
      @Query("select pc from charityProjects pc where pc.category = ?1")
      List<CharityProject> findByCond(String cond);

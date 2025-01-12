@@ -18,12 +18,9 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-
-
     public List<Account> getAllAccounts(){
         return accountRepository.findAll();
     }
-
 
     public ResponseEntity<Account> getAccountByAccountId(String accountId) {
         Optional<Account> accountOptional = accountRepository.findById(accountId);
@@ -35,7 +32,7 @@ public class AccountService {
         }
     }
 
-   
+    // get account
     public Account updateAccount(Account account, String id){
         Account existingAccount = accountRepository.findById(id).orElseThrow(() -> 
             new RuntimeException("Account not found with id: " + account.getId())
@@ -57,4 +54,8 @@ public class AccountService {
         accountRepository.deleteById(accountId);
         return "Account with id " + accountId + " deleted";
     }
+
+
+
+
 }

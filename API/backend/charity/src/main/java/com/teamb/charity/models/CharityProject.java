@@ -59,3 +59,4 @@ public class CharityProject {
     @NotNull
     private String continent;
 }
+
