@@ -59,9 +59,6 @@ public class DonorService {
         if (donor.getLanguage() == null || donor.getLanguage().isEmpty()) {
             throw new IllegalArgumentException("Donor language is required");
         }
-        if (getAccount(donor) == null) {
-            throw new IllegalArgumentException("Donor account cannot be null");
-        }
     }
 
     // Fetch account by donor
@@ -189,12 +186,11 @@ public class DonorService {
         existingDonor.setSubscriptions(donor.getSubscriptions());
         existingDonor.setStripeCustomerId(donor.getStripeCustomerId());
 
-
+        Account updatedAccount = getAccount(existingDonor);
         // Update account fields if needed
-        if (getAccount(existingDonor) != null) {
-            getAccount(existingDonor).setUpdatedAt(Instant.now());
-            // existingDonor.getAccount().setEmail(donor.getAccount().getEmail());
-            // existingDonor.getAccount().setPassword(passwordEncoding.passwordEncoder().encode(donor.getAccount().getPassword())); 
+        if (updatedAccount != null) {
+            updatedAccount.setUpdatedAt(Instant.now());
+            accountRepository.save(updatedAccount);
         }
 
         return donorRepository.save(existingDonor);

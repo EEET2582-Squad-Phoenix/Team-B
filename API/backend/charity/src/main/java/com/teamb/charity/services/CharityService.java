@@ -51,9 +51,6 @@ public class CharityService {
         if (charity.getType() == null) {
             throw new IllegalArgumentException("Charity type is required");
         }
-        if (validateAccount && (charity.getAccount() == null)) {
-            throw new IllegalArgumentException("Charity account is required");
-        }
     }
 
     // Fetch charity account by id
@@ -151,11 +148,11 @@ public class CharityService {
         existingCharity.setIntroVidUrl(charity.getIntroVidUrl());
         existingCharity.setLogoUrl(charity.getLogoUrl());
 
+        Account updateAccount = getAccount(existingCharity);
         // update account if needed
-        if (getAccount(existingCharity) != null) {
-            getAccount(existingCharity).setUpdatedAt(Instant.now());
-            // existingCharity.getAccount().setEmail(charity.getAccount().getEmail());
-            // existingCharity.getAccount().setPassword(passwordEncoding.passwordEncoder().encode(charity.getAccount().getPassword()));
+        if (updateAccount != null) {
+            updateAccount.setUpdatedAt(Instant.now());
+            accountRepository.save(updateAccount);
         }
         return charityRepository.save(existingCharity);
     }
