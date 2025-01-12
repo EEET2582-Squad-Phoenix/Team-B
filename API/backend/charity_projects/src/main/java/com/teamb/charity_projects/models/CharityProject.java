@@ -102,7 +102,6 @@ public class CharityProject {
     @DBRef
     private List<Donor> donorList;
 
-    //! Rerturn Donor list (email, role, id)
     // Return emails and roles of donors
     public List<Object> getDonorEmailsAndRoles() {
         return donorList.stream()

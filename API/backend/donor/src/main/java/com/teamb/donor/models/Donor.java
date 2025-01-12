@@ -61,7 +61,7 @@ public class Donor implements Serializable{
 
     //! Return what data type?
     @DBRef
-    private List<Object> subscriptions;
+    private Subscription subscription;
 
     @Nullable
     private String stripeCustomerId;
