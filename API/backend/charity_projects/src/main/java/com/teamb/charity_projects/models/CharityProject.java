@@ -7,7 +7,7 @@ import com.teamb.common.models.ProjectStatus;
 import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.donor.models.Donor;
 // import com.teamb.common.models.Region;
-
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 // import java.time.Duration;
 import java.util.Date;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -64,26 +64,37 @@ public class CharityProject {
     @Builder.Default
     private ProjectStatus status = ProjectStatus.UNAPPROVED;
 
-    //! Recommendation: Make halt as a different entity including 2 halted reasons (for charity and for donors), a timestamp
-    // private String haltedReason;
-
-    private boolean highlighted;
+    private boolean isHighlighted;
 
     //! Optional: Get rid of fundStatus as you can compare raisedAmount and goalAmount to determine the status
     @Builder.Default
     private FundStatus fundStatus = FundStatus.ONGOING;
 
     @NotNull
-    private Date endedAt;
-    private Date createdAt; // = startAt
+    private Date startDate;
+    @NotNull
+    private Date endDate;
+    @AssertTrue(message = "End date must be after start date")
+    private boolean isEndDateAfterStartDate() {
+        return endDate != null && startDate != null && endDate.after(startDate);
+    }
+
+    private Date createdAt;
     private Date updatedAt;
 
     @NotEmpty(message = "At least one category must be selected.")
-    private List<ProjectCategoryType> categories;
+    @Size(max = 8, message = "A maximum of 8 categories can be selected.")
+    private List<@NotNull ProjectCategoryType> categories;
+
+    @AssertTrue(message = "Categories must be unique.")
+    private boolean isCategoriesUnique() {
+        return categories != null && categories.stream().distinct().count() == categories.size();
+    }
 
     @Nullable
     private String stripeProductId;
 
+    // ! charityID or charity
     @DBRef
     @NotNull
     private Charity charity;
@@ -91,8 +102,26 @@ public class CharityProject {
     @DBRef
     private List<Donor> donors;
 
-    // ! Consider getting rid of this
-    // @DBRef
+    // ! Rerturn Donor list (email, role, id)
+    // donorList: [
+    //  {
+    //     email: { type: String},
+    //     role: { type: String}, // User role, e.g., "donor", "admin"
+    //     _id: false,// Reference to Donor
+    //   },
+    // ],
+    // public List<String> getDonorEmails() {
+    //     return donors.stream()
+    //                  .map(Donor::getEmail)
+    //                  .collect(Collectors.toList());
+    // }
+
+    // public List<String> getDonorRoles() {
+    //     return donors.stream()
+    //                  .map(Donor::getRole)
+    //                  .collect(Collectors.toList());
+    // }
+
     @NotNull
     private String continent;
 }

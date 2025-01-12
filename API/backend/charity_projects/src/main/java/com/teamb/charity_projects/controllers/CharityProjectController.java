@@ -131,7 +131,7 @@ public class CharityProjectController {
         return ResponseEntity.ok(highlightedProjects);
     }
 
-    //! Halt charity project
+    // Halt charity project
     @PostMapping("/halt/{id}")
     public ResponseEntity<?> haltCharityProject(@PathVariable String id, @RequestBody Halt haltReason) {
         try {

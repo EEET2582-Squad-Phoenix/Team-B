@@ -21,4 +21,6 @@ public class UpdateProjectDTO {
     private String country;
     private List<ProjectCategoryType> categories;
     private BigDecimal goalAmount;
+
+    //! isGlobal, status, isHighlighted, fundStatus, startDate, endDate
 }

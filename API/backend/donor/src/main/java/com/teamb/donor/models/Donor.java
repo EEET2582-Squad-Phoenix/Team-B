@@ -55,6 +55,11 @@ public class Donor implements Serializable{
     @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     private Double monthlyDonation = 0.0;
 
+    // @Min(0)
+    // @Digits(integer = Integer.MAX_VALUE, fraction = 2)
+    //! private Double totalDonation = 0.0;
+
+    //! Return what data type?
     @DBRef
     private List<Object> subscriptions;
 

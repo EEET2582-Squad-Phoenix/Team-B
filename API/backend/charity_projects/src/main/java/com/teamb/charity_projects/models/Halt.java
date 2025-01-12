@@ -15,19 +15,13 @@ import java.time.LocalDateTime;
 @Document("halts")
 @AllArgsConstructor
 public class Halt {
-
     //Auto generated id
-
     private String charityProjectId = null;
 
     private String haltedReasonDonor;
-
     private String haltedReasonCharity;
 
     @CreatedDate
     private LocalDateTime createdAt;
-
-    //! Get rid of it
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 }
+
