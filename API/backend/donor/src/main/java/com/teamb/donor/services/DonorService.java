@@ -85,12 +85,12 @@ public class DonorService {
         return donorRepository.findByFirstNameOrLastName(name);
     }
 
-    // Return all subscriptions for a donor
+    // Return donor's subscription
     @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
-    public List<Subscription> getSubscriptions(String id) {
-        return donorRepository.findSubscriptionsById(id).stream()
-                .map(subscription -> (Subscription) subscription)
-                .collect(Collectors.toList());
+    public Subscription getSubscription(String id) {
+        return donorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Donor not found"))
+                .getSubscription();
     }
 
     // Return donation for a donor
@@ -205,7 +205,7 @@ public class DonorService {
         existingDonor.setAddress(donor.getAddress());
         existingDonor.setLanguage(donor.getLanguage());
         existingDonor.setMonthlyDonation(donor.getMonthlyDonation());
-        existingDonor.setSubscriptions(donor.getSubscriptions());
+        existingDonor.setSubscription(donor.getSubscription());
         existingDonor.setStripeCustomerId(donor.getStripeCustomerId());
 
         Account updatedAccount = getAccount(existingDonor);
