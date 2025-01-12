@@ -25,17 +25,16 @@ import java.util.function.Function;
 @Service
 @RequiredArgsConstructor
 public class StatisticService {
-    //STORE VALUE TIME OF VIETNAM:0 -4-8-12-16-20-24
+    // STORE VALUE TIME OF VIETNAM:0 -4-8-12-16-20-24
 
     private static final Integer MAXIMUM_ACCEPTABLE_OUTDATED_HRS = 4;
 
-    private static final Function<FluentQuery.FetchableFluentQuery<Statistic>, Optional<Statistic>> GET_FIRST_ORDER_DESC_BY_CREATED_AT = (q) -> q.sortBy(Sort.by("createdAt").descending()).first();
+    private static final Function<FluentQuery.FetchableFluentQuery<Statistic>, Optional<Statistic>> GET_FIRST_ORDER_DESC_BY_CREATED_AT = (
+            q) -> q.sortBy(Sort.by("createdAt").descending()).first();
 
     private final StatisticRepository statisticRepository;
 
-
     private final CharityProjectRepository charityProjectRepository;
-
 
     private final DonationRepository donationRepository;
     private final ContinentRepository continentRepository;
@@ -49,15 +48,15 @@ public class StatisticService {
 
         var statistic = statisticRepository.findBy(
                 Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
-                GET_FIRST_ORDER_DESC_BY_CREATED_AT
-        ).orElse(baseValue);
+                GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(baseValue);
 
         // if statistic found and created time is not outdated
-        if (statistic.getId() != null && statistic.getCreatedAt().plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
+        if (statistic.getId() != null && statistic.getCreatedAt()
+                .plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
             return statistic;
         }
 
-        //Outdated... Updating new value
+        // Outdated... Updating new value
         double totalDonationValue = isDonor
                 ? donationRepository.sumDonationAmountByDonorId(userTargetID)
                 : charityProjectRepository.sumDonationAmountByCharityId(userTargetID);
@@ -79,15 +78,15 @@ public class StatisticService {
 
         var statistic = statisticRepository.findBy(
                 Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
-                GET_FIRST_ORDER_DESC_BY_CREATED_AT
-        ).orElse(baseValue);
+                GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(baseValue);
 
         // if statistic found and created time is not outdated
-        if (statistic.getId() != null && statistic.getCreatedAt().plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
+        if (statistic.getId() != null && statistic.getCreatedAt()
+                .plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
             return statistic;
         }
 
-        //Outdated... Updating new value
+        // Outdated... Updating new value
         int totalProjectCount = isDonor
                 ? donationRepository.countDistinctProjectsByDonorId(userTargetID)
                 : charityProjectRepository.countProjectsByCharityId(userTargetID);
@@ -102,7 +101,8 @@ public class StatisticService {
 
     /**
      * Calculate the total donation of all the projects in the system.
-     * the new value will be updated if the record in the db is {@value MAXIMUM_ACCEPTABLE_OUTDATED_HRS} hours ago.
+     * the new value will be updated if the record in the db is
+     * {@value MAXIMUM_ACCEPTABLE_OUTDATED_HRS} hours ago.
      *
      * @param filterStartDate left boundary of the filter. Will be flooring to HOURS
      * @param filterEndDate   right boundary of the filter. Will be ceiling to HOURS
@@ -118,19 +118,19 @@ public class StatisticService {
         var statistic = statisticRepository
                 .findBy(
                         Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
-                        GET_FIRST_ORDER_DESC_BY_CREATED_AT
-                )
+                        GET_FIRST_ORDER_DESC_BY_CREATED_AT)
                 .orElse(Statistic.builder()
                         .filterStartDate(filterStartDate)
                         .filterEndDate(filterEndDate)
                         .build());
 
         // if statistic found and created time is not outdated
-        if (statistic.getId() != null && statistic.getCreatedAt().plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
+        if (statistic.getId() != null && statistic.getCreatedAt()
+                .plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
             return statistic;
         }
 
-        //Outdated... Updating new value
+        // Outdated... Updating new value
         double totalDonationValue = donationRepository.sumAllDonationValues();
 
         if (statistic.getId() == null) {
@@ -143,49 +143,61 @@ public class StatisticService {
 
     /**
      * Calculate the project count in the system base on filter
-     * the new value will be updated if the record in the db is {@value MAXIMUM_ACCEPTABLE_OUTDATED_HRS} hours ago.
+     * the new value will be updated if the record in the db is
+     * {@value MAXIMUM_ACCEPTABLE_OUTDATED_HRS} hours ago.
      *
      * @param filter Statistic object that has filter value
      * @return
      */
     public Statistic calculateProjectCount(Statistic filter) {
-
-        log.info("filter values: {}", filter);
-
+        log.info("Filter values received: {}", filter);
+    
+        // Fetch matching statistic or create a new one
         Statistic statistic = statisticRepository
                 .findBy(
-                        Example.of(filter, ExampleMatcher.matching().withIgnoreCase()),
-                        GET_FIRST_ORDER_DESC_BY_CREATED_AT)
-                .orElse(filter);
-
-        // if statistic found and created time is not outdated
+                    Example.of(filter, ExampleMatcher.matching()
+                        .withIgnoreCase()
+                        .withIgnorePaths("value")
+                        .withIncludeNullValues()), // Include nulls explicitly
+                    GET_FIRST_ORDER_DESC_BY_CREATED_AT
+                )
+                .orElseGet(() -> {
+                    // If no matching record exists, create a new one
+                    Statistic newStatistic = Statistic.builder()
+                            .id(UUID.randomUUID().toString())
+                            .statisticType(filter.getStatisticType())
+                            .build();
+                    log.info("No existing statistic found, creating new: {}", newStatistic);
+                    return newStatistic;
+                });
+    
+        // Explicitly update fields, including nulls
+        statistic.setFilterCountry(filter.getFilterCountry());
+        statistic.setFilterContinent(filter.getFilterContinent()); // Allow overwriting with null
+        statistic.setFilterCategory(filter.getFilterCategory());
+        statistic.setFilterStartDate(filter.getFilterStartDate());
+        statistic.setFilterEndDate(filter.getFilterEndDate());
+    
+        // If the statistic is not outdated, return it
         if (statistic.getId() != null
                 && statistic.getCreatedAt() != null
-                && statistic.getCreatedAt().plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
+                && statistic.getCreatedAt().plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS)
+                .isAfter(Instant.now())) {
             return statistic;
         }
-
-        //Outdated... Updating new value
-        CharityProject countCondition = CharityProject.builder()
-                .continent(filter.getFilterContinent())
-                .category(filter.getFilterCategory() == null ? null : List.of(filter.getFilterCategory().name()))
-                .country(filter.getFilterCountry())
-                .build();
-        log.info("countCondition = {}", countCondition);
+    
+        // Calculate new value if needed
         long totalProjectCount = charityProjectRepository.countBy(
                 valueOrEmpty(filter.getFilterContinent()),
                 valueOrEmpty(filter.getFilterCountry()),
                 valueOrEmpty(filter.getFilterCategory())
         );
-
-        log.info("project counted: {}", totalProjectCount);
-
-        if (statistic.getId() == null) {
-            statistic.setId(UUID.randomUUID().toString());
-        }
+    
+        log.info("Project count calculated: {}", totalProjectCount);
+    
         statistic.setValue(totalProjectCount);
         statistic.setCreatedAt(Instant.now());
-
+    
         return statisticRepository.save(statistic);
     }
 
