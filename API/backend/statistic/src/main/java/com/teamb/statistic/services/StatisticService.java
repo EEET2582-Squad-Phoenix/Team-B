@@ -1,7 +1,6 @@
 package com.teamb.statistic.services;
 
 import com.teamb.charity.models.CharityProject;
-import com.teamb.charity.repositories.ContinentRepository;
 import com.teamb.statistic.models.Statistic;
 import com.teamb.statistic.models.StatisticType;
 
@@ -38,7 +37,7 @@ public class StatisticService {
     private final CharityProjectRepository charityProjectRepository;
 
     private final DonationRepository donationRepository;
-    private final ContinentRepository continentRepository;
+    // private final ContinentRepository continentRepository;
 
     // Calculate donation value for one user
     public Statistic calculateDonationValueForOneTarget(String userTargetID, boolean isDonor) {
