@@ -40,14 +40,7 @@ public class CharityController {
     public List<Charity> getAllCharities(){
         return service.getAllCharities();
     }
-
-    // Fetch charity by id
-    @GetMapping("/{id}")
-    public ResponseEntity<Charity> getCharityById(@PathVariable String id){
-        Charity charity = service.getCharityByAccountId(id);
-        return ResponseEntity.ok(charity);
-    }
-
+    
     // Fetch charity by name
     @GetMapping("/name/{name}")
     public ResponseEntity<Charity> getCharityByName(@PathVariable String name){

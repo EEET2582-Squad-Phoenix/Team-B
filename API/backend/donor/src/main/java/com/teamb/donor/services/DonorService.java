@@ -91,7 +91,7 @@ public class DonorService {
     // Return all subscriptions for a donor
     @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
     public List<Subscription> getSubscriptions(String id) {
-        return donorRepository.getSubscriptions(id).stream()
+        return donorRepository.findSubscriptionsById(id).stream()
                 .map(subscription -> (Subscription) subscription)
                 .collect(Collectors.toList());
     }

@@ -12,5 +12,5 @@ import com.teamb.donor.models.Donor;
 public interface DonorRepository extends MongoRepository<Donor, String>{
     @Query("{ $or: [ { 'firstName' : { $regex: ?0, $options: 'i' } }, { 'lastName' : { $regex: ?0, $options: 'i' } } ] }")
     List<Donor> findByFirstNameOrLastName(String name);
-    List<Subscription> getSubscriptions(String id);
+    List<Subscription> findSubscriptionsById(String id);
 }

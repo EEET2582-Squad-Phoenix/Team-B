@@ -11,5 +11,5 @@ import com.teamb.common.models.CharityType;
 @Repository
 public interface CharityRepository extends MongoRepository<Charity, String>{
     Charity findByName(String name);
-    List<Charity> findByCharityTypeIn(List<CharityType> charityTypes);
+    List<Charity> findByTypeIn(List<CharityType> types);
 }

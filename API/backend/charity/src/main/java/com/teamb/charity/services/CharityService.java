@@ -3,7 +3,6 @@ package com.teamb.charity.services;
 import java.time.Instant;
 // import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.teamb.account.models.Account;
@@ -27,10 +24,6 @@ import com.teamb.charity.repositories.CharityRepository;
 import com.teamb.common.configurations.PasswordEncoding;
 import com.teamb.common.exception.EntityNotFound;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 @Service
 public class CharityService {
@@ -90,7 +83,7 @@ public class CharityService {
     // Fetch charities by list of types;
     @Cacheable(value = "charity", condition = "#redisAvailable", key = "#type")
     public List<Charity> getCharitiesByTypes(List<CharityType> charityTypes) {
-        return charityRepository.findByCharityTypeIn(charityTypes);
+        return charityRepository.findByTypeIn(charityTypes);
     }
 
     // Create charity
