@@ -101,6 +101,16 @@ public class DonorService {
                 .getMonthlyDonation();
     }
 
+    // Return donor account's email and role by donor ID
+    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
+    public ResponseEntity<?> getDonorEmailAndRole(String id) {
+        Account account = getAccount(getDonorsByAccountId(id));
+        return ResponseEntity.ok().body(new Object() {
+            public final String email = account.getEmail();
+            public final Role role = account.getRole();
+        });
+    }
+
     //! Return donor's email
     // @Cacheable(value = "donorEmail", condition = "#redisAvailable", key = "#donor.id")
     // public String getEmail(Donor donor) {

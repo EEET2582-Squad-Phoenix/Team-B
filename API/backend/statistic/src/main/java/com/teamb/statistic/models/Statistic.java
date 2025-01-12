@@ -1,6 +1,10 @@
 package com.teamb.statistic.models;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,15 +29,27 @@ public class Statistic {
     private List<String> userTargetIDs; // List of foreign keys for multiple users
     private StatisticType statisticType;
 
-    private String filterCountry;
-    private String filterContinent;
-    private String filterCategory;
+    @NotEmpty(message = "At least one category must be selected.")
+    @Size(max = 8, message = "A maximum of 8 categories can be selected.")
+    private List<ProjectCategoryType> filterCategories;
+
+    @AssertTrue(message = "Categories must be unique.")
+    private boolean isCategoriesUnique() {
+        return filterCategories != null && filterCategories.stream().distinct().count() == filterCategories.size();
+    }
+
+    private List<String> filterCountries;
+    //! Make it enum later
+    private List<String> filterContinents;
+
     private Date filterStartDate;
     private Date filterEndDate;
+    @AssertTrue(message = "End date must be after start date")
+    private boolean isEndDateAfterStartDate() {
+        return filterEndDate != null && filterStartDate != null && filterEndDate.after(filterStartDate);
+    }
 
-    // 14 digits before the decimal point and up to 2 digits after the decimal
-    // point.
-    @Digits(integer = 14, fraction = 2)
+    @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     private Double value;
 
     private Instant createdAt;
