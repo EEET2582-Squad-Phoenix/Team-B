@@ -101,6 +101,18 @@ public class DonorService {
                 .getMonthlyDonation();
     }
 
+    //! Return donor's email
+    // @Cacheable(value = "donorEmail", condition = "#redisAvailable", key = "#donor.id")
+    // public String getEmail(Donor donor) {
+    //     return getAccount(donor).getEmail();
+    // }
+
+    //! Return donor's role
+    // @Cacheable(value = "donor", condition = "#redisAvailable", key = "#donor.id")
+    // public Role getRole(Donor donor) {
+    //     return getAccount(donor).getRole();
+    // }
+
     // Upload image for a donor
     @Caching(evict = {
         @CacheEvict(value = "donor", condition = "#redisAvailable", key = "#donorId"),

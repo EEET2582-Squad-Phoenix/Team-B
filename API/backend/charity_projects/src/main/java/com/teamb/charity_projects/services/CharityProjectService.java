@@ -234,15 +234,15 @@ public class CharityProjectService {
         CharityProject project = charityProjectRepository.findById(projectId).orElseThrow(() -> new EntityNotFound("projectId", projectId));
       
         // Verify if project can be halted
-        // switch (project.getStatus()) {
-        //     case UNAPPROVED -> throw new IllegalArgumentException("Cannot halt unapproved charity project");
-        //     case HALTED -> throw new IllegalArgumentException("This charity project is already halted");
-        //     case INACTIVATED -> throw new IllegalArgumentException("This charity project is already deactivated");
-        //     case COMPLETED -> throw new IllegalArgumentException("This charity project is already completed");
-        //     default -> {
-        //         // No action needed for other statuses
-        //     }
-        // }
+        switch (project.getStatus()) {
+            case UNAPPROVED -> throw new IllegalArgumentException("Cannot halt unapproved charity project");
+            case HALTED -> throw new IllegalArgumentException("This charity project is already halted");
+            case INACTIVATED -> throw new IllegalArgumentException("This charity project is already deactivated");
+            case COMPLETED -> throw new IllegalArgumentException("This charity project is already completed");
+            default -> {
+                // No action needed for other statuses
+            }
+        }
         
         haltReason.setCharityProjectId(projectId);
 

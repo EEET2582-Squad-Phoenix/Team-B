@@ -28,10 +28,7 @@ public class Subscription {
     @DBRef
     private String donorId;
 
-    @NotNull
-    private String region; // Continent
-
-    @NotNull
+    private String continent;
     List<ProjectCategoryType> categories;
 
     @CreatedDate
@@ -39,11 +36,4 @@ public class Subscription {
 
     @LastModifiedDate
     private Instant updatedAt;
-
-    public enum Region {
-        AFRICA,
-        EUROPE,
-        ASIA,
-        AMERICA
-    }
 }
