@@ -1,94 +1,74 @@
 package com.teamb.authentication.services;
 
-import java.util.Base64;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import org.springframework.stereotype.Service;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JWTService {
 
-    private String secretKey = "T9s4/KBX8vjsXPyUou2IWiJtvnpn7W5UK983YO6avSs=";
+    private String secretKey = "mHbLsmh+uFlpYOlg7doIys4aPSzj6CpJG0kNHtW/EXA=";
+    private final Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
-    public JWTService(){
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            // SecretKey sk = keyGen.generateKey();
-            // secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public JWTService() {
         
     }
 
-    public String generateToken(String email, String id) {
-        Map<String, Object> claims =  new HashMap<>();
-        claims.put("id", id);
+    public String generateToken(String email, String accountId, String role) {
+        Map<String, Object> claims = new HashMap<>();
         
-        long expirationTime = 3 * 60 * 60 * 1000;
-        return Jwts.builder()
-                .claims()
-                .add(claims)
-                .subject(email)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
-                .and()
-                .signWith(getKey(), SignatureAlgorithm.HS256)
-                .compact();
 
-  
-    }
-
-    private SecretKey getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return JWT.create()
+                .withClaim("email", email)
+                .withClaim("accountId", accountId)
+                .withClaim("role", role)
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + (10 * 24 * 60 * 60 * 1000)))
+                .sign(algorithm);
     }
 
     public String extractEmail(String token) {
-        // extract the username from jwt token
-        return extractClaim(token, Claims::getSubject);
+        return JWT.require(algorithm)
+            .build()
+            .verify(token)
+            .getClaim("email")  // Extract the email from the claims
+            .asString();
     }
 
-    public String extractId(String token) {
-        return extractClaim(token, claims -> claims.get("id", String.class));
+    public String extractAccountId(String token) {
+        return JWT.require(algorithm)
+            .build()
+            .verify(token)
+            .getClaim("accountId")  // Extract the email from the claims
+            .asString();
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimResolver.apply(claims);
+    public String extractRole(String token) {
+        return JWT.require(algorithm)
+            .build()
+            .verify(token)
+            .getClaim("role")  // Extract the email from the claims
+            .asString();
     }
 
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
-
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String userName = extractEmail(token);
-        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public boolean validateToken(String token, String email) {
+        try {
+            String tokenEmail = extractEmail(token);
+            return tokenEmail.equals(email) && !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        Date expiration = JWT.require(Algorithm.HMAC256(secretKey))
+                .build()
+                .verify(token)
+                .getExpiresAt();
+        return expiration.before(new Date());
     }
 }

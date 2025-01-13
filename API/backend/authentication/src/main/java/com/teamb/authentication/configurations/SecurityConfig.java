@@ -43,9 +43,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(auth-> auth
                 .requestMatchers("/auth/**", "/error").permitAll()
-                .requestMatchers("/account/**", "admin/charity/**", "admin/donor/**", "admin/projects/**").hasRole("ADMIN")
-                .requestMatchers("/account/**", "donor/**").hasRole("DONOR")
-                .requestMatchers("/account/**", "charity/**").hasRole("CHARITY")
+                .requestMatchers("/donor/**", "/organization/**").permitAll() // Allow all access to these routes
+                .requestMatchers("/account/**", "/admin/charity/**", "/admin/donor/**", "/admin/projects/**").hasRole("ADMIN")
+                .requestMatchers("/account/**", "/donor/**").hasRole("DONOR")
+                .requestMatchers("/account/**", "/charity/**").hasRole("CHARITY")
                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

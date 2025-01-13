@@ -1,12 +1,9 @@
 package com.teamb.charity.models;
 
-import com.mongodb.lang.Nullable;
 import com.teamb.common.models.FundStatus;
 import com.teamb.common.models.ProjectStatus;
-// import com.teamb.common.models.Region;
-import jakarta.validation.constraints.Digits;
+import com.teamb.common.models.Region;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,10 +11,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-// import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.math.BigDecimal;
-// import java.time.Duration;
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
@@ -25,65 +22,41 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("charityProjects")
+@Document("charityprojects")
 public class CharityProject {
     @Id
     private String id;
-
     @NotNull
-    @Size(min = 1, max = 255)
     private String name;
-
-    //! Thumbnail is recommended as a separate attribute.
-    @Size(max = 15)
     private List<String> imageUrls;
-    @Size(max = 4)
     private List<String> videoUrls;
-
     @NotNull
-    @Size(min = 1, max = 255)
     private String description;
     @NotNull
-    @Size(min = 1, max = 100)
     private String country;
-
-    @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     @NotNull
     private BigDecimal goalAmount;
-    @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     @Builder.Default
     private BigDecimal raisedAmount = BigDecimal.ZERO;
-
     private boolean isGlobal;
     @Builder.Default
     private ProjectStatus status = ProjectStatus.UNAPPROVED;
-
-    //! Recommendation: Make halt as a different entity including 2 halted reasons (for charity and for donors), a timestamp
     private String haltedReason;
-
     private boolean highlighted;
-
-    //! Optional: Get rid of fundStatus as you can compare raisedAmount and goalAmount to determine the status
     @Builder.Default
     private FundStatus fundStatus = FundStatus.ONGOING;
-
     @NotNull
+    private Duration duration;
     private Date endedAt;
-    private Date createdAt; // = startAt
+    private List<String> category;
+
+    private Date createdAt;
     private Date updatedAt;
-
-    //! A project can have multiple category enums
-    private String category;
-
-    @Nullable
-    private String stripeProductId;
 
     @DBRef
     @NotNull
     private Charity charity;
-
-    // ! Consider getting rid of this
-    @DBRef
     @NotNull
-    private Continent continent;
+    private String continent;
 }
+

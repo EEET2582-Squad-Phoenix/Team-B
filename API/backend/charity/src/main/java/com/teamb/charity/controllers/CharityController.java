@@ -14,13 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 // import com.teamb.account.repositories.AccountRepository;
 import com.teamb.charity.models.Charity;
 import com.teamb.charity.services.CharityService;
-import org.springframework.web.bind.annotation.PostMapping;
+import com.teamb.common.models.CharityType;
+// import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import org.springframework.http.HttpStatus;
-
-
 
 @RestController
 @RequestMapping("/charity")
@@ -29,21 +28,30 @@ public class CharityController {
     @Autowired
     private CharityService service;
 
+    // Fetch charity account by id
+    @GetMapping("/{id}")
+    public ResponseEntity<Charity> getCharityAccountById(@PathVariable String id){
+        Charity charity = service.getCharityByAccountId(id);
+        return ResponseEntity.ok(charity);
+    }
+
+    // Fetch all charities
     @GetMapping("/all")
     public List<Charity> getAllCharities(){
         return service.getAllCharities();
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Charity> getCharityById(@PathVariable String id){
-        return service.getCharitiesByAccountId(id);
+    
+    // Fetch charity by name
+    @GetMapping("/name/{name}")
+    public ResponseEntity<Charity> getCharityByName(@PathVariable String name){
+        Charity charity = service.getCharityByName(name);
+        return ResponseEntity.ok(charity);
     }
 
-    // Create charity
-    @PostMapping("")
-    public ResponseEntity<Charity> createCharity(@RequestBody Charity newCharity) {
-        var result = service.saveCharity(newCharity);        
-        return ResponseEntity.ok(result);
+    // Fetch charities by list of types
+    @GetMapping("/type")
+    public List<Charity> getCharitiesByType(@RequestBody List<CharityType> charityTypes){
+        return service.getCharitiesByTypes(charityTypes);
     }
 
     // Update charity
@@ -60,6 +68,6 @@ public class CharityController {
         ProblemDetail deletedMsg = ProblemDetail.forStatus(HttpStatus.OK);
         deletedMsg.setTitle("Charity deleted successfully");
         deletedMsg.setDetail(String.format("Charity with id %s deleted successfully", id));
-        return ResponseEntity.ok(deletedMsg);    }
-
+        return ResponseEntity.ok(deletedMsg);    
+    }
 }

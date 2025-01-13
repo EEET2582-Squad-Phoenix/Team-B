@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamb.account.models.Account;
 import com.teamb.authentication.services.AuthenticateService;
 import com.teamb.authentication.services.AuthenticateUserService;
+import com.teamb.common.exception.EntityNotFound;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.teamb.authentication.models.Registration;
@@ -32,6 +34,7 @@ public class AuthenticationController {
 
     @Autowired
     private AuthenticateUserService authUserService;
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest, HttpServletResponse response) {
@@ -54,6 +57,19 @@ public class AuthenticationController {
         }
     }
 
+    
+    @GetMapping("/get-me")
+    public ResponseEntity<?> getMe(HttpServletRequest request) {
+        try {
+            return service.getMe(request);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(401).body(Map.of("error", e.getMessage()));
+        } catch (EntityNotFound e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+
     @GetMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         Cookie jwtCookie = new Cookie("jwt", null);
@@ -65,7 +81,6 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
-        
 
     @PostMapping("/register")
     // @ResponseStatus(HttpStatus.CREATED)

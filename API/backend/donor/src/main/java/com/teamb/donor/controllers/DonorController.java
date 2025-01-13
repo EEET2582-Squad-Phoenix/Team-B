@@ -26,15 +26,35 @@ public class DonorController {
     // Get a donor by ID
     @GetMapping("/{id}")
     public ResponseEntity<Donor> getDonorById(@PathVariable String id) {
-        return donorService.getDonorsByAccountId(id);
+        Donor donor = donorService.getDonorsByAccountId(id);
+        return ResponseEntity.ok(donor);
+    }
+
+    // Get a donor by name
+    @GetMapping("/name/{name}")
+    public List<Donor> getDonorByName(@PathVariable String name) {
+        return donorService.getDonorsByName(name);
+    }
+
+    // Return all subscriptions for a donor
+    @GetMapping("/{id}/subscriptions")
+    public List<?> getSubscriptions(@PathVariable String id) {
+        return donorService.getSubscriptions(id);
+    }
+
+    // Return monthly donation for a donor
+    @GetMapping("/{id}/monthlyDonation")
+    public Double getMonthlyDonation(@PathVariable String id) {
+        return donorService.getMonthlyDonation(id);
     }
 
     // Create a new donor
-    @PostMapping("")
-    public ResponseEntity<Donor> createDonor(@RequestBody Donor donor) {
-        Donor createdDonor = donorService.saveDonor(donor);
-        return ResponseEntity.ok(createdDonor);
-    }
+    // Incorrect, does not create account alongside donor
+    // @PostMapping("")
+    // public ResponseEntity<Donor> createDonor(@RequestBody Donor donor) {
+    //     Donor createdDonor = donorService.saveDonor(donor);
+    //     return ResponseEntity.ok(createdDonor);
+    // }
 
     // Update an existing donor
     @PutMapping("/{id}")

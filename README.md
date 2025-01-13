@@ -12,7 +12,7 @@ ADMIN
     "password": "Passw0rd123"
 
 CHARITY
-    "email": "TestCharity1@gmail.com",
+    "email": "stuanhv@gmail.com",
     "password": "Password-1234"
 
 DONOR
@@ -21,6 +21,13 @@ DONOR
 
     "email": "testRegisterDonor1@gmail.com",
     "password": "Password-1234"
+```
+
+**Docker commands**
+```bash
+Important: redirect to Team-B\Redis-docker
+docker compose up
+docker compose down
 ```
 
 # Documents

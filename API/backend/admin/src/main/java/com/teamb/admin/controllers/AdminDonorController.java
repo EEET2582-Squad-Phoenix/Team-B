@@ -3,10 +3,14 @@ package com.teamb.admin.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import com.teamb.donor.dtos.CreateDonorDTO;
 import com.teamb.donor.models.Donor;
 import com.teamb.donor.services.DonorService;
 
@@ -26,12 +30,13 @@ public class AdminDonorController {
     // Get a donor by ID
     @GetMapping("/{id}")
     public ResponseEntity<Donor> getDonorById(@PathVariable String id) {
-        return donorService.getDonorsByAccountId(id);
+        Donor donor = donorService.getDonorsByAccountId(id);
+        return ResponseEntity.ok(donor);
     }
 
     // Create a new donor
     @PostMapping("")
-    public ResponseEntity<Donor> createDonor(@RequestBody Donor donor) {
+    public ResponseEntity<Donor> createDonor(@RequestBody CreateDonorDTO donor) {
         Donor createdDonor = donorService.saveDonor(donor);
         return ResponseEntity.ok(createdDonor);
     }
@@ -45,9 +50,12 @@ public class AdminDonorController {
 
     // Delete a donor by ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDonor(@PathVariable String id) {
+    public ResponseEntity<ProblemDetail> deleteDonor(@PathVariable String id) {
         donorService.deleteDonor(id);
-        return ResponseEntity.ok("Donor deleted successfully");
+        ProblemDetail deletedMsg = ProblemDetail.forStatus(HttpStatus.OK);
+        deletedMsg.setTitle("Donor deleted successfully");
+        deletedMsg.setDetail(String.format("Donor with id %s deleted successfully", id));
+        return ResponseEntity.ok(deletedMsg);
     }
 
     // Upload avatar for donor (300x300)

@@ -28,5 +28,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
         
+  redis:
+    host: redis-test
+    port: 6379
+  cache:
+    type: redis
 
 #Old mongodb url: mongodb+srv://donambinh2002:passw0rd@news.s0vit.mongodb.net/

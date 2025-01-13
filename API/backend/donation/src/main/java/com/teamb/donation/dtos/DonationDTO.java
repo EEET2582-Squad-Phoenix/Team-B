@@ -1,7 +1,11 @@
 package com.teamb.donation.dtos;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.Data;
 
 @Data
+@Document("donations")
+
 public class DonationDTO {
     private String id;
     private String donorId; // Donor ID reference
