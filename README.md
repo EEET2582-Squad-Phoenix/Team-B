@@ -8,18 +8,18 @@ step 2: run ./mvnw spring-boot:run -pl application
 **Testing accounts**
 ```bash
 ADMIN
-    "email": "admin1@gmail.com",
-    "password": "Passw0rd123"
+    "email": "admin@gmail.com"
+    "password": "admin-password123"
 
 CHARITY
     "email": "HopeFoundation@gmail.com"           "email": "BooksForAll@gmail.com"
     "password": "Hope1234!"                       "password": "Books4U!23"
 
-    "email": "GreenEarthCharity@gmail.com",       "email": "AnimalCareOrg@gmail.com",
+    "email": "GreenEarthCharity@gmail.com"        "email": "AnimalCareOrg@gmail.com"
     "password": "Earth@2025"                      "password": "Animals2023@"
 
-    "email": "FeedTheWorld@gmail.com",            "email": "SaveOurOceans@gmail.com",
-    "password": "Feeding#123",                    "password": "OceanLove!456",
+    "email": "FeedTheWorld@gmail.com"             "email": "SaveOurOceans@gmail.com"
+    "password": "Feeding#123"                     "password": "OceanLove!456"
 
 DONOR
     "email": "7@gmail.com",
