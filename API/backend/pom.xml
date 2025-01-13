@@ -28,6 +28,7 @@
         <module>notification</module>
         <module>redis</module>
         <module>charity_projects</module>
+        <module>statistic</module>
     </modules>
 
     <properties>

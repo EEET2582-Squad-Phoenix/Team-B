@@ -29,8 +29,8 @@
 
         <dependency>
             <groupId>com.teamb</groupId>
-            <artifactId>charity</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>charity_projects</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

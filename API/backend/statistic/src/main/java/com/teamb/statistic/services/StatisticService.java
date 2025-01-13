@@ -1,11 +1,11 @@
 package com.teamb.statistic.services;
 
-import com.teamb.charity.models.CharityProject;
+import com.teamb.charity_projects.models.CharityProject;
 import com.teamb.statistic.models.Statistic;
 import com.teamb.statistic.models.StatisticType;
 
 import com.teamb.statistic.repositories.StatisticRepository;
-import com.teamb.charity.repositories.CharityProjectRepository;
+import com.teamb.charity_projects.repositories.CharityProjectRepository;
 import com.teamb.donation.repositories.DonationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
