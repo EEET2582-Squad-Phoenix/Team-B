@@ -134,11 +134,15 @@ public class CharityProjectService {
 
         existingProject.setName(updatedProject.getName());
         existingProject.setThumbnailUrl(updatedProject.getThumbnailUrl());
+        existingProject.setImageUrls(updatedProject.getImageUrls());
         existingProject.setVideoUrls(updatedProject.getVideoUrls());
         existingProject.setDescription(updatedProject.getDescription());
         existingProject.setCountry(updatedProject.getCountry());
         existingProject.setCategories(updatedProject.getCategories());
         existingProject.setGoalAmount(updatedProject.getGoalAmount());
+        existingProject.setGlobal(updatedProject.getIsGlobal());
+        existingProject.setStartDate(updatedProject.getStartDate());
+        existingProject.setEndDate(updatedProject.getEndDate());
         existingProject.setUpdatedAt(Date.from(Instant.now()));
 
         CountryRequest countryRequest = new CountryRequest();
