@@ -12,12 +12,15 @@ ADMIN
     "password": "admin-password123"
 
 CHARITY
+    Vietnam - Indiviual                           Germany - Company
     "email": "HopeFoundation@gmail.com"           "email": "BooksForAll@gmail.com"
     "password": "Hope1234!"                       "password": "Books4U!23"
-
+    
+    USA - Individual                              Ukraine - Non-profit
     "email": "GreenEarthCharity@gmail.com"        "email": "AnimalCareOrg@gmail.com"
     "password": "Earth@2025"                      "password": "Animals2023@"
 
+    South Africa - Company                        Israel - Non-profit
     "email": "FeedTheWorld@gmail.com"             "email": "SaveOurOceans@gmail.com"
     "password": "Feeding#123"                     "password": "OceanLove!456"
 
