@@ -128,9 +128,9 @@ public class StatisticService {
         Statistic newStatistic = Statistic.builder()
                 .id(UUID.randomUUID().toString())
                 .statisticType(filter.getStatisticType())
-                .filterCountry(filter.getFilterCountry())
-                .filterContinent(filter.getFilterContinent())
-                .filterCategory(filter.getFilterCategory())
+                .filterCountries(filter.getFilterCountries())
+                .filterContinents(filter.getFilterContinents())
+                .filterCategories(filter.getFilterCategories())
                 .filterStartDate(filter.getFilterStartDate())
                 .filterEndDate(filter.getFilterEndDate())
                 .build();
@@ -138,9 +138,9 @@ public class StatisticService {
 
         // Calculate new value
         Double totalDonationValue = charityProjectRepository.sumTotalRaisedAmountBy(
-                valueOrEmpty(filter.getFilterContinent()),
-                valueOrEmpty(filter.getFilterCountry()),
-                valueOrEmpty(filter.getFilterCategory()));
+                valueOrEmpty(filter.getFilterContinents()),
+                valueOrEmpty(filter.getFilterCountries()),
+                valueOrEmpty(newStatistic.getFilterCategories()));
 
         log.info("Total donation value before null check: {}", totalDonationValue);
 
@@ -185,9 +185,9 @@ public class StatisticService {
         Statistic newStatistic = Statistic.builder()
                 .id(UUID.randomUUID().toString())
                 .statisticType(filter.getStatisticType())
-                .filterCountry(filter.getFilterCountry())
-                .filterContinent(filter.getFilterContinent())
-                .filterCategory(filter.getFilterCategory())
+                .filterCountries(filter.getFilterCountries())
+                .filterContinents(filter.getFilterContinents())
+                .filterCategories(filter.getFilterCategories())
                 .filterStartDate(filter.getFilterStartDate())
                 .filterEndDate(filter.getFilterEndDate())
                 .build();
@@ -195,9 +195,9 @@ public class StatisticService {
 
         // Calculate new value
         Double totalProjectCount = charityProjectRepository.countBy(
-                valueOrEmpty(filter.getFilterContinent()),
-                valueOrEmpty(filter.getFilterCountry()),
-                valueOrEmpty(filter.getFilterCategory()));
+                valueOrEmpty(filter.getFilterContinents()),
+                valueOrEmpty(filter.getFilterCountries()),
+                valueOrEmpty(filter.getFilterCategories()));
         if (totalProjectCount == null) {
             totalProjectCount = 0.0;
         }
@@ -210,9 +210,9 @@ public class StatisticService {
 
     private boolean isMatchingStatistic(Statistic existingStatistic, Statistic filter) {
         return Objects.equals(existingStatistic.getStatisticType(), filter.getStatisticType())
-                && Objects.equals(existingStatistic.getFilterCountry(), filter.getFilterCountry())
-                && Objects.equals(existingStatistic.getFilterContinent(), filter.getFilterContinent())
-                && Objects.equals(existingStatistic.getFilterCategory(), filter.getFilterCategory())
+                && Objects.equals(existingStatistic.getFilterCountries(), filter.getFilterCountries())
+                && Objects.equals(existingStatistic.getFilterContinents(), filter.getFilterContinents())
+                && Objects.equals(existingStatistic.getFilterCategories(), filter.getFilterCategories())
                 && Objects.equals(existingStatistic.getFilterStartDate(), filter.getFilterStartDate())
                 && Objects.equals(existingStatistic.getFilterEndDate(), filter.getFilterEndDate());
     }

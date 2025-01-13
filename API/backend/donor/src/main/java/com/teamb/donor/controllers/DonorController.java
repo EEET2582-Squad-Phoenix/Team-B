@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.teamb.donor.models.Donor;
 import com.teamb.donor.services.DonorService;
+import com.teamb.subscription.models.Subscription;
 
 @RestController
 @RequestMapping("/donor")
@@ -36,10 +37,10 @@ public class DonorController {
         return donorService.getDonorsByName(name);
     }
 
-    // Return all subscriptions for a donor
-    @GetMapping("/{id}/subscriptions")
-    public List<?> getSubscriptions(@PathVariable String id) {
-        return donorService.getSubscriptions(id);
+    // Return a donor's subscription
+    @GetMapping("/{id}/subscription")
+    public Subscription getSubscription(@PathVariable String id) {
+        return donorService.getSubscription(id);
     }
 
     // Return monthly donation for a donor

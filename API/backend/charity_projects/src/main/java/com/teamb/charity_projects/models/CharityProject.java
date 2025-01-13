@@ -84,7 +84,7 @@ public class CharityProject {
 
     @NotEmpty(message = "At least one category must be selected.")
     @Size(max = 8, message = "A maximum of 8 categories can be selected.")
-    private List<@NotNull ProjectCategoryType> categories;
+    private List<ProjectCategoryType> categories;
 
     @AssertTrue(message = "Categories must be unique.")
     private boolean isCategoriesUnique() {
@@ -94,33 +94,25 @@ public class CharityProject {
     @Nullable
     private String stripeProductId;
 
-    // ! charityID or charity
+    //! charityID or charity
     @DBRef
     @NotNull
     private Charity charity;
 
     @DBRef
-    private List<Donor> donors;
+    private List<Donor> donorList;
 
-    // ! Rerturn Donor list (email, role, id)
-    // donorList: [
-    //  {
-    //     email: { type: String},
-    //     role: { type: String}, // User role, e.g., "donor", "admin"
-    //     _id: false,// Reference to Donor
-    //   },
-    // ],
-    // public List<String> getDonorEmails() {
-    //     return donors.stream()
-    //                  .map(Donor::getEmail)
-    //                  .collect(Collectors.toList());
-    // }
-
-    // public List<String> getDonorRoles() {
-    //     return donors.stream()
-    //                  .map(Donor::getRole)
-    //                  .collect(Collectors.toList());
-    // }
+    // Return emails and roles of donors
+    public List<Object> getDonorEmailsAndRoles() {
+        return donorList.stream()
+                .map(donor -> {
+                    return new Object() {
+                        public final String email = donor.getAccount().getEmail();
+                        public final String role = donor.getAccount().getRole().toString();
+                    };
+                })
+                .collect(Collectors.toList());
+    }
 
     @NotNull
     private String continent;

@@ -26,9 +26,9 @@ public class StatisticController {
     @PostMapping("/donation-value")
     public ResponseEntity<Statistic> calculateTotalDonationValue(
        @RequestParam StatisticType statisticType,
-            @RequestParam(required = false) String filterContinent,
-            @RequestParam(required = false) String filterCountry,
-            @RequestParam(required = false) String filterCategory,
+            @RequestParam(required = false) List<String> filterContinents,
+            @RequestParam(required = false) List<String> filterCountries,
+            @RequestParam(required = false) List<ProjectCategoryType> filterCategories,
             @RequestParam(required = false) String filterStartDate,
             @RequestParam(required = false) String filterEndDate
     ) {
@@ -36,9 +36,9 @@ public class StatisticController {
             // Build the Statistic filter object
             Statistic filter = Statistic.builder()
                     .statisticType(statisticType)
-                    .filterContinent(filterContinent)
-                    .filterCountry(filterCountry)
-                    .filterCategory(filterCategory)
+                    .filterContinents(filterContinents)
+                    .filterCountries(filterCountries)
+                    .filterCategories(filterCategories)
                     .filterStartDate(parseDate(filterStartDate))
                     .filterEndDate(parseDate(filterEndDate))
                     .build();
@@ -56,9 +56,9 @@ public class StatisticController {
     @GetMapping("/project-count")
     public ResponseEntity<Statistic> getProjectCount(
             @RequestParam StatisticType statisticType,
-            @RequestParam(required = false) String filterContinent,
-            @RequestParam(required = false) String filterCountry,
-            @RequestParam(required = false) String filterCategory,
+            @RequestParam(required = false) List<String> filterContinents,
+            @RequestParam(required = false) List<String> filterCountries,
+            @RequestParam(required = false) List<ProjectCategoryType> filterCategories,
             @RequestParam(required = false) String filterStartDate,
             @RequestParam(required = false) String filterEndDate
     ) {
@@ -66,9 +66,9 @@ public class StatisticController {
             // Build the Statistic filter object
             Statistic filter = Statistic.builder()
                     .statisticType(statisticType)
-                    .filterContinent(filterContinent)
-                    .filterCountry(filterCountry)
-                    .filterCategory(filterCategory)
+                    .filterContinents(filterContinents)
+                    .filterCountries(filterCountries)
+                    .filterCategories(filterCategories)
                     .filterStartDate(parseDate(filterStartDate))
                     .filterEndDate(parseDate(filterEndDate))
                     .build();
@@ -95,8 +95,6 @@ public class StatisticController {
         }
     }
 
-
-
     @PostMapping("/donation-value/target")
     public ResponseEntity<Statistic> calculateDonationValueForOneTarget(
             @RequestParam String userTargetID,
@@ -112,6 +110,5 @@ public class StatisticController {
         Statistic statistic = statisticService.calculateProjectCountForOneTarget(userTargetID, isDonor);
         return ResponseEntity.ok(statistic);
     }
-
 
 }
