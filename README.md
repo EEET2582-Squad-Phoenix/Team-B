@@ -25,21 +25,24 @@ CHARITY
     "password": "Feeding#123"                     "password": "OceanLove!456"
 
 DONOR
-    Vietnamese                                German
-    "email": "vietnam.donor1@gmail.com",      "email": "germany.donor1@gmail.com",
-    "password": "VND@12345",                  "password": "GermanyD1@2024",
+    Vietnamese                           German                               Qatar
+    "email": "vietnam.donor1@gmail.com"  "email": "germany.donor1@gmail.com"  "email": "qatar.donor1@gmail.com"
+    "password": "VND@12345"              "password": "GermanyD1@2024"         "password": "QatarD1@123"
     
-    "email": "vietnam.donor2@gmail.com",      "email": "germany.donor2@gmail.com",
-    "password": "VietDonor2@",                "password": "DonorDE2#",
+    "email": "vietnam.donor2@gmail.com"  "email": "germany.donor2@gmail.com"  "email": "qatar.donor2@gmail.com"
+    "password": "VietDonor2@"            "password": "DonorDE2#"              "password": "QatarDonor2#"
 
-    "email": "vietnam.donor3@gmail.com",      "email": "germany.donor3@gmail.com",
-    "password": "TuanPham@2024",              "password": "DEDonor@321",
+    "email": "vietnam.donor3@gmail.com"  "email": "germany.donor3@gmail.com"  "email": "qatar.donor3@gmail.com"
+    "password": "TuanPham@2024"          "password": "DEDonor@321"            "password": "DonorQA3@2025"
 
-    "email": "vietnam.donor4@gmail.com",      "email": "germany.donor4@gmail.com",
-    "password": "DonorVN$5678",               "password": "DonorGER4@",
+    "email": "vietnam.donor4@gmail.com"  "email": "germany.donor4@gmail.com"  "email": "qatar.donor4@gmail.com"
+    "password": "DonorVN$5678"           "password": "DonorGER4@"             "password": "QatariD4@"
 
-    "email": "vietnam.donor5@gmail.com",      "email": "germany.donor5@gmail.com",
-    "password": "VNHero@567",                 "password": "GermDonor5!",
+    "email": "vietnam.donor5@gmail.com"  "email": "germany.donor5@gmail.com"  "email": "qatar.donor5@gmail.com"
+    "password": "VNHero@567"             "password": "GermDonor5!"            "password": "QatarHero5!"
+    
+
+
 
     "email": "john.doe.donor@gmail.com"
     "password": "JohnDoe123!"
