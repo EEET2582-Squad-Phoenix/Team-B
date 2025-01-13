@@ -31,6 +31,7 @@
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+
         <!-- Add dependencies specific to the donor module -->
         <dependency>
 			<groupId>org.springframework.boot</groupId>
