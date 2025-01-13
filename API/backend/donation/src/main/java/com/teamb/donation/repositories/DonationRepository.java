@@ -31,23 +31,18 @@ public interface DonationRepository extends MongoRepository<DonationDTO, String>
 
     // Sum donation values by donor ID using aggregation
     @Aggregation(pipeline = {
-        "{ '$match': { 'donorId': ?0 } }",
+        "{ '$match': { 'donor': ?0 } }",
         "{ '$group': { '_id': null, 'totalAmount': { '$sum': '$amount' } } }"
     })
-    double sumDonationAmountByDonorId(String donorId);
+    Double sumDonationAmountByDonorId(String donorId);
 
     // Count unique projects by donor ID using aggregation
     @Aggregation(pipeline = {
-        "{ '$match': { 'donorId': ?0 } }",
-        "{ '$group': { '_id': '$projectId' } }",
+        "{ '$match': { 'donor': ?0 } }",
+        "{ '$group': { '_id': '$project' } }",
         "{ '$count': 'totalProjects' }"
     })
     Double countDistinctProjectsByDonorId(String donorId);
 
-    // Sum all donation values
-    @Aggregation(pipeline = {
-        "{ '$group': { '_id': null, 'totalAmount': { '$sum': '$amount' } } }"
-    })
-    Double sumAllDonationValues();
 
 }

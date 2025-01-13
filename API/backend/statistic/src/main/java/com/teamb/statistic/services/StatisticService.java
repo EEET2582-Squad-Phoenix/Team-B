@@ -42,61 +42,97 @@ public class StatisticService {
 
     // Calculate donation value for one user
     public Statistic calculateDonationValueForOneTarget(String userTargetID, boolean isDonor) {
-
+        log.info("Calculating donation value for userTargetID: {}, isDonor: {}", userTargetID, isDonor);
+    
         var baseValue = Statistic.builder()
                 .userTargetIDs(List.of(userTargetID))
+                .statisticType(StatisticType.DONATION_VALUE)
                 .build();
-
+    
+        log.info("Base value for statistic: {}", baseValue);
+    
         var statistic = statisticRepository.findBy(
                 Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
                 GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(baseValue);
-
+    
+        log.info("Statistic found: {}", statistic);
+    
         // if statistic found and created time is not outdated
         if (statistic.getId() != null && statistic.getCreatedAt()
                 .plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
+            log.info("Statistic is not outdated. Returning existing statistic.");
             return statistic;
         }
-
-        // Outdated... Updating new value
-        double totalDonationValue = isDonor
+    
+        log.info("Statistic is outdated or not found. Updating new value.");
+    
+        Double totalDonationValue = isDonor
                 ? donationRepository.sumDonationAmountByDonorId(userTargetID)
                 : charityProjectRepository.sumDonationAmountByCharityId(userTargetID);
-
+    
+        log.info("Total donation value calculated: {}", totalDonationValue);
+    
+        if (totalDonationValue == null) {
+            totalDonationValue = 0.0;
+            log.info("Total donation value was null, set to 0.0");
+        }
+    
         if (statistic.getId() == null) {
             statistic.setId(UUID.randomUUID().toString());
+            log.info("Generated new statistic ID: {}", statistic.getId());
         }
+    
         statistic.setValue(totalDonationValue);
         statistic.setCreatedAt(Instant.now());
-
+    
+        log.info("Saving updated statistic: {}", statistic);
+    
         return statisticRepository.save(statistic);
     }
 
+
+
     public Statistic calculateProjectCountForOneTarget(String userTargetID, boolean isDonor) {
+        log.info("Calculating project count for userTargetID: {}, isDonor: {}", userTargetID, isDonor);
+    
         var baseValue = Statistic.builder()
                 .userTargetIDs(List.of(userTargetID))
                 .statisticType(StatisticType.PROJECT_COUNT)
                 .build();
-
+    
+        log.info("Base value for statistic: {}", baseValue);
+    
         var statistic = statisticRepository.findBy(
                 Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
                 GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(baseValue);
-
+    
+        log.info("Statistic found: {}", statistic);
+    
         // if statistic found and created time is not outdated
         if (statistic.getId() != null && statistic.getCreatedAt()
                 .plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
+            log.info("Statistic is not outdated. Returning existing statistic.");
             return statistic;
         }
-
-        // Outdated... Updating new value
+    
+        log.info("Statistic is outdated or not found. Updating new value.");
+    
         Double totalProjectCount = isDonor
                 ? donationRepository.countDistinctProjectsByDonorId(userTargetID)
                 : charityProjectRepository.countProjectsByCharityId(userTargetID);
-
+    
+        log.info("Total project count calculated: {}", totalProjectCount);
+    
         if (statistic.getId() == null) {
             statistic.setId(UUID.randomUUID().toString());
+            log.info("Generated new statistic ID: {}", statistic.getId());
         }
+    
         statistic.setValue(totalProjectCount);
         statistic.setCreatedAt(Instant.now());
+    
+        log.info("Saving updated statistic: {}", statistic);
+    
         return statisticRepository.save(statistic);
     }
 

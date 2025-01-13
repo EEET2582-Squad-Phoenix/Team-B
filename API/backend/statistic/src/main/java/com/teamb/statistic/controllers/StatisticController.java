@@ -97,7 +97,7 @@ public class StatisticController {
 
 
 
-    @PostMapping("/donation-value/target")
+    @GetMapping("/donation-value/target")
     public ResponseEntity<Statistic> calculateDonationValueForOneTarget(
             @RequestParam String userTargetID,
             @RequestParam boolean isDonor) {
@@ -105,7 +105,7 @@ public class StatisticController {
         return ResponseEntity.ok(statistic);
     }
 
-    @PostMapping("/project-count/target")
+    @GetMapping("/project-count/target")
     public ResponseEntity<Statistic> calculateProjectCountForOneTarget(
             @RequestParam String userTargetID,
             @RequestParam boolean isDonor) {
