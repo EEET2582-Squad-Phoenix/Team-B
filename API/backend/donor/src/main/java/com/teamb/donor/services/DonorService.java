@@ -84,12 +84,12 @@ public class DonorService {
         return donorRepository.findByFirstNameOrLastName(name);
     }
 
-    // Return all subscriptions for a donor
-    @Cacheable(value = "donor", condition = "@redisAvailability.isRedisAvailable()", key = "#id")
-    public List<Subscription> getSubscriptions(String id) {
-        return donorRepository.findSubscriptionsById(id).stream()
-                .map(subscription -> (Subscription) subscription)
-                .collect(Collectors.toList());
+    // Return donor's subscription
+    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
+    public Subscription getSubscription(String id) {
+        return donorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Donor not found"))
+                .getSubscription();
     }
 
     // Return donation for a donor
@@ -98,6 +98,16 @@ public class DonorService {
         return donorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donor not found"))
                 .getMonthlyDonation();
+    }
+
+    // Return donor account's email and role by donor ID
+    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
+    public ResponseEntity<?> getDonorEmailAndRole(String id) {
+        Account account = getAccount(getDonorsByAccountId(id));
+        return ResponseEntity.ok().body(new Object() {
+            public final String email = account.getEmail();
+            public final Role role = account.getRole();
+        });
     }
 
     //! Return donor's email
@@ -194,7 +204,7 @@ public class DonorService {
         existingDonor.setAddress(donor.getAddress());
         existingDonor.setLanguage(donor.getLanguage());
         existingDonor.setMonthlyDonation(donor.getMonthlyDonation());
-        existingDonor.setSubscriptions(donor.getSubscriptions());
+        existingDonor.setSubscription(donor.getSubscription());
         existingDonor.setStripeCustomerId(donor.getStripeCustomerId());
 
         Account updatedAccount = getAccount(existingDonor);
