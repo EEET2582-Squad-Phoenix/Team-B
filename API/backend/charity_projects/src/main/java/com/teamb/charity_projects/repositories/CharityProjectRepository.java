@@ -50,6 +50,9 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
                     "'continent': { '$regex': ?0, '$options': 'i' }, " +
                     "'country': { '$regex': ?1, '$options': 'i' }, " +
                     "'category': { '$in': ?2 } " +
+                    "'status':{'$regex': ?3 '$options' : 'i'} " +
+                    "'startDate" +
+                    "'endDate' " +
                     "} }",
             "{ '$group': { '_id': null, 'totalRaisedAmount': { '$sum': '$raisedAmount' } } }"
     })

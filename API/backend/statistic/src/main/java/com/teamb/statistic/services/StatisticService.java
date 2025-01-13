@@ -166,6 +166,7 @@ public class StatisticService {
                 .filterCountry(filter.getFilterCountry())
                 .filterContinent(filter.getFilterContinent())
                 .filterCategory(filter.getFilterCategory())
+                .filterStatus(filter.getFilterStatus())
                 .filterStartDate(filter.getFilterStartDate())
                 .filterEndDate(filter.getFilterEndDate())
                 .build();
@@ -175,6 +176,7 @@ public class StatisticService {
         Double totalDonationValue = charityProjectRepository.sumTotalRaisedAmountBy(
                 valueOrEmpty(filter.getFilterContinent()),
                 valueOrEmpty(filter.getFilterCountry()),
+                valueOrEmpty(filter.getFilterStatus()),
                 valueOrEmptyList(filter.getFilterCategory()));
 
         log.info("Total donation value before null check: {}", totalDonationValue);
@@ -224,6 +226,7 @@ public class StatisticService {
                 .filterCountry(filter.getFilterCountry())
                 .filterContinent(filter.getFilterContinent())
                 .filterCategory(filter.getFilterCategory())
+                .filterStatus(filter.getFilterStatus())
                 .filterStartDate(filter.getFilterStartDate())
                 .filterEndDate(filter.getFilterEndDate())
                 .build();
@@ -234,6 +237,7 @@ public class StatisticService {
                 valueOrEmpty(filter.getFilterContinent()),
                 valueOrEmpty(filter.getFilterCountry()),
                 valueOrEmptyList(filter.getFilterCategory()));
+                valueOrEmpty(filter.getFilterStatus());
         if (totalProjectCount == null) {
             totalProjectCount = 0.0;
         }
@@ -249,6 +253,7 @@ public class StatisticService {
                 && Objects.equals(existingStatistic.getFilterCountry(), filter.getFilterCountry())
                 && Objects.equals(existingStatistic.getFilterContinent(), filter.getFilterContinent())
                 && Objects.equals(existingStatistic.getFilterCategory(), filter.getFilterCategory())
+                && Objects.equals(existingStatistic.getFilterStatus(), filter.getFilterStatus())
                 && Objects.equals(existingStatistic.getFilterStartDate(), filter.getFilterStartDate())
                 && Objects.equals(existingStatistic.getFilterEndDate(), filter.getFilterEndDate());
     }
