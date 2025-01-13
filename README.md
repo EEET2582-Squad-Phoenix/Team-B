@@ -12,8 +12,14 @@ ADMIN
     "password": "Passw0rd123"
 
 CHARITY
-    "email": "stuanhv@gmail.com",
-    "password": "Password-1234"
+    "email": "HopeFoundation@gmail.com"           "email": "BooksForAll@gmail.com"
+    "password": "Hope1234!"                       "password": "Books4U!23"
+
+    "email": "GreenEarthCharity@gmail.com",       "email": "AnimalCareOrg@gmail.com",
+    "password": "Earth@2025"                      "password": "Animals2023@"
+
+    "email": "FeedTheWorld@gmail.com",            "email": "SaveOurOceans@gmail.com",
+    "password": "Feeding#123",                    "password": "OceanLove!456",
 
 DONOR
     "email": "7@gmail.com",
