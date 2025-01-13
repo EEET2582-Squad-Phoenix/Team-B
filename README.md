@@ -22,11 +22,8 @@ CHARITY
     "password": "Feeding#123"                     "password": "OceanLove!456"
 
 DONOR
-    "email": "7@gmail.com",
-    "password":"1234567"
-
-    "email": "testRegisterDonor1@gmail.com",
-    "password": "Password-1234"
+    "email": "john.doe.donor@gmail.com"
+    "password": "JohnDoe123!"
 ```
 
 **Docker commands**
