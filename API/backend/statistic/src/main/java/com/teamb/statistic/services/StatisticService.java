@@ -1,6 +1,6 @@
 package com.teamb.statistic.services;
 
-import com.teamb.charity_projects.models.CharityProject;
+import com.teamb.common.models.ProjectCategoryType;
 import com.teamb.statistic.models.Statistic;
 import com.teamb.statistic.models.StatisticType;
 
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -135,15 +134,7 @@ public class StatisticService {
         return statisticRepository.save(statistic);
     }
 
-    /**
-     * Calculate the total donation of all the projects in the system.
-     * the new value will be updated if the record in the db is
-     * {@value MAXIMUM_ACCEPTABLE_OUTDATED_HRS} hours ago.
-     *
-     * @param filterStartDate left boundary of the filter. Will be flooring to HOURS
-     * @param filterEndDate   right boundary of the filter. Will be ceiling to HOURS
-     * @return
-     */
+
     public Statistic calculateTotalDonationValue(Statistic filter) {
         log.info("Filter values received: {}", filter);
         List<Statistic> allStatistics = statisticRepository.findAll();
@@ -174,10 +165,12 @@ public class StatisticService {
 
         // Calculate new value
         Double totalDonationValue = charityProjectRepository.sumTotalRaisedAmountBy(
-                valueOrEmpty(filter.getFilterContinent()),
-                valueOrEmpty(filter.getFilterCountry()),
-                valueOrEmpty(filter.getFilterStatus()),
-                valueOrEmptyList(filter.getFilterCategory()));
+                filter.getFilterCategory().isEmpty() ? Arrays.stream(ProjectCategoryType.values()).map(Enum::name).toList() : filter.getFilterCategory(),
+                valueOrMatchAllExpression(filter.getFilterContinent()),
+                valueOrMatchAllExpression(filter.getFilterCountry()),
+                filter.getFilterStatus(),
+                filter.getFilterStartDate(),
+                filter.getFilterEndDate());
 
         log.info("Total donation value before null check: {}", totalDonationValue);
 
@@ -220,29 +213,26 @@ public class StatisticService {
         }
         // Create a new Statistic object if no matching record exists or if it is
         // outdated
-        Statistic newStatistic = Statistic.builder()
-                .id(UUID.randomUUID().toString())
-                .statisticType(StatisticType.PROJECT_COUNT_SYSTEM)
-                .filterCountry(filter.getFilterCountry())
-                .filterContinent(filter.getFilterContinent())
-                .filterCategory(filter.getFilterCategory())
-                .filterStatus(filter.getFilterStatus())
-                .filterStartDate(filter.getFilterStartDate())
-                .filterEndDate(filter.getFilterEndDate())
-                .build();
-        log.info("No existing statistic found or outdated, creating new: {}", newStatistic);
+        log.info("No existing statistic found or outdated, creating new...");
+        var newStatistic = filter;
+        newStatistic.setId(UUID.randomUUID().toString());
+        newStatistic.setStatisticType(StatisticType.PROJECT_COUNT_SYSTEM);
 
         // Calculate new value
-        Double totalProjectCount = charityProjectRepository.countBy(
-                valueOrEmpty(filter.getFilterContinent()),
-                valueOrEmpty(filter.getFilterCountry()),
-                valueOrEmptyList(filter.getFilterCategory()));
-                valueOrEmpty(filter.getFilterStatus());
+        Long totalProjectCount = charityProjectRepository
+                .countAllByCategoriesContainingAndContinentMatchesRegexAndCountryMatchesRegexAndStatusInAndStartDateGreaterThanEqualAndEndDateLessThanEqual(
+                        newStatistic.getFilterCategory(),
+                        filter.getFilterContinent(),
+                        filter.getFilterCountry(),
+                        filter.getFilterStatus(),
+                        filter.getFilterStartDate(),
+                        filter.getFilterEndDate()
+                );
         if (totalProjectCount == null) {
-            totalProjectCount = 0.0;
+            totalProjectCount = 0L;
         }
 
-        newStatistic.setValue(totalProjectCount);
+        newStatistic.setValue(totalProjectCount.doubleValue());
         newStatistic.setCreatedAt(Instant.now());
 
         return statisticRepository.save(newStatistic);
@@ -258,8 +248,8 @@ public class StatisticService {
                 && Objects.equals(existingStatistic.getFilterEndDate(), filter.getFilterEndDate());
     }
 
-    private String valueOrEmpty(Object o) {
-        return Objects.isNull(o) ? "" : o.toString();
+    private String valueOrMatchAllExpression(Object o) {
+        return Objects.isNull(o) ? ".+" : o.toString();
     }
 
     private List<String> valueOrEmptyList(List<String> list) {

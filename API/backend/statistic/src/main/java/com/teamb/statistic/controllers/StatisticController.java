@@ -1,16 +1,21 @@
 package com.teamb.statistic.controllers;
 
 import com.teamb.common.models.ProjectCategoryType;
+import com.teamb.common.models.ProjectStatus;
 import com.teamb.statistic.models.Statistic;
 import com.teamb.statistic.models.StatisticType;
 import com.teamb.statistic.services.StatisticService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Array;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -21,23 +26,30 @@ import java.util.List;
 
 public class StatisticController {
 
+    private static final String DEFAULT_REGEX_FOR_MATCHING_ALL = ".+";
+
     private final StatisticService statisticService;
 
     @GetMapping("/donation-value")
     public ResponseEntity<Statistic> calculateTotalDonationValue(
-            @RequestParam(required = false) String filterContinent,
-            @RequestParam(required = false) String filterCountry,
-            @RequestParam(required = false) List<String> filterCategory,
-            @RequestParam(required = false) String filterStartDate,
-            @RequestParam(required = false) String filterEndDate) {
+            @RequestParam(required = false, defaultValue = "") List<ProjectCategoryType> filterCategory,
+            @RequestParam(required = false, defaultValue = DEFAULT_REGEX_FOR_MATCHING_ALL) String filterContinent,
+            @RequestParam(required = false, defaultValue = DEFAULT_REGEX_FOR_MATCHING_ALL) String filterCountry,
+            @RequestParam(required = false) ProjectStatus filterStatus,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterStartDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterEndDate) {
         try {
             // Build the Statistic filter object
             Statistic filter = Statistic.builder()
+                    .filterCategory(filterCategory == null || filterCategory.isEmpty()
+                            ? List.of(ProjectCategoryType.values())
+                            : filterCategory)
                     .filterContinent(filterContinent)
                     .filterCountry(filterCountry)
-                    .filterCategory(filterCategory != null ? filterCategory : List.of())
-                    .filterStartDate(parseDate(filterStartDate))
-                    .filterEndDate(parseDate(filterEndDate))
+                    //FIXME - fixme
+                    .filterStatus(List.of(filterStatus))
+                    .filterStartDate(filterStartDate)
+                    .filterEndDate(filterEndDate)
                     .build();
 
             // Calculate project count based on the filter
@@ -52,19 +64,25 @@ public class StatisticController {
 
     @GetMapping("/project-count")
     public ResponseEntity<Statistic> getProjectCount(
-            @RequestParam(required = false) String filterContinent,
-            @RequestParam(required = false) String filterCountry,
-            @RequestParam(required = false) List<String> filterCategory,
-            @RequestParam(required = false) String filterStartDate,
-            @RequestParam(required = false) String filterEndDate) {
+            @RequestParam(required = false, defaultValue = "") List<ProjectCategoryType> filterCategory,
+            @RequestParam(required = false, defaultValue = DEFAULT_REGEX_FOR_MATCHING_ALL) String filterContinent,
+            @RequestParam(required = false, defaultValue = DEFAULT_REGEX_FOR_MATCHING_ALL) String filterCountry,
+            @RequestParam(required = false, defaultValue = "") List<ProjectStatus> filterStatus,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterStartDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterEndDate) {
         try {
             // Build the Statistic filter object
             Statistic filter = Statistic.builder()
+                    .filterCategory(filterCategory.isEmpty()
+                            ? List.of(ProjectCategoryType.values())
+                            : filterCategory)
                     .filterContinent(filterContinent)
                     .filterCountry(filterCountry)
-                    .filterCategory(filterCategory != null ? filterCategory : List.of())
-                    .filterStartDate(parseDate(filterStartDate))
-                    .filterEndDate(parseDate(filterEndDate))
+                    .filterStatus(filterStatus.isEmpty()
+                            ? List.of(ProjectStatus.values())
+                            : filterStatus)
+                    .filterStartDate(filterStartDate)
+                    .filterEndDate(filterEndDate)
                     .build();
 
             // Calculate project count based on the filter
@@ -74,18 +92,6 @@ public class StatisticController {
         } catch (Exception e) {
             log.error("Error occurred while calculating project count", e);
             return ResponseEntity.badRequest().build();
-        }
-    }
-
-    private Date parseDate(String dateString) {
-        if (dateString == null || dateString.isEmpty()) {
-            return null;
-        }
-        try {
-            return Date.from(Instant.parse(dateString));
-        } catch (Exception e) {
-            log.error("Error parsing date: {}", dateString, e);
-            throw new IllegalArgumentException("Invalid date format. Use ISO-8601 format, e.g., 2025-01-11T10:00:00Z");
         }
     }
 

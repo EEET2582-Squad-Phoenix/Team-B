@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -24,39 +25,24 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
 
     List<CharityProject> findByIsGlobal(boolean isGlobal);
 
-    @Query(value = "{ 'charityID': ?0 }", fields = "{ 'raisedAmount': 1 }")
-    @Aggregation(pipeline = {
-            "{ '$match': { 'charityID': ?0 } }",
-            "{ '$group': { '_id': null, 'totalRaisedAmount': { '$sum': '$raisedAmount' } } }"
-    })
-    Double sumDonationAmountByCharityId(String charityId);
 
-    // Count total number of projects by charityId
-    @Query(value = "{ 'charityID': ?0 }", count = true)
-    int countProjectsByCharityId(String charityId);
-
-    // Count total number of projects
-    @Query(value = """
-            {
-                 continent: {$regex: ?0},
-                 country: {$regex: ?1},
-                 'category': { '$in': ?2 }
-            }
-            """, count = true)
-    Double countBy(String continent, String country, List<String> category);
 
     @Aggregation(pipeline = {
-            "{ '$match': { " +
-                    "'continent': { '$regex': ?0, '$options': 'i' }, " +
-                    "'country': { '$regex': ?1, '$options': 'i' }, " +
-                    "'category': { '$in': ?2 } " +
-                    "'status':{'$regex': ?3 '$options' : 'i'} " +
-                    "'startDate" +
-                    "'endDate' " +
-                    "} }",
+            """
+                { '$match': 
+                    { 
+                        'categories': { '$in': ?0 },
+                        'continent': { '$regex': ?1, '$options': 'i' }, 
+                        'country': { '$regex': ?2, '$options': 'i' }, 
+                        'status':{'$eq': ?03},
+                        'startDate':{'$gte': new ISODate(?4)},
+                        'endDate': {'$gte': new ISODate(?5)}
+                    } 
+                }
+            """,
             "{ '$group': { '_id': null, 'totalRaisedAmount': { '$sum': '$raisedAmount' } } }"
     })
-    Double sumTotalRaisedAmountBy(String continent, String country, List<String> category);
+    Double sumTotalRaisedAmountBy(List<String> categories, String continent, String country, ProjectStatus status, Date startDate, Date endDate);
 
     List<CharityProject> findByCountryIn(List<String> countries);
 
@@ -73,4 +59,47 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
     List<CharityProject> findAllByCharityId(String id);
 
     List<CharityProject> findAllByCharityIdAndStatusIn(String charityId, List<ProjectStatus> statuses);
+
+    @Query(value = "{ 'charity.id': ?0 }", fields = "{ 'raisedAmount': 1 }")
+    double sumDonationAmountByCharityId(String donorId);
+
+    // Count total number of projects by charityId
+    @Query(value = "{ 'charity.id': ?0 }", count = true)
+    int countProjectsByCharityId(String charityId);
+
+    // Count total number of projects
+    @Query(value = """
+            {
+                   categories: {
+                       $in: ?0
+                   },
+                   continent: {
+                       $regex: ?1
+                   },
+                   country: {
+                       $regex: ?2
+                   },
+                   status:{
+                       $eq: ?3
+                   },
+                   startDate: {
+                       $gte: new ISODate(?4)
+                   },
+                   endDate:{
+                       $lte: new ISODate(?5)
+                   },
+               }
+            """, count = true)
+    Double countBy(List<String> categories, String continent, String country, ProjectStatus status, String startDate, String endDate);
+
+    Long countAllBy
+    CategoriesContaining
+    And
+    ContinentMatchesRegex
+    And
+    CountryMatchesRegex
+    And
+    StatusIsAndStartDateGreaterThanEqualAndEndDateLessThanEqual(List<ProjectCategoryType> categories, String continent, String country, ProjectStatus status, Date startDate, Date endDate);
+
+
 }

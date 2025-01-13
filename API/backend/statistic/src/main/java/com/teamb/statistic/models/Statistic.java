@@ -1,5 +1,6 @@
 package com.teamb.statistic.models;
 
+import com.teamb.common.models.ProjectStatus;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
@@ -32,10 +33,10 @@ public class Statistic {
 
     private String filterCountry;
     private String filterContinent;
-    private String filterStatus;
+    private List<ProjectStatus> filterStatus;
 
     @Size(max = 8, message = "A maximum of 8 categories can be selected.")
-    private List<String> filterCategory;
+    private List<ProjectCategoryType> filterCategory;
 
     private Date filterStartDate;
     private Date filterEndDate;
