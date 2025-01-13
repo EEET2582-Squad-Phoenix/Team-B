@@ -27,7 +27,7 @@ public class Statistic {
 
     private String filterCountry;
     private String filterContinent;
-    private String filterCategory;
+    private List <String> filterCategory;
     private Date filterStartDate;
     private Date filterEndDate;
 

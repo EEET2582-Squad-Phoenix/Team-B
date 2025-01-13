@@ -20,6 +20,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,96 +44,94 @@ public class StatisticService {
     // Calculate donation value for one user
     public Statistic calculateDonationValueForOneTarget(String userTargetID, boolean isDonor) {
         log.info("Calculating donation value for userTargetID: {}, isDonor: {}", userTargetID, isDonor);
-    
+
         var baseValue = Statistic.builder()
                 .userTargetIDs(List.of(userTargetID))
-                .statisticType(StatisticType.DONATION_VALUE)
+                .statisticType(StatisticType.DONATION_VALUE_USER)
                 .build();
-    
+
         log.info("Base value for statistic: {}", baseValue);
-    
+
         var statistic = statisticRepository.findBy(
                 Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
                 GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(baseValue);
-    
+
         log.info("Statistic found: {}", statistic);
-    
+
         // if statistic found and created time is not outdated
         if (statistic.getId() != null && statistic.getCreatedAt()
                 .plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
             log.info("Statistic is not outdated. Returning existing statistic.");
             return statistic;
         }
-    
+
         log.info("Statistic is outdated or not found. Updating new value.");
-    
+
         Double totalDonationValue = isDonor
                 ? donationRepository.sumDonationAmountByDonorId(userTargetID)
                 : charityProjectRepository.sumDonationAmountByCharityId(userTargetID);
-    
+
         log.info("Total donation value calculated: {}", totalDonationValue);
-    
+
         if (totalDonationValue == null) {
             totalDonationValue = 0.0;
             log.info("Total donation value was null, set to 0.0");
         }
-    
+
         if (statistic.getId() == null) {
             statistic.setId(UUID.randomUUID().toString());
             log.info("Generated new statistic ID: {}", statistic.getId());
         }
-    
+
         statistic.setValue(totalDonationValue);
         statistic.setCreatedAt(Instant.now());
-    
+
         log.info("Saving updated statistic: {}", statistic);
-    
+
         return statisticRepository.save(statistic);
     }
 
-
-
     public Statistic calculateProjectCountForOneTarget(String userTargetID, boolean isDonor) {
         log.info("Calculating project count for userTargetID: {}, isDonor: {}", userTargetID, isDonor);
-    
+
         var baseValue = Statistic.builder()
                 .userTargetIDs(List.of(userTargetID))
-                .statisticType(StatisticType.PROJECT_COUNT)
+                .statisticType(StatisticType.PROJECT_COUNT_USER)
                 .build();
-    
+
         log.info("Base value for statistic: {}", baseValue);
-    
+
         var statistic = statisticRepository.findBy(
                 Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
                 GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(baseValue);
-    
+
         log.info("Statistic found: {}", statistic);
-    
+
         // if statistic found and created time is not outdated
         if (statistic.getId() != null && statistic.getCreatedAt()
                 .plus(MAXIMUM_ACCEPTABLE_OUTDATED_HRS, ChronoUnit.HOURS).isAfter(Instant.now())) {
             log.info("Statistic is not outdated. Returning existing statistic.");
             return statistic;
         }
-    
+
         log.info("Statistic is outdated or not found. Updating new value.");
-    
+
         Double totalProjectCount = isDonor
                 ? donationRepository.countDistinctProjectsByDonorId(userTargetID)
                 : charityProjectRepository.countProjectsByCharityId(userTargetID);
-    
+
         log.info("Total project count calculated: {}", totalProjectCount);
-    
+
         if (statistic.getId() == null) {
             statistic.setId(UUID.randomUUID().toString());
             log.info("Generated new statistic ID: {}", statistic.getId());
         }
-    
+
         statistic.setValue(totalProjectCount);
         statistic.setCreatedAt(Instant.now());
-    
+
         log.info("Saving updated statistic: {}", statistic);
-    
+
         return statisticRepository.save(statistic);
     }
 
@@ -162,7 +162,7 @@ public class StatisticService {
         // outdated
         Statistic newStatistic = Statistic.builder()
                 .id(UUID.randomUUID().toString())
-                .statisticType(filter.getStatisticType())
+                .statisticType(StatisticType.DONATION_VALUE_SYSTEM)
                 .filterCountry(filter.getFilterCountry())
                 .filterContinent(filter.getFilterContinent())
                 .filterCategory(filter.getFilterCategory())
@@ -175,7 +175,7 @@ public class StatisticService {
         Double totalDonationValue = charityProjectRepository.sumTotalRaisedAmountBy(
                 valueOrEmpty(filter.getFilterContinent()),
                 valueOrEmpty(filter.getFilterCountry()),
-                valueOrEmpty(filter.getFilterCategory()));
+                valueOrEmptyList(filter.getFilterCategory()));
 
         log.info("Total donation value before null check: {}", totalDonationValue);
 
@@ -186,6 +186,8 @@ public class StatisticService {
 
         log.info("Total donation value after null check: {}", totalDonationValue);
 
+        newStatistic.setValue(totalDonationValue);
+        newStatistic.setCreatedAt(Instant.now());
         return statisticRepository.save(newStatistic);
     }
 
@@ -214,12 +216,11 @@ public class StatisticService {
                 }
             }
         }
-
         // Create a new Statistic object if no matching record exists or if it is
         // outdated
         Statistic newStatistic = Statistic.builder()
                 .id(UUID.randomUUID().toString())
-                .statisticType(filter.getStatisticType())
+                .statisticType(StatisticType.PROJECT_COUNT_SYSTEM)
                 .filterCountry(filter.getFilterCountry())
                 .filterContinent(filter.getFilterContinent())
                 .filterCategory(filter.getFilterCategory())
@@ -232,7 +233,7 @@ public class StatisticService {
         Double totalProjectCount = charityProjectRepository.countBy(
                 valueOrEmpty(filter.getFilterContinent()),
                 valueOrEmpty(filter.getFilterCountry()),
-                valueOrEmpty(filter.getFilterCategory()));
+                valueOrEmptyList(filter.getFilterCategory()));
         if (totalProjectCount == null) {
             totalProjectCount = 0.0;
         }
@@ -254,6 +255,15 @@ public class StatisticService {
 
     private String valueOrEmpty(Object o) {
         return Objects.isNull(o) ? "" : o.toString();
+    }
+
+    private List<String> valueOrEmptyList(List<String> list) {
+        if (list == null || list.isEmpty()) {
+            return List.of(".*"); // Match any string
+        }
+        return list.stream()
+                .map(Pattern::quote) // Escape special characters
+                .collect(Collectors.toList());
     }
 
 }

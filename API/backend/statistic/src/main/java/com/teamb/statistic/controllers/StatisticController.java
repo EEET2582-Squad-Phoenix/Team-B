@@ -23,22 +23,19 @@ public class StatisticController {
 
     private final StatisticService statisticService;
 
-    @PostMapping("/donation-value")
+    @GetMapping("/donation-value")
     public ResponseEntity<Statistic> calculateTotalDonationValue(
-       @RequestParam StatisticType statisticType,
             @RequestParam(required = false) String filterContinent,
             @RequestParam(required = false) String filterCountry,
-            @RequestParam(required = false) String filterCategory,
+            @RequestParam(required = false) List<String> filterCategory,
             @RequestParam(required = false) String filterStartDate,
-            @RequestParam(required = false) String filterEndDate
-    ) {
+            @RequestParam(required = false) String filterEndDate) {
         try {
             // Build the Statistic filter object
             Statistic filter = Statistic.builder()
-                    .statisticType(statisticType)
                     .filterContinent(filterContinent)
                     .filterCountry(filterCountry)
-                    .filterCategory(filterCategory)
+                    .filterCategory(filterCategory != null ? filterCategory : List.of())
                     .filterStartDate(parseDate(filterStartDate))
                     .filterEndDate(parseDate(filterEndDate))
                     .build();
@@ -52,23 +49,20 @@ public class StatisticController {
             return ResponseEntity.badRequest().build();
         }
     }
-    
+
     @GetMapping("/project-count")
     public ResponseEntity<Statistic> getProjectCount(
-            @RequestParam StatisticType statisticType,
             @RequestParam(required = false) String filterContinent,
             @RequestParam(required = false) String filterCountry,
-            @RequestParam(required = false) String filterCategory,
+            @RequestParam(required = false) List<String> filterCategory,
             @RequestParam(required = false) String filterStartDate,
-            @RequestParam(required = false) String filterEndDate
-    ) {
+            @RequestParam(required = false) String filterEndDate) {
         try {
             // Build the Statistic filter object
             Statistic filter = Statistic.builder()
-                    .statisticType(statisticType)
                     .filterContinent(filterContinent)
                     .filterCountry(filterCountry)
-                    .filterCategory(filterCategory)
+                    .filterCategory(filterCategory != null ? filterCategory : List.of())
                     .filterStartDate(parseDate(filterStartDate))
                     .filterEndDate(parseDate(filterEndDate))
                     .build();
@@ -95,8 +89,6 @@ public class StatisticController {
         }
     }
 
-
-
     @GetMapping("/donation-value/target")
     public ResponseEntity<Statistic> calculateDonationValueForOneTarget(
             @RequestParam String userTargetID,
@@ -112,6 +104,5 @@ public class StatisticController {
         Statistic statistic = statisticService.calculateProjectCountForOneTarget(userTargetID, isDonor);
         return ResponseEntity.ok(statistic);
     }
-
 
 }
