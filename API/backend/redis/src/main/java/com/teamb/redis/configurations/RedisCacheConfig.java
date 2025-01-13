@@ -2,6 +2,7 @@ package com.teamb.redis.configurations;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.support.NoOpCacheManager;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +44,7 @@ public class RedisCacheConfig{
                     .build();
         }else {
             // If Redis is not available, disable caching by returning a simple CacheManager
-            return new SimpleCacheManager(); // In-memory cache or no caching
+            return new NoOpCacheManager(); // In-memory cache or no caching
         }
     }
 }
