@@ -67,39 +67,7 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
     @Query(value = "{ 'charity.id': ?0 }", count = true)
     int countProjectsByCharityId(String charityId);
 
-    // Count total number of projects
-    @Query(value = """
-            {
-                   categories: {
-                       $in: ?0
-                   },
-                   continent: {
-                       $regex: ?1
-                   },
-                   country: {
-                       $regex: ?2
-                   },
-                   status:{
-                       $eq: ?3
-                   },
-                   startDate: {
-                       $gte: new ISODate(?4)
-                   },
-                   endDate:{
-                       $lte: new ISODate(?5)
-                   },
-               }
-            """, count = true)
-    Double countBy(List<String> categories, String continent, String country, ProjectStatus status, String startDate, String endDate);
-
-    Long countAllBy
-    CategoriesContaining
-    And
-    ContinentMatchesRegex
-    And
-    CountryMatchesRegex
-    And
-    StatusIsAndStartDateGreaterThanEqualAndEndDateLessThanEqual(List<ProjectCategoryType> categories, String continent, String country, ProjectStatus status, Date startDate, Date endDate);
-
+    Long countAllByCategoriesContainingAndContinentMatchesRegexAndCountryMatchesRegexAndStatusInAndStartDateGreaterThanEqualAndEndDateLessThanEqual
+            (List<ProjectCategoryType> categories, String continent, String country, List<ProjectStatus> status, Date startDate, Date endDate);
 
 }
