@@ -25,7 +25,6 @@ import com.teamb.common.models.Role;
 import com.teamb.common.services.ImageUploadService;
 import com.teamb.common.services.MailService;
 import com.teamb.donor.repositories.DonorRepository;
-
 import com.teamb.account.repositories.AccountRepository;
 
 @Service
@@ -67,20 +66,20 @@ public class DonorService {
     }
 
     // Fetch all donors
-    @Cacheable(value = "allDonors", condition = "#redisAvailable")
+    @Cacheable(value = "allDonors", condition = "@redisAvailability.isRedisAvailable()")
     public List<Donor> getAllDonors() {
         return donorRepository.findAll();
     }
 
     // Fetch donor by account ID
-    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
+    @Cacheable(value = "donor", condition = "@redisAvailability.isRedisAvailable()", key = "#id")
     public Donor getDonorsByAccountId(String id) {
         return donorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donor not found"));
     }
 
     // Fetch donor by name (either last or first name)
-    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#name")
+    @Cacheable(value = "donor", condition = "@redisAvailability.isRedisAvailable()", key = "#name")
     public List<Donor> getDonorsByName(String name) {
         return donorRepository.findByFirstNameOrLastName(name);
     }
@@ -94,7 +93,7 @@ public class DonorService {
     }
 
     // Return donation for a donor
-    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
+    @Cacheable(value = "donor", condition = "@redisAvailability.isRedisAvailable()", key = "#id")
     public Double getMonthlyDonation(String id) {
         return donorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donor not found"))
@@ -112,21 +111,21 @@ public class DonorService {
     }
 
     //! Return donor's email
-    // @Cacheable(value = "donorEmail", condition = "#redisAvailable", key = "#donor.id")
+    // @Cacheable(value = "donorEmail", condition = "@redisAvailability.isRedisAvailable()", key = "#donor.id")
     // public String getEmail(Donor donor) {
     //     return getAccount(donor).getEmail();
     // }
 
     //! Return donor's role
-    // @Cacheable(value = "donor", condition = "#redisAvailable", key = "#donor.id")
+    // @Cacheable(value = "donor", condition = "@redisAvailability.isRedisAvailable()", key = "#donor.id")
     // public Role getRole(Donor donor) {
     //     return getAccount(donor).getRole();
     // }
 
     // Upload image for a donor
     @Caching(evict = {
-        @CacheEvict(value = "donor", condition = "#redisAvailable", key = "#donorId"),
-        @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
+        @CacheEvict(value = "donor", condition = "@redisAvailability.isRedisAvailable()", key = "#donorId"),
+        @CacheEvict(value = "allDonors", condition = "@redisAvailability.isRedisAvailable()", allEntries = true)
     })
     public ResponseEntity<?> uploadImage(String donorId, MultipartFile file, int height, int width) {
         if (file.isEmpty()) {
@@ -149,8 +148,8 @@ public class DonorService {
     }
 
     // Save donor and create associated account
-    @CachePut(value = "donor", condition = "#redisAvailable", key = "#result.id")
-    @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
+    @CachePut(value = "donor", condition = "@redisAvailability.isRedisAvailable()", key = "#result.id")
+    @CacheEvict(value = "allDonors", condition = "@redisAvailability.isRedisAvailable()", allEntries = true)
     public Donor saveDonor(CreateDonorDTO donor) {
         if (accountRepository.findByEmail(donor.getEmail()) != null) {
             throw new IllegalArgumentException("Email already taken");
@@ -190,8 +189,8 @@ public class DonorService {
     }
 
     // Update donor
-    @CachePut(value = "donor", condition = "#redisAvailable", key = "#id")
-    @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
+    @CachePut(value = "donor", condition = "@redisAvailability.isRedisAvailable()", key = "#id")
+    @CacheEvict(value = "allDonors", condition = "@redisAvailability.isRedisAvailable()", allEntries = true)
     public Donor updateDonor(String id, Donor donor) {
         Donor existingDonor = donorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Donor not found"));
@@ -220,8 +219,8 @@ public class DonorService {
 
     // Delete donor
     @Caching(evict = {
-        @CacheEvict(value = "donor", condition = "#redisAvailable", key = "#id"),
-        @CacheEvict(value = "allDonors", condition = "#redisAvailable", allEntries = true)
+        @CacheEvict(value = "donor", condition = "@redisAvailability.isRedisAvailable()", key = "#id"),
+        @CacheEvict(value = "allDonors", condition = "@redisAvailability.isRedisAvailable()", allEntries = true)
     })
     public void deleteDonor(String id) {
         boolean ifExist = donorRepository.existsById(id) && accountRepository.existsById(id);

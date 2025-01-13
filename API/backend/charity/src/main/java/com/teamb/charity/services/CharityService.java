@@ -59,33 +59,33 @@ public class CharityService {
     }
 
     // Fetch all charities
-    @Cacheable(value = "allCharities", condition = "#redisAvailable")
+    @Cacheable(value = "allCharities", condition = "@redisAvailability.isRedisAvailable()")
     public List<Charity> getAllCharities() {
         return charityRepository.findAll();
     }
 
     // Fetch charity info by id
-    @Cacheable(value = "charity", condition = "#redisAvailable", key = "#accountId")
+    @Cacheable(value = "charity", condition = "@redisAvailability.isRedisAvailable()", key = "#accountId")
     public Charity getCharityByAccountId(String accountId) {
         return charityRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Charity not found"));
     }
 
     // Fetch charity by name
-    @Cacheable(value = "charity", condition = "#redisAvailable", key = "#name")
+    @Cacheable(value = "charity", condition = "@redisAvailability.isRedisAvailable()", key = "#name")
     public Charity getCharityByName(String name) {
         return charityRepository.findByName(name);
     }
 
     // Fetch charities by list of types;
-    @Cacheable(value = "charity", condition = "#redisAvailable", key = "#type")
+    @Cacheable(value = "charity", condition = "@redisAvailability.isRedisAvailable()", key = "#type")
     public List<Charity> getCharitiesByTypes(List<CharityType> charityTypes) {
         return charityRepository.findByTypeIn(charityTypes);
     }
 
     // Create charity
-    @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")
-    @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
+    @CachePut(value = "charity", condition = "@redisAvailability.isRedisAvailable()", key = "#result.id")
+    @CacheEvict(value = "allCharities", condition = "@redisAvailability.isRedisAvailable()", allEntries = true)
     public Charity saveCharity(CreateCharityDTO charity) {
         if (accountRepository.findByEmail(charity.getEmail()) != null) {
             throw new IllegalArgumentException("Email already taken");
@@ -131,8 +131,8 @@ public class CharityService {
     }
 
     // Update charity
-    @CachePut(value = "charity", condition = "#redisAvailable", key = "#result.id")
-    @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
+    @CachePut(value = "charity", condition = "@redisAvailability.isRedisAvailable()", key = "#result.id")
+    @CacheEvict(value = "allCharities", condition = "@redisAvailability.isRedisAvailable()", allEntries = true)
     public Charity updateCharity(String id, Charity charity) {
         var existingCharity = charityRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Charity not found"));
@@ -159,8 +159,8 @@ public class CharityService {
 
     // Delete charity
     @Caching(evict = {
-        @CacheEvict(value = "charity", condition = "#redisAvailable", key = "#id"),
-        @CacheEvict(value = "allCharities", condition = "#redisAvailable", allEntries = true)
+        @CacheEvict(value = "charity", condition = "@redisAvailability.isRedisAvailable()", key = "#id"),
+        @CacheEvict(value = "allCharities", condition = "@redisAvailability.isRedisAvailable()", allEntries = true)
     })
     public void deleteCharity(String id) {
         boolean isExisted = charityRepository.existsById(id) && accountRepository.existsById(id);

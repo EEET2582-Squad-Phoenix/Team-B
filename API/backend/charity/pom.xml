@@ -28,6 +28,7 @@
             <scope>compile</scope>
         </dependency>
 
+
         <!-- Add dependencies specific to the charity module -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

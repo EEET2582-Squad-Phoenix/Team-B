@@ -24,11 +24,11 @@
 		<module>authentication</module>
 		<module>admin</module>
 		<module>subscription</module>
-        <module>statistic</module>
         <module>donation</module>
         <module>notification</module>
         <module>redis</module>
         <module>charity_projects</module>
+        <module>statistic</module>
     </modules>
 
     <properties>
