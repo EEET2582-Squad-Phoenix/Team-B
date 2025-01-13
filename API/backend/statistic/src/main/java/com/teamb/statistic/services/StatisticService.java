@@ -1,57 +1,85 @@
 package com.teamb.statistic.services;
  
-import com.teamb.charity_projects.models.CharityProject;
-import com.teamb.statistic.models.Statistic;
-import com.teamb.statistic.models.StatisticType;
- 
-import com.teamb.statistic.repositories.StatisticRepository;
-import com.teamb.charity_projects.repositories.CharityProjectRepository;
-import com.teamb.donation.repositories.DonationRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
- 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import com.teamb.charity_projects.repositories.CharityProjectRepository;
+import com.teamb.donation.repositories.DonationRepository;
+import com.teamb.statistic.models.Statistic;
+import com.teamb.statistic.models.StatisticType;
+import com.teamb.statistic.repositories.StatisticRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
  
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class StatisticService {
-    // STORE VALUE TIME OF VIETNAM:0 -4-8-12-16-20-24
- 
+
+    // Store the time zone of London (UTC+0)
+    private final ZoneId resetTime = ZoneId.of("Europe/London");
     private static final Integer MAXIMUM_ACCEPTABLE_OUTDATED_HRS = 4;
  
     private static final Function<FluentQuery.FetchableFluentQuery<Statistic>, Optional<Statistic>> GET_FIRST_ORDER_DESC_BY_CREATED_AT = (
             q) -> q.sortBy(Sort.by("createdAt").descending()).first();
  
     private final StatisticRepository statisticRepository;
- 
     private final CharityProjectRepository charityProjectRepository;
- 
     private final DonationRepository donationRepository;
-    // private final ContinentRepository continentRepository;
  
+    // Create a new statistic every 4 hours
+    public void resetStatistics() {
+        // Get the current time in UTC and convert it to the London time zone
+        Instant now = Instant.now();
+        ZonedDateTime resetTimeNow = now.atZone(resetTime); // Convert UTC to London time
+
+        // Extract the hour, minute, and second
+        int resetTimeNowHour = resetTimeNow.getHour();
+        int resetTimeNowMinute = resetTimeNow.getMinute();
+        int resetTimeNowSecond = resetTimeNow.getSecond();
+
+        // Check if the hour is a multiple of 4 and the minute and second are exactly 0
+        if (resetTimeNowHour % 4 == 0 && resetTimeNowMinute == 0 && resetTimeNowSecond == 0) {
+            log.info("Resetting statistics at {}", resetTimeNow);  // Log the exact reset time
+
+            // Total Number of Donation Value
+            calculateDonationValueForOneTarget(null, false); // by CHARITY
+            calculateDonationValueForOneTarget(null, true); // by DONOR
+            // by filter
+            // Total Number of Projects
+            calculateProjectCountForOneTarget(null, false); // by CHARITY
+            calculateProjectCountForOneTarget(null, true); // by DONOR
+            // by status (ACTIVE/COMPLETED)
+            // by filter
+
+            // statisticRepository.deleteAll();  // Perform the reset operation
+        }
+    }
+
     // Calculate donation value for one user
     public Statistic calculateDonationValueForOneTarget(String userTargetID, boolean isDonor) {
         log.info("Calculating donation value for userTargetID: {}, isDonor: {}", userTargetID, isDonor);
- 
+
         var baseValue = Statistic.builder()
                 .userTargetIDs(List.of(userTargetID))
                 .statisticType(StatisticType.DONATION_VALUE_USER)
                 .build();
- 
+
         log.info("Base value for statistic: {}", baseValue);
- 
+
         var statistic = statisticRepository.findBy(
                 Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
                 GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(baseValue);
@@ -90,7 +118,7 @@ public class StatisticService {
  
         return statisticRepository.save(statistic);
     }
- 
+
     public Statistic calculateProjectCountForOneTarget(String userTargetID, boolean isDonor) {
         log.info("Calculating project count for userTargetID: {}, isDonor: {}", userTargetID, isDonor);
  
@@ -265,5 +293,8 @@ public class StatisticService {
                 .map(Pattern::quote) // Escape special characters
                 .collect(Collectors.toList());
     }
- 
+
+
+
+
 }
