@@ -24,17 +24,6 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
 
     List<CharityProject> findByIsGlobal(boolean isGlobal);
 
-    @Query(value = "{ 'charityID': ?0 }", fields = "{ 'raisedAmount': 1 }")
-    @Aggregation(pipeline = {
-            "{ '$match': { 'charityID': ?0 } }",
-            "{ '$group': { '_id': null, 'totalRaisedAmount': { '$sum': '$raisedAmount' } } }"
-    })
-    Double sumDonationAmountByCharityId(String charityId);
-
-    // Count total number of projects by charityId
-    @Query(value = "{ 'charityID': ?0 }", count = true)
-    int countProjectsByCharityId(String charityId);
-
     // Count total number of projects
     @Query(value = """
             {
