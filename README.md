@@ -25,6 +25,22 @@ CHARITY
     "password": "Feeding#123"                     "password": "OceanLove!456"
 
 DONOR
+    Vietnamese                                German
+    "email": "vietnam.donor1@gmail.com",      "email": "germany.donor1@gmail.com",
+    "password": "VND@12345",                  "password": "GermanyD1@2024",
+    
+    "email": "vietnam.donor2@gmail.com",      "email": "germany.donor2@gmail.com",
+    "password": "VietDonor2@",                "password": "DonorDE2#",
+
+    "email": "vietnam.donor3@gmail.com",      "email": "germany.donor3@gmail.com",
+    "password": "TuanPham@2024",              "password": "DEDonor@321",
+
+    "email": "vietnam.donor4@gmail.com",      "email": "germany.donor4@gmail.com",
+    "password": "DonorVN$5678",               "password": "DonorGER4@",
+
+    "email": "vietnam.donor5@gmail.com",      "email": "germany.donor5@gmail.com",
+    "password": "VNHero@567",                 "password": "GermDonor5!",
+
     "email": "john.doe.donor@gmail.com"
     "password": "JohnDoe123!"
 ```
