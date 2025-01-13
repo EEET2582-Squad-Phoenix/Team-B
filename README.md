@@ -41,11 +41,21 @@ DONOR
     "email": "vietnam.donor5@gmail.com"  "email": "germany.donor5@gmail.com"  "email": "qatar.donor5@gmail.com"
     "password": "VNHero@567"             "password": "GermDonor5!"            "password": "QatarHero5!"
     
+    USA                                  Cameroon
+    "email": "john.doe.donor@gmail.com"  "email": "cameroon.donor1@gmail.com"
+    "password": "JohnDoe123!"            "password": "CameroonD1@"
 
+    "email": "usa.donor2@gmail.com"      "email": "cameroon.donor2@gmail.com"
+    "password": "USADonor2$"             "password": "DonorCM2@2025"
 
+    "email": "usa.donor3@gmail.com"      "email": "cameroon.donor3@gmail.com"
+    "password": "DonorUSA3#"             "password": "CMD3!2024"
 
-    "email": "john.doe.donor@gmail.com"
-    "password": "JohnDoe123!"
+    "email": "usa.donor4@gmail.com"      "email": "cameroon.donor4@gmail.com"
+    "password": "USAD4@2025"             "password": "CamerD4@567"
+
+    "email": "usa.donor5@gmail.com"      "email": "cameroon.donor5@gmail.com"
+    "password": "USADonor5!"             "password": "HeroCM5@"
 ```
 
 **Docker commands**
