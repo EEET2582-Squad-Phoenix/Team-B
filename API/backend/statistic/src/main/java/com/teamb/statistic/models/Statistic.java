@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-
+ 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,11 +26,11 @@ import java.util.List;
 public class Statistic {
     @Id
     private String id; // Same as Account ID
-
+ 
     private List<String> userTargetIDs; // List of foreign keys for multiple users
     @NotNull
     private StatisticType statisticType;
-
+ 
     private String filterCountry;
     private String filterContinent;
     private List<ProjectStatus> filterStatus;

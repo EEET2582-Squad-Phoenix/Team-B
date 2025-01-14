@@ -25,19 +25,23 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
 
     List<CharityProject> findByIsGlobal(boolean isGlobal);
 
+
+
     @Aggregation(pipeline = {
-            "{ '$match': { " +
-                    "'categories': { '$in': ?0 }, " +
-                    "'continent': { '$regex': ?1, '$options': 'i' }, " +
-                    "'country': { '$regex': ?2, '$options': 'i' }, " +
-                    "'status': { '$in': ?3 }, " +
-                    "'startDate': { '$gte': ?4 }, " +
-                    "'endDate': { '$lte': ?5 } " +
-                    "} }",
-            "{ '$group': { '_id': null, 'totalRaisedAmount': { '$sum': '$raisedAmount' } } }"
-    })
-    Double sumTotalRaisedAmountBy(List<ProjectCategoryType> categories, String continent, String country,
-            List<ProjectStatus> status, Date startDate, Date endDate);
+        "{ '$match': { " +
+                "'categories': { '$in': ?0 }, " +
+                "'continent': { '$regex': ?1, '$options': 'i' }, " +
+                "'country': { '$regex': ?2, '$options': 'i' }, " +
+                "'status': { '$in': ?3 }, " +
+                "'startDate': { '$gte': ?4 }, " +
+                "'endDate': { '$lte': ?5 } " +
+                "} }",
+        "{ '$group': { '_id': null, 'totalRaisedAmount': { '$sum': '$raisedAmount' } } }"
+})
+Double sumTotalRaisedAmountBy(List<ProjectCategoryType> categories, String continent, String country, List<ProjectStatus> status, Date startDate, Date endDate);
+
+
+
 
     List<CharityProject> findByCountryIn(List<String> countries);
 
@@ -55,18 +59,14 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
 
     List<CharityProject> findAllByCharityIdAndStatusIn(String charityId, List<ProjectStatus> statuses);
 
-    @Aggregation(pipeline = {
-            "{ '$match': { 'charityID': ?0 } }",
-            "{ '$group': { '_id': null, 'totalRaisedAmount': { '$sum': '$raisedAmount' } } }"
-    })
-    Double sumDonationAmountByCharityId(String charityId);
+    @Query(value = "{ 'charityID': ?0 }", fields = "{ 'raisedAmount': 1 }")
+    Double sumDonationAmountByCharityId(String donorId);
 
     // Count total number of projects by charityId
     @Query(value = "{ 'charityID': ?0 }", count = true)
-    Double countProjectsByCharityId(String charityId);
+    int countProjectsByCharityId(String charityId);
 
-    Long countAllByCategoriesContainingAndContinentMatchesRegexAndCountryMatchesRegexAndStatusInAndStartDateGreaterThanEqualAndEndDateLessThanEqual(
-            List<ProjectCategoryType> categories, String continent, String country, List<ProjectStatus> status,
-            Date startDate, Date endDate);
+    Long countAllByCategoriesContainingAndContinentMatchesRegexAndCountryMatchesRegexAndStatusInAndStartDateGreaterThanEqualAndEndDateLessThanEqual
+            (List<ProjectCategoryType> categories, String continent, String country, List<ProjectStatus> status, Date startDate, Date endDate);
 
 }

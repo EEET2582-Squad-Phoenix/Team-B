@@ -136,7 +136,6 @@ public class StatisticService {
         return statisticRepository.save(statistic);
     }
 
-
     // calculate total donation value for the system
     public Statistic calculateTotalDonationValue(Statistic filter) {
         log.info("Filter values received: {}", filter);
