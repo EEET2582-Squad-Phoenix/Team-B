@@ -11,12 +11,16 @@ import org.springframework.stereotype.Service;
 
 import com.teamb.account.models.Account;
 import com.teamb.account.repositories.AccountRepository;
+import com.teamb.common.configurations.PasswordEncoding;
 
 @Service
 public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private PasswordEncoding passwordEncoding;
 
     public List<Account> getAllAccounts(){
         return accountRepository.findAll();
@@ -44,7 +48,9 @@ public class AccountService {
         );
 
         // Update existing fields
-        existingAccount.setRole(account.getRole());
+        // existingAccount.setRole(account.getRole());
+        existingAccount.setEmail(account.getEmail());
+        existingAccount.setPassword(passwordEncoding.passwordEncoder().encode(account.getPassword()));
         existingAccount.setEmailVerified(account.getEmailVerified());
         existingAccount.setAdminCreated(account.getAdminCreated());
 
