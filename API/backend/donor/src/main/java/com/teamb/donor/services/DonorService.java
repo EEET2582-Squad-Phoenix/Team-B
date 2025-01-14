@@ -18,13 +18,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.teamb.account.models.Account;
 import com.teamb.donor.dtos.CreateDonorDTO;
 import com.teamb.donor.models.Donor;
-import com.teamb.subscription.models.Subscription;
 import com.teamb.common.configurations.PasswordEncoding;
 import com.teamb.common.models.Role;
 
 import com.teamb.common.services.ImageUploadService;
 import com.teamb.common.services.MailService;
 import com.teamb.donor.repositories.DonorRepository;
+import com.teamb.subscription.models.Subscription;
 import com.teamb.account.repositories.AccountRepository;
 
 @Service
@@ -85,12 +85,12 @@ public class DonorService {
     }
 
     // Return donor's subscription
-    @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
-    public Subscription getSubscription(String id) {
-        return donorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Donor not found"))
-                .getSubscription();
-    }
+    // @Cacheable(value = "donor", condition = "#redisAvailable", key = "#id")
+    // public Subscription getSubscription(String id) {
+    //     return donorRepository.findById(id)
+    //             .orElseThrow(() -> new RuntimeException("Donor not found"))
+    //             .getSubscription();
+    // }
 
     // Return donation for a donor
     @Cacheable(value = "donor", condition = "@redisAvailability.isRedisAvailable()", key = "#id")
@@ -204,7 +204,7 @@ public class DonorService {
         existingDonor.setAddress(donor.getAddress());
         existingDonor.setLanguage(donor.getLanguage());
         existingDonor.setMonthlyDonation(donor.getMonthlyDonation());
-        existingDonor.setSubscription(donor.getSubscription());
+        // existingDonor.setSubscription(donor.getSubscription());
         existingDonor.setStripeCustomerId(donor.getStripeCustomerId());
 
         Account updatedAccount = getAccount(existingDonor);

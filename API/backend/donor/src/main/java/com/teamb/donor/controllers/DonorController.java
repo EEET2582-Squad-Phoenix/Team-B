@@ -38,10 +38,10 @@ public class DonorController {
     }
 
     // Return a donor's subscription
-    @GetMapping("/{id}/subscription")
-    public Subscription getSubscription(@PathVariable String id) {
-        return donorService.getSubscription(id);
-    }
+    // @GetMapping("/{id}/subscription")
+    // public Subscription getSubscription(@PathVariable String id) {
+    //     return donorService.getSubscription(id);
+    // }
 
     // Return monthly donation for a donor
     @GetMapping("/{id}/monthlyDonation")
