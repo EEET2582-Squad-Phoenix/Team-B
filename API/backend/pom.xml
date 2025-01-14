@@ -29,6 +29,8 @@
         <module>redis</module>
         <module>charity_projects</module>
         <module>statistic</module>
+        <module>credit_card</module>
+        <module>payment</module>
     </modules>
 
     <properties>
