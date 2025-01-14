@@ -301,11 +301,11 @@ public class StatisticService {
         // Get the reset time
         Instant resetTime = shouldResetStatistics();
 
-        // Get the current time
-        Instant now = Instant.now();
+        // Get the current time truncated to the hour
+        Instant now = Instant.now().truncatedTo(ChronoUnit.HOURS);
 
-        // Calculate the start time for the last 24 hours
-        Instant startTime = resetTime != null ? resetTime : now;
+        // Calculate the start time for the last 24 hours truncated to the hour
+        Instant startTime = resetTime != null ? resetTime.truncatedTo(ChronoUnit.HOURS) : now.minus(24, ChronoUnit.HOURS);
         Instant endTime = now;
 
         // Get the number of new donor registrations
