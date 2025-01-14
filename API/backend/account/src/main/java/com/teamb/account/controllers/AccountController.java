@@ -32,6 +32,11 @@ public class AccountController {
         return service.getAccountByAccountId(id);
     }
 
+    @GetMapping("/email/{email}")
+    public Account getAccountByEmail(@PathVariable String email){
+        return service.getAccountByEmail(email);
+    }
+
 
     @PutMapping("/edit/{id}")
     public Account modifyAccount(@RequestBody Account account, @PathVariable String id){

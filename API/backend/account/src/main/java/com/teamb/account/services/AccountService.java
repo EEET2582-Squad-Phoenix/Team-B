@@ -32,6 +32,11 @@ public class AccountService {
         }
     }
 
+    // fetch account by email
+    public Account getAccountByEmail(String email){
+        return accountRepository.findByEmail(email);
+    }
+
     // get account
     public Account updateAccount(Account account, String id){
         Account existingAccount = accountRepository.findById(id).orElseThrow(() -> 
