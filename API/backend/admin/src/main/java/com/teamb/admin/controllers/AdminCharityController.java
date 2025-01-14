@@ -41,6 +41,13 @@ public class AdminCharityController {
         return ResponseEntity.ok(charity);
     }
 
+    // Fetch charity by email
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Charity> getCharityByEmail(@PathVariable String email){
+        Charity charity = service.getCharityByEmail(email);
+        return ResponseEntity.ok(charity);
+    }
+
     //Create charity
     @PostMapping("")
     public ResponseEntity<Charity> createCharity(@RequestBody CreateCharityDTO newCharity) {
