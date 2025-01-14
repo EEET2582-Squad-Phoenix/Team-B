@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.teamb.account.models.Account;
 import com.teamb.account.repositories.AccountRepository;
 import com.teamb.common.configurations.PasswordEncoding;
+import com.teamb.common.exception.EntityNotFound;
 
 @Service
 public class AccountService {
@@ -61,9 +62,7 @@ public class AccountService {
         return accountRepository.save(existingAccount);
     }
 
-    public String deleteAccount(String accountId){
-        accountRepository.deleteById(accountId);
-        return "Account with id " + accountId + " deleted";
-    }
+  
+
 
 }

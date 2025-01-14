@@ -43,8 +43,4 @@ public class AccountController {
         return service.updateAccount(account, id);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public String deleteAccount(@PathVariable String id){
-        return service.deleteAccount(id);
-    }
 }

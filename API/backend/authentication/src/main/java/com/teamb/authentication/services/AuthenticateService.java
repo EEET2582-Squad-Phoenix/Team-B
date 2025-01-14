@@ -178,4 +178,21 @@ public class AuthenticateService implements UserDetailsService{
         throw new IllegalStateException("JWT cookie not found or invalid");
       
     }
+
+
+    public String deleteAccount(String id) {
+        boolean isCharity = charityRepository.existsById(id) && accountRepository.existsById(id);
+        boolean isDonor =  donorRepository.existsById(id) && accountRepository.existsById(id);
+        if (isCharity) {
+            accountRepository.deleteById(id);
+            charityRepository.deleteById(id);
+            return "Account with id " + id + " deleted";
+        }
+        if (isDonor) {
+            accountRepository.deleteById(id);
+            donorRepository.deleteById(id);
+            return "Account with id " + id + " deleted";
+        }
+        throw new EntityNotFound("Id", id);
+    }
 }
