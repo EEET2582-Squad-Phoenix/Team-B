@@ -48,6 +48,13 @@ public class CharityController {
         return ResponseEntity.ok(charity);
     }
 
+    // Fetch charity by email
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Charity> getCharityByEmail(@PathVariable String email){
+        Charity charity = service.getCharityByEmail(email);
+        return ResponseEntity.ok(charity);
+    }
+
     // Fetch charities by list of types
     @GetMapping("/type")
     public List<Charity> getCharitiesByType(@RequestBody List<CharityType> charityTypes){

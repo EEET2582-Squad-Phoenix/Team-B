@@ -58,6 +58,16 @@ public class CharityService {
         return accountRepository.findById(charity.getId()).orElseThrow(() -> new IllegalArgumentException("Account not found"));
     }
 
+    // Fetch charity by email
+    public Charity getCharityByEmail(String email) {
+        Account account = accountRepository.findByEmail(email);
+        if (account == null) {
+            throw new IllegalArgumentException("Account not found");
+        }
+        return charityRepository.findById(account.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Charity not found"));
+    }
+
     // Fetch all charities
     @Cacheable(value = "allCharities", condition = "@redisAvailability.isRedisAvailable()")
     public List<Charity> getAllCharities() {
