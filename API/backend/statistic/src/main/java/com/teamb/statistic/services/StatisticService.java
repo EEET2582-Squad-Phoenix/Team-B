@@ -17,7 +17,7 @@ import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -29,10 +29,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class StatisticService {
-    // Store the time zone of London (UTC+0)
-    private final ZoneId resetTime = ZoneId.of("Europe/London");
-
-    private static final Integer MAXIMUM_ACCEPTABLE_OUTDATED_HRS = 4;
 
     private static final Function<FluentQuery.FetchableFluentQuery<Statistic>, Optional<Statistic>> GET_FIRST_ORDER_DESC_BY_CREATED_AT = (
             q) -> q.sortBy(Sort.by("createdAt").descending()).first();
@@ -43,27 +39,19 @@ public class StatisticService {
 
     private final DonationRepository donationRepository;
 
-    // Create a new statistic every 4 hours
+    // Check if it's time to reset the statistics (every 4 hours)
     public boolean shouldResetStatistics() {
-        // Define the London time zone
-        ZoneId londonTimeZone = ZoneId.of("Europe/London");
-    
-        // Get the current time in UTC and convert it to the London time zone
+        // Get the current time in UTC
         Instant now = Instant.now();
-        ZonedDateTime resetTimeNow = now.atZone(londonTimeZone); // Convert UTC to London time
-    
-        // Extract the hour, minute, and second
-        int resetTimeNowHour = resetTimeNow.getHour();
-        int resetTimeNowMinute = resetTimeNow.getMinute();
-        int resetTimeNowSecond = resetTimeNow.getSecond();
-    
+        
+        // Extract the hour, minute, and second in UTC
+        int resetTimeNowHour = now.atZone(ZoneOffset.UTC).getHour();
+        int resetTimeNowMinute = now.atZone(ZoneOffset.UTC).getMinute();
+        int resetTimeNowSecond = now.atZone(ZoneOffset.UTC).getSecond();
+        
         // Check if the hour is a multiple of 4 and the minute and second are exactly 0
         return resetTimeNowHour % 4 == 0 && resetTimeNowMinute == 0 && resetTimeNowSecond == 0;
     }
-
-    // ! Every 4 hours, create a new stat object.
-    // ! If the stats object is not found, create a new one.
-    // ! Fetch lastest statistics from the database. If it reaches 4 hours, create a new one. Else, return the existing one.
 
     // Calculate donation value for one target
     public Statistic calculateDonationValueForOneTarget(String userTargetID, boolean isDonor) {
