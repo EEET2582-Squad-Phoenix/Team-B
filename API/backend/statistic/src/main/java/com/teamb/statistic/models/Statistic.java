@@ -46,10 +46,7 @@ public class Statistic {
         return filterEndDate != null && filterStartDate != null && filterEndDate.after(filterStartDate);
     }
 
-    // 14 digits before the decimal point and up to 2 digits after the decimal
-    // point.
-
-    @Digits(integer = 14, fraction = 2)
+    @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     @Builder.Default
     private Double value = 0.0;
 

@@ -210,6 +210,14 @@ public class DonorService {
         Account updatedAccount = getAccount(existingDonor);
         // Update account fields if needed
         if (updatedAccount != null) {
+            // Update account email
+            if (!updatedAccount.getEmail().equals(updatedAccount.getEmail())) {
+                updatedAccount.setEmail(updatedAccount.getEmail());
+            }
+            // Update account password
+            if (!updatedAccount.getPassword().equals(updatedAccount.getPassword())) {
+                updatedAccount.setPassword(passwordEncoding.passwordEncoder().encode(updatedAccount.getPassword()));
+            }
             updatedAccount.setUpdatedAt(Instant.now());
             accountRepository.save(updatedAccount);
         }

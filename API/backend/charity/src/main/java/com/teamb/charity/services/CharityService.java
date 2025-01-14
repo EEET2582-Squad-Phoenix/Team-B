@@ -161,6 +161,15 @@ public class CharityService {
         Account updateAccount = getAccount(existingCharity);
         // update account if needed
         if (updateAccount != null) {
+            // update email if needed
+            if (!updateAccount.getEmail().equals(updateAccount.getEmail())) {
+                updateAccount.setEmail(updateAccount.getEmail());
+            }
+            // update password if needed
+            if (!updateAccount.getPassword().equals(updateAccount.getPassword())) {
+                updateAccount.setPassword(passwordEncoding.passwordEncoder().encode(updateAccount.getPassword()));
+                
+            }
             updateAccount.setUpdatedAt(Instant.now());
             accountRepository.save(updateAccount);
         }
