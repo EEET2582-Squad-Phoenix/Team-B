@@ -28,21 +28,17 @@ public interface CharityProjectRepository extends MongoRepository<CharityProject
 
 
     @Aggregation(pipeline = {
-            """
-                { '$match': 
-                    { 
-                        'categories': { '$in': ?0 },
-                        'continent': { '$regex': ?1, '$options': 'i' }, 
-                        'country': { '$regex': ?2, '$options': 'i' }, 
-                        'status':{'$eq': ?03},
-                        'startDate':{'$gte': new ISODate(?4)},
-                        'endDate': {'$gte': new ISODate(?5)}
-                    } 
-                }
-            """,
-            "{ '$group': { '_id': null, 'totalRaisedAmount': { '$sum': '$raisedAmount' } } }"
-    })
-    Double sumTotalRaisedAmountBy(List<String> categories, String continent, String country, ProjectStatus status, Date startDate, Date endDate);
+        "{ '$match': { " +
+                "'categories': { '$in': ?0 }, " +
+                "'continent': { '$regex': ?1, '$options': 'i' }, " +
+                "'country': { '$regex': ?2, '$options': 'i' }, " +
+                "'status': { '$in': ?3 }, " +
+                "'startDate': { '$gte': ?4 }, " +
+                "'endDate': { '$lte': ?5 } " +
+                "} }",
+        "{ '$group': { '_id': null, 'totalRaisedAmount': { '$sum': '$raisedAmount' } } }"
+})
+Double sumTotalRaisedAmountBy(List<ProjectCategoryType> categories, String continent, String country, List<ProjectStatus> status, Date startDate, Date endDate);
 
     List<CharityProject> findByCountryIn(List<String> countries);
 

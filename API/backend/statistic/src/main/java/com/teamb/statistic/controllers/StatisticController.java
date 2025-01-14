@@ -35,19 +35,20 @@ public class StatisticController {
             @RequestParam(required = false, defaultValue = "") List<ProjectCategoryType> filterCategory,
             @RequestParam(required = false, defaultValue = DEFAULT_REGEX_FOR_MATCHING_ALL) String filterContinent,
             @RequestParam(required = false, defaultValue = DEFAULT_REGEX_FOR_MATCHING_ALL) String filterCountry,
-            @RequestParam(required = false) ProjectStatus filterStatus,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterStartDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterEndDate) {
+            @RequestParam(required = false, defaultValue = "") List<ProjectStatus> filterStatus,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterStartDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterEndDate) {
         try {
             // Build the Statistic filter object
             Statistic filter = Statistic.builder()
-                    .filterCategory(filterCategory == null || filterCategory.isEmpty()
+                    .filterCategory(filterCategory.isEmpty()
                             ? List.of(ProjectCategoryType.values())
                             : filterCategory)
                     .filterContinent(filterContinent)
                     .filterCountry(filterCountry)
-                    //FIXME - fixme
-                    .filterStatus(List.of(filterStatus))
+                    .filterStatus(filterStatus.isEmpty()
+                            ? List.of(ProjectStatus.values())
+                            : filterStatus)
                     .filterStartDate(filterStartDate)
                     .filterEndDate(filterEndDate)
                     .build();

@@ -1,6 +1,7 @@
 package com.teamb.statistic.services;
 
 import com.teamb.common.models.ProjectCategoryType;
+import com.teamb.common.models.ProjectStatus;
 import com.teamb.statistic.models.Statistic;
 import com.teamb.statistic.models.StatisticType;
 
@@ -134,7 +135,6 @@ public class StatisticService {
         return statisticRepository.save(statistic);
     }
 
-
     public Statistic calculateTotalDonationValue(Statistic filter) {
         log.info("Filter values received: {}", filter);
         List<Statistic> allStatistics = statisticRepository.findAll();
@@ -151,24 +151,19 @@ public class StatisticService {
 
         // Create a new Statistic object if no matching record exists or if it is
         // outdated
-        Statistic newStatistic = Statistic.builder()
-                .id(UUID.randomUUID().toString())
-                .statisticType(StatisticType.DONATION_VALUE_SYSTEM)
-                .filterCountry(filter.getFilterCountry())
-                .filterContinent(filter.getFilterContinent())
-                .filterCategory(filter.getFilterCategory())
-                .filterStatus(filter.getFilterStatus())
-                .filterStartDate(filter.getFilterStartDate())
-                .filterEndDate(filter.getFilterEndDate())
-                .build();
-        log.info("No existing statistic found or outdated, creating new: {}", newStatistic);
+        log.info("No existing statistic found or outdated, creating new...");
+        var newStatistic = filter;
+        newStatistic.setId(UUID.randomUUID().toString());
+        newStatistic.setStatisticType(StatisticType.DONATION_VALUE_SYSTEM);
 
         // Calculate new value
         Double totalDonationValue = charityProjectRepository.sumTotalRaisedAmountBy(
-                filter.getFilterCategory().isEmpty() ? Arrays.stream(ProjectCategoryType.values()).map(Enum::name).toList() : filter.getFilterCategory(),
+                filter.getFilterCategory().isEmpty() ? Arrays.asList(ProjectCategoryType.values())
+                        : filter.getFilterCategory(),
                 valueOrMatchAllExpression(filter.getFilterContinent()),
                 valueOrMatchAllExpression(filter.getFilterCountry()),
-                filter.getFilterStatus(),
+                filter.getFilterStatus().isEmpty() ? Arrays.asList(ProjectStatus.values())
+                        : filter.getFilterStatus(),
                 filter.getFilterStartDate(),
                 filter.getFilterEndDate());
 
@@ -196,10 +191,8 @@ public class StatisticService {
      */
     public Statistic calculateProjectCount(Statistic filter) {
         log.info("Filter values received: {}", filter);
-
         // Fetch all statistics
         List<Statistic> allStatistics = statisticRepository.findAll();
-
         // Loop through and compare with filter
         for (Statistic existingStatistic : allStatistics) {
             if (isMatchingStatistic(existingStatistic, filter)) {
@@ -226,15 +219,13 @@ public class StatisticService {
                         filter.getFilterCountry(),
                         filter.getFilterStatus(),
                         filter.getFilterStartDate(),
-                        filter.getFilterEndDate()
-                );
+                        filter.getFilterEndDate());
         if (totalProjectCount == null) {
             totalProjectCount = 0L;
         }
 
         newStatistic.setValue(totalProjectCount.doubleValue());
         newStatistic.setCreatedAt(Instant.now());
-
         return statisticRepository.save(newStatistic);
     }
 
