@@ -27,7 +27,8 @@ import java.util.List;
 public class StatisticController {
 
     private static final String DEFAULT_REGEX_FOR_MATCHING_ALL = ".+";
-
+    private static final Instant DEFAULT_START_DATE = Instant.EPOCH;
+    private static final Instant DEFAULT_END_DATE = Instant.ofEpochMilli(Long.MAX_VALUE);
     private final StatisticService statisticService;
 
     @GetMapping("/donation-value")
@@ -36,9 +37,11 @@ public class StatisticController {
             @RequestParam(required = false, defaultValue = DEFAULT_REGEX_FOR_MATCHING_ALL) String filterContinent,
             @RequestParam(required = false, defaultValue = DEFAULT_REGEX_FOR_MATCHING_ALL) String filterCountry,
             @RequestParam(required = false, defaultValue = "") List<ProjectStatus> filterStatus,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterStartDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterEndDate) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterStartDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterEndDate) {
         try {
+            Date defaultStartDate = Date.from(DEFAULT_START_DATE);
+            Date defaultEndDate = Date.from(DEFAULT_END_DATE);
             // Build the Statistic filter object
             Statistic filter = Statistic.builder()
                     .filterCategory(filterCategory.isEmpty()
@@ -49,8 +52,8 @@ public class StatisticController {
                     .filterStatus(filterStatus.isEmpty()
                             ? List.of(ProjectStatus.values())
                             : filterStatus)
-                    .filterStartDate(filterStartDate)
-                    .filterEndDate(filterEndDate)
+                    .filterStartDate(filterStartDate != null ? filterStartDate : defaultStartDate)
+                    .filterEndDate(filterEndDate != null ? filterEndDate : defaultEndDate)
                     .build();
 
             // Calculate project count based on the filter
@@ -69,9 +72,11 @@ public class StatisticController {
             @RequestParam(required = false, defaultValue = DEFAULT_REGEX_FOR_MATCHING_ALL) String filterContinent,
             @RequestParam(required = false, defaultValue = DEFAULT_REGEX_FOR_MATCHING_ALL) String filterCountry,
             @RequestParam(required = false, defaultValue = "") List<ProjectStatus> filterStatus,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterStartDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterEndDate) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterStartDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date filterEndDate) {
         try {
+            Date defaultStartDate = Date.from(DEFAULT_START_DATE);
+            Date defaultEndDate = Date.from(DEFAULT_END_DATE);
             // Build the Statistic filter object
             Statistic filter = Statistic.builder()
                     .filterCategory(filterCategory.isEmpty()
@@ -82,8 +87,8 @@ public class StatisticController {
                     .filterStatus(filterStatus.isEmpty()
                             ? List.of(ProjectStatus.values())
                             : filterStatus)
-                    .filterStartDate(filterStartDate)
-                    .filterEndDate(filterEndDate)
+                    .filterStartDate(filterStartDate != null ? filterStartDate : defaultStartDate)
+                    .filterEndDate(filterEndDate != null ? filterEndDate : defaultEndDate)
                     .build();
 
             // Calculate project count based on the filter
@@ -100,6 +105,7 @@ public class StatisticController {
     public ResponseEntity<Statistic> calculateDonationValueForOneTarget(
             @RequestParam String userTargetID,
             @RequestParam boolean isDonor) {
+                
         Statistic statistic = statisticService.calculateDonationValueForOneTarget(userTargetID, isDonor);
         return ResponseEntity.ok(statistic);
     }
