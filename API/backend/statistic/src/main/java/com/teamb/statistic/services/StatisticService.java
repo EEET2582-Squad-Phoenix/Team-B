@@ -79,7 +79,7 @@ public class StatisticService {
     
         // Always fetch the latest statistic from the database
         var statistic = statisticRepository.findBy(
-                Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
+                Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase().withIgnorePaths("value")),
                 GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(null);
     
         log.info("Latest statistic found: {}", statistic);
@@ -131,8 +131,8 @@ public class StatisticService {
     
         // Always fetch the latest statistic from the database
         var statistic = statisticRepository.findBy(
-                Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
-                GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(null);
+            Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase().withIgnorePaths("value")),
+            GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(null);
     
         log.info("Latest statistic found: {}", statistic);
     
@@ -173,24 +173,20 @@ public class StatisticService {
     public Statistic calculateTotalDonationValue(Statistic filter) {
         log.info("Filter values received: {}", filter);
     
-        // Always fetch all relevant statistics from the database
-        List<Statistic> allStatistics = statisticRepository.findAll();
-    
+      
+        Statistic statistic = statisticRepository
+                .findBy(
+                Example.of(filter, ExampleMatcher.matching().withIgnoreCase().withIgnorePaths("value")),
+                        GET_FIRST_ORDER_DESC_BY_CREATED_AT)
+                .orElse(null);
+
+       
         boolean shouldReset = shouldResetStatistics();
-    
-        for (Statistic existingStatistic : allStatistics) {
-            if (isMatchingStatistic(existingStatistic, filter)) {
-                // Return the existing statistic if it doesn't need a reset
-                if (!shouldReset) {
-                    log.info("Found valid matching statistic: {}", existingStatistic);
-                    return existingStatistic;
-                }
-            }
-        }
-    
         // Create a new Statistic object if no matching record exists or reset is due
-        log.info("No existing statistic found or reset is due. Creating new statistic...");
-        var newStatistic = Statistic.builder()
+        log.info("No existing statistic found or reset is due. Creating new statistic...");        
+        if (statistic == null || shouldReset) {
+
+         statistic = Statistic.builder()
                 .id(UUID.randomUUID().toString())
                 .statisticType(StatisticType.DONATION_VALUE_SYSTEM)
                 .filterCategory(filter.getFilterCategory())
@@ -200,6 +196,7 @@ public class StatisticService {
                 .filterStartDate(filter.getFilterStartDate())
                 .filterEndDate(filter.getFilterEndDate())
                 .build();
+        }
     
         // Calculate the total donation value
         Double totalDonationValue = charityProjectRepository.sumTotalRaisedAmountBy(
@@ -223,38 +220,34 @@ public class StatisticService {
         log.info("Total donation value after null check: {}", totalDonationValue);
     
         // Update and save the new statistic
-        newStatistic.setValue(totalDonationValue);
-        newStatistic.setCreatedAt(Instant.now());
+        statistic.setValue(totalDonationValue);
+        statistic.setCreatedAt(Instant.now());
     
-        log.info("Saving new statistic: {}", newStatistic);
+        log.info("Saving new statistic: {}", statistic);
     
-        return statisticRepository.save(newStatistic);
+        return statisticRepository.save(statistic);
     }
     
     // Calculate total project count using the filter
     public Statistic calculateProjectCount(Statistic filter) {
         log.info("Filter values received: {}", filter);
     
-        // Always fetch all relevant statistics from the database
-        List<Statistic> allStatistics = statisticRepository.findAll();
-    
+      
+        Statistic statistic = statisticRepository
+                .findBy(
+                Example.of(filter, ExampleMatcher.matching().withIgnoreCase().withIgnorePaths("value")),
+                        GET_FIRST_ORDER_DESC_BY_CREATED_AT)
+                .orElse(null);
+
+       
         boolean shouldReset = shouldResetStatistics();
-    
-        for (Statistic existingStatistic : allStatistics) {
-            if (isMatchingStatistic(existingStatistic, filter)) {
-                // Return the existing statistic if it doesn't need a reset
-                if (!shouldReset) {
-                    log.info("Found valid matching statistic: {}", existingStatistic);
-                    return existingStatistic;
-                }
-            }
-        }
-    
         // Create a new Statistic object if no matching record exists or reset is due
-        log.info("No existing statistic found or reset is due. Creating new statistic...");
-        var newStatistic = Statistic.builder()
+        log.info("No existing statistic found or reset is due. Creating new statistic...");        
+        if (statistic == null || shouldReset) {
+
+         statistic = Statistic.builder()
                 .id(UUID.randomUUID().toString())
-                .statisticType(StatisticType.PROJECT_COUNT_SYSTEM)
+                .statisticType(StatisticType.DONATION_VALUE_SYSTEM)
                 .filterCategory(filter.getFilterCategory())
                 .filterContinent(filter.getFilterContinent())
                 .filterCountry(filter.getFilterCountry())
@@ -262,11 +255,12 @@ public class StatisticService {
                 .filterStartDate(filter.getFilterStartDate())
                 .filterEndDate(filter.getFilterEndDate())
                 .build();
+        }
     
         // Calculate the total project count
         Long totalProjectCount = charityProjectRepository
                 .countAllByCategoriesContainingAndContinentMatchesRegexAndCountryMatchesRegexAndStatusInAndStartDateGreaterThanEqualAndEndDateLessThanEqual(
-                        newStatistic.getFilterCategory(),
+                        filter.getFilterCategory(),
                         filter.getFilterContinent(),
                         filter.getFilterCountry(),
                         filter.getFilterStatus(),
@@ -281,23 +275,13 @@ public class StatisticService {
         log.info("Total project count calculated: {}", totalProjectCount);
     
         // Update and save the new statistic
-        newStatistic.setValue(totalProjectCount.doubleValue());
-        newStatistic.setCreatedAt(Instant.now());
+        statistic.setValue(totalProjectCount.doubleValue());
+        statistic.setCreatedAt(Instant.now());
     
-        log.info("Saving new statistic: {}", newStatistic);
+        log.info("Saving new statistic: {}", statistic);
     
-        return statisticRepository.save(newStatistic);
+        return statisticRepository.save(statistic);
     }
     
-    // Check if the existing statistic matches the filter
-    private boolean isMatchingStatistic(Statistic existingStatistic, Statistic filter) {
-        return Objects.equals(existingStatistic.getStatisticType(), filter.getStatisticType())
-                && Objects.equals(existingStatistic.getFilterCountry(), filter.getFilterCountry())
-                && Objects.equals(existingStatistic.getFilterContinent(), filter.getFilterContinent())
-                && Objects.equals(existingStatistic.getFilterCategory(), filter.getFilterCategory())
-                && Objects.equals(existingStatistic.getFilterStatus(), filter.getFilterStatus())
-                && Objects.equals(existingStatistic.getFilterStartDate(), filter.getFilterStartDate())
-                && Objects.equals(existingStatistic.getFilterEndDate(), filter.getFilterEndDate());
-    }
-
+ 
 }
