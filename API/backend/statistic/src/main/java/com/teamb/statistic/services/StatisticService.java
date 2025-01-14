@@ -72,8 +72,8 @@ public class StatisticService {
 
         // Always fetch the latest statistic from the database
         var statistic = statisticRepository.findBy(
-                Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase().withIgnorePaths("value")),
-                GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(null);
+            Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase().withIgnorePaths("value")),
+            GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(null);
 
         log.info("Latest statistic found: {}", statistic);
 
@@ -127,7 +127,7 @@ public class StatisticService {
         var statistic = statisticRepository.findBy(
                 Example.of(baseValue, ExampleMatcher.matching().withIgnoreCase()),
                 GET_FIRST_ORDER_DESC_BY_CREATED_AT).orElse(null);
-    
+
         log.info("Latest statistic found: {}", statistic);
 
         Instant resetTime = shouldResetStatistics();
@@ -167,120 +167,166 @@ public class StatisticService {
     // Calculate total donation value using the filter
     public Statistic calculateTotalDonationValue(Statistic filter) {
         log.info("Filter values received: {}", filter);
-    
+
         // Always fetch all relevant statistics from the database
         List<Statistic> allStatistics = statisticRepository.findAll();
-    
-        boolean shouldReset = shouldResetStatistics();
-    
-        for (Statistic existingStatistic : allStatistics) {
-            if (isMatchingStatistic(existingStatistic, filter)) {
-                // Return the existing statistic if it doesn't need a reset
-                if (!shouldReset) {
-                    log.info("Found valid matching statistic: {}", existingStatistic);
-                    return existingStatistic;
-                }
+
+        Instant resetTime = shouldResetStatistics(); // Get the reset time
+
+        // Get the most recently created statistic matching the filter
+        Statistic mostRecentStatistic = allStatistics.stream()
+                .filter(existingStatistic -> isMatchingStatistic(existingStatistic, filter))
+                .max(Comparator.comparing(Statistic::getCreatedAt))
+                .orElse(null); // If no matching statistic, return null
+
+        // If there's no statistic or the most recent one is outdated, create a new one
+        if (mostRecentStatistic == null || (resetTime != null && mostRecentStatistic.getCreatedAt().isBefore(resetTime))) {
+            log.info("No valid matching statistic found or reset is due. Creating new statistic...");
+
+            // Create the new Statistic object with the necessary filter values
+            var newStatistic = Statistic.builder()
+                    .id(UUID.randomUUID().toString())
+                    .statisticType(StatisticType.DONATION_VALUE_SYSTEM)
+                    .filterCategory(filter.getFilterCategory())
+                    .filterContinent(filter.getFilterContinent())
+                    .filterCountry(filter.getFilterCountry())
+                    .filterStatus(filter.getFilterStatus())
+                    .filterStartDate(filter.getFilterStartDate())
+                    .filterEndDate(filter.getFilterEndDate())
+                    .build();
+
+            // Calculate the total donation value
+            Double totalDonationValue = charityProjectRepository.sumTotalRaisedAmountBy(
+                    filter.getFilterCategory().isEmpty() ? Arrays.asList(ProjectCategoryType.values()) 
+                            : filter.getFilterCategory(),
+                    filter.getFilterContinent(),
+                    filter.getFilterCountry(),
+                    filter.getFilterStatus().isEmpty() ? Arrays.asList(ProjectStatus.values()) 
+                            : filter.getFilterStatus(),
+                    filter.getFilterStartDate() != null ? filter.getFilterStartDate() : Date.from(Instant.EPOCH),
+                    filter.getFilterEndDate() != null ? filter.getFilterEndDate() 
+                            : Date.from(Instant.ofEpochMilli(Long.MAX_VALUE)));
+
+            log.info("Total donation value before null check: {}", totalDonationValue);
+
+            if (totalDonationValue == null) {
+                totalDonationValue = 0.0;
+                log.info("Total donation value was null, set to 0.0");
             }
+
+            log.info("Total donation value after null check: {}", totalDonationValue);
+
+            // Update and save the new statistic
+            newStatistic.setValue(totalDonationValue);
+            newStatistic.setCreatedAt(Instant.now());
+
+            log.info("Saving new statistic: {}", newStatistic);
+
+            // Save the new statistic and return it
+            return statisticRepository.save(newStatistic);
         }
-    
-        // Create a new Statistic object if no matching record exists or reset is due
-        log.info("No existing statistic found or reset is due. Creating new statistic...");
-        var newStatistic = Statistic.builder()
-                .id(UUID.randomUUID().toString())
-                .statisticType(StatisticType.DONATION_VALUE_SYSTEM)
-                .filterCategory(filter.getFilterCategory())
-                .filterContinent(filter.getFilterContinent())
-                .filterCountry(filter.getFilterCountry())
-                .filterStatus(filter.getFilterStatus())
-                .filterStartDate(filter.getFilterStartDate())
-                .filterEndDate(filter.getFilterEndDate())
-                .build();
-    
-        // Calculate the total donation value
-        Double totalDonationValue = charityProjectRepository.sumTotalRaisedAmountBy(
-                filter.getFilterCategory().isEmpty() ? Arrays.asList(ProjectCategoryType.values())
-                        : filter.getFilterCategory(),
-                filter.getFilterContinent(),
-                filter.getFilterCountry(),
-                filter.getFilterStatus().isEmpty() ? Arrays.asList(ProjectStatus.values())
-                        : filter.getFilterStatus(),
-                filter.getFilterStartDate() != null ? filter.getFilterStartDate() : Date.from(Instant.EPOCH),
-                filter.getFilterEndDate() != null ? filter.getFilterEndDate()
-                        : Date.from(Instant.ofEpochMilli(Long.MAX_VALUE)));
-    
-        log.info("Total donation value before null check: {}", totalDonationValue);
-    
-        if (totalDonationValue == null) {
-            totalDonationValue = 0.0;
-            log.info("Total donation value was null, set to 0.0");
-        }
-    
-        log.info("Total donation value after null check: {}", totalDonationValue);
-    
-        // Update and save the new statistic
-        newStatistic.setValue(totalDonationValue);
-        newStatistic.setCreatedAt(Instant.now());
-    
-        log.info("Saving new statistic: {}", newStatistic);
-    
-        return statisticRepository.save(newStatistic);
+
+        // Return the most recent statistic if no reset is needed
+        log.info("Found valid matching statistic: {}", mostRecentStatistic);
+        return mostRecentStatistic;
     }
 
     // Calculate total project count using the filter
     public Statistic calculateProjectCount(Statistic filter) {
         log.info("Filter values received: {}", filter);
-    
+
         // Always fetch all relevant statistics from the database
         List<Statistic> allStatistics = statisticRepository.findAll();
-    
-        boolean shouldReset = shouldResetStatistics();
-    
-        for (Statistic existingStatistic : allStatistics) {
-            if (isMatchingStatistic(existingStatistic, filter)) {
-                // Return the existing statistic if it doesn't need a reset
-                if (!shouldReset) {
-                    log.info("Found valid matching statistic: {}", existingStatistic);
-                    return existingStatistic;
-                }
+
+        Instant resetTime = shouldResetStatistics(); // Get the reset time
+
+        // Get the most recently created statistic matching the filter
+        Statistic mostRecentStatistic = allStatistics.stream()
+                .filter(existingStatistic -> isMatchingStatistic(existingStatistic, filter))
+                .max(Comparator.comparing(Statistic::getCreatedAt))
+                .orElse(null); // If no matching statistic, return null
+
+        // If there's no statistic or the most recent one is outdated, create a new one
+        if (mostRecentStatistic == null || (resetTime != null && mostRecentStatistic.getCreatedAt().isBefore(resetTime))) {
+            log.info("No valid matching statistic found or reset is due. Creating new statistic...");
+
+            // Create the new Statistic object with the necessary filter values
+            var newStatistic = Statistic.builder()
+                    .id(UUID.randomUUID().toString())
+                    .statisticType(StatisticType.PROJECT_COUNT_SYSTEM)
+                    .filterCategory(filter.getFilterCategory())
+                    .filterContinent(filter.getFilterContinent())
+                    .filterCountry(filter.getFilterCountry())
+                    .filterStatus(filter.getFilterStatus())
+                    .filterStartDate(filter.getFilterStartDate())
+                    .filterEndDate(filter.getFilterEndDate())
+                    .build();
+
+            // Calculate the total project count
+            Long totalProjectCount = charityProjectRepository
+                    .countAllByCategoriesContainingAndContinentMatchesRegexAndCountryMatchesRegexAndStatusInAndStartDateGreaterThanEqualAndEndDateLessThanEqual(
+                            newStatistic.getFilterCategory(),
+                            filter.getFilterContinent(),
+                            filter.getFilterCountry(),
+                            filter.getFilterStatus(),
+                            filter.getFilterStartDate(),
+                            filter.getFilterEndDate());
+
+            if (totalProjectCount == null) {
+                totalProjectCount = 0L;
+                log.info("Total project count was null, set to 0.");
             }
+
+            log.info("Total project count calculated: {}", totalProjectCount);
+
+            // Update and save the new statistic
+            newStatistic.setValue(totalProjectCount.doubleValue());
+            newStatistic.setCreatedAt(Instant.now());
+
+            log.info("Saving new statistic: {}", newStatistic);
+
+            // Save the new statistic and return it
+            return statisticRepository.save(newStatistic);
         }
+
+        // Return the most recent statistic if no reset is needed
+        log.info("Found valid matching statistic: {}", mostRecentStatistic);
+        return mostRecentStatistic;
+    }
     
-        // Create a new Statistic object if no matching record exists or reset is due
-        log.info("No existing statistic found or reset is due. Creating new statistic...");
+    // Calculate nnumber of new DONOR registrations (last 24 hours compared to the calculated reset time)
+    public Statistic calculateNewDonorRegistrations() {
+        log.info("Calculating new donor registrations...");
+
+        // Get the reset time
+        Instant resetTime = shouldResetStatistics();
+
+        // Get the current time
+        Instant now = Instant.now();
+
+        // Calculate the start time for the last 24 hours
+        Instant startTime = resetTime != null ? resetTime : now;
+        Instant endTime = now;
+
+        // Get the number of new donor registrations
+        Long newDonorRegistrations = donationRepository.countDistinctDonorsByCreatedAtBetween(Date.from(startTime), Date.from(endTime));
+
+        if (newDonorRegistrations == null) {
+            newDonorRegistrations = 0L;
+            log.info("New donor registrations was null, set to 0.");
+        }
+
+        // Create a new Statistic object
         var newStatistic = Statistic.builder()
                 .id(UUID.randomUUID().toString())
-                .statisticType(StatisticType.PROJECT_COUNT_SYSTEM)
-                .filterCategory(filter.getFilterCategory())
-                .filterContinent(filter.getFilterContinent())
-                .filterCountry(filter.getFilterCountry())
-                .filterStatus(filter.getFilterStatus())
-                .filterStartDate(filter.getFilterStartDate())
-                .filterEndDate(filter.getFilterEndDate())
+                .statisticType(StatisticType.NEW_DONOR_REGISTRATIONS)
+                .createdAt(now)
+                .value(newDonorRegistrations.doubleValue())
                 .build();
-    
-        // Calculate the total project count
-        Long totalProjectCount = charityProjectRepository
-                .countAllByCategoriesContainingAndContinentMatchesRegexAndCountryMatchesRegexAndStatusInAndStartDateGreaterThanEqualAndEndDateLessThanEqual(
-                        newStatistic.getFilterCategory(),
-                        filter.getFilterContinent(),
-                        filter.getFilterCountry(),
-                        filter.getFilterStatus(),
-                        filter.getFilterStartDate(),
-                        filter.getFilterEndDate());
-    
-        if (totalProjectCount == null) {
-            totalProjectCount = 0L;
-            log.info("Total project count was null, set to 0.");
-        }
-    
-        log.info("Total project count calculated: {}", totalProjectCount);
-    
-        // Update and save the new statistic
-        newStatistic.setValue(totalProjectCount.doubleValue());
-        newStatistic.setCreatedAt(Instant.now());
-    
+
         log.info("Saving new statistic: {}", newStatistic);
-    
+
+        // Save the new statistic and return it
         return statisticRepository.save(newStatistic);
     }
     

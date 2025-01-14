@@ -117,5 +117,10 @@ public class StatisticController {
         Statistic statistic = statisticService.calculateProjectCountForOneTarget(userTargetID, isDonor);
         return ResponseEntity.ok(statistic);
     }
- 
+
+    @GetMapping("/new-donor-count")
+    public ResponseEntity<Statistic> calculateNewDonorRegistrations() {
+        Statistic statistic = statisticService.calculateNewDonorRegistrations();
+        return ResponseEntity.ok(statistic);
+    }
 }
