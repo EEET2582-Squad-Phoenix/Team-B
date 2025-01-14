@@ -12,7 +12,6 @@ import com.teamb.donation.dtos.DonationDTO;
 
 public interface DonationRepository extends MongoRepository<DonationDTO, String> {
 
-    long countDistinctDonorsByCreatedAtBetween(Date startDate, Date endDate);
 
     // Custom query to fetch only necessary fields
     // @Query(value = "{}", fields = "{_id: 1, donor: 1, project: 1, creditCard: 1,
